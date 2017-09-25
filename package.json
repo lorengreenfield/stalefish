@@ -1,0 +1,25 @@
+{
+  "name": "stalefish",
+  "version": "0.1.0",
+  "description": "Simple function based component library for hyperx tagged template literals",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lorengreenfield/stalefish.git"
+  },
+  "keywords": [
+    "halfcab",
+    "hyperx",
+    "components",
+    "css"
+  ],
+  "author": "Loren Greenfield",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lorengreenfield/stalefish/issues"
+  },
+  "homepage": "https://github.com/lorengreenfield/stalefish#readme"
+}
