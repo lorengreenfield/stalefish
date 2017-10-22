@@ -1,10 +1,17 @@
 {
   "name": "stalefish",
-  "version": "0.1.0",
-  "description": "Simple function based component library for hyperx tagged template literals",
-  "main": "index.js",
+  "version": "0.2.2",
+  "description": "Simple function based component library for hyperx/bel/halfcab tagged template literals",
+  "main": "stalefish.js",
+  "module": "index.js",
+  "jsnext:main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "npm test",
+    "build": "rollup index.js --output.format cjs --output.file stalefish.js",
+    "build-publish": "npm run build && npm publish",
+    "versionbump:fix": "npm version patch --no-git-tag-version",
+    "versionbump:feature": "npm version minor --no-git-tag-version",
+    "versionbump:breakingchanges": "npm version major --no-git-tag-version"
   },
   "repository": {
     "type": "git",
@@ -14,12 +21,19 @@
     "halfcab",
     "hyperx",
     "components",
-    "css"
+    "css",
+    "bel"
   ],
   "author": "Loren Greenfield",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/lorengreenfield/stalefish/issues"
   },
-  "homepage": "https://github.com/lorengreenfield/stalefish#readme"
+  "homepage": "https://github.com/lorengreenfield/stalefish#readme",
+  "dependencies": {
+    "halfcab": "^5.2.3"
+  },
+  "devDependencies": {
+    "rollup": "^0.50.0"
+  }
 }
