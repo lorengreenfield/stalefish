@@ -1,5 +1,5 @@
 import {html, css, geb} from 'halfcab'
-import {close} from '../icons'
+import close from './close'
 
 let styles = css`
     

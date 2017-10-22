@@ -1,4 +1,4 @@
-import html from 'bel'
+import {html} from 'halfcab'
 
 export default ({colour}) => html`
 <svg fill="${colour}" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
