@@ -11,7 +11,7 @@ let styles = css`
         display: flex;
         align-items: center;
         color: white;
-        padding: 10px 20px;
+        padding: 10px 0px;
         box-sizing: border-box;
     }
     
@@ -31,7 +31,7 @@ export default ({on, message, colour, multiline}) => html`
 
     <div class="${styles.toastContainer}" onclick=${e => geb.broadcast('errorDismissed')} style="colour: ${colour || 'red'}; ${on ? 'bottom: 0px;' : `bottom: -${multiline ? '100' : '50'}px;`}${multiline ? 'height: 100px;' : ''}">
         <div class="${styles.toast}">
-            <div style="width: 100%;">${message}</div>
+            <div style="width: 100%; margin-left: 20px">${message}</div>
             <div style="margin-right: 10px; cursor: pointer;">${close({colour: 'white'})}</div>
         </div>
     </div>
