@@ -1,14 +1,14 @@
 {
   "name": "stalefish",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "description": "Simple function based component library for hyperx/bel/halfcab tagged template literals",
-  "main": "stalefish.js",
+  "main": "index.js",
   "module": "index.js",
   "jsnext:main": "index.js",
+  "@std/esm": true,
   "scripts": {
     "test": "npm test",
-    "build": "rollup index.js --output.format cjs --output.file stalefish.js",
-    "build-publish": "npm run build && npm publish",
+    "npm-publish": "npm publish",
     "versionbump:fix": "npm version patch --no-git-tag-version",
     "versionbump:feature": "npm version minor --no-git-tag-version",
     "versionbump:breakingchanges": "npm version major --no-git-tag-version"
@@ -31,9 +31,7 @@
   },
   "homepage": "https://github.com/lorengreenfield/stalefish#readme",
   "dependencies": {
-    "halfcab": "^5.2.3"
-  },
-  "devDependencies": {
-    "rollup": "^0.50.0"
+    "halfcab": "^6.1.2",
+    "reify": "^0.12.3"
   }
 }
