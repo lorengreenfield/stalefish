@@ -1,4 +1,4 @@
-import {html, css, formField, formIsValid} from 'halfcab'
+import {html, css, formField, formIsValid, attribute} from 'halfcab'
 
 let styles = css`
     .textfield {
@@ -15,28 +15,10 @@ let styles = css`
     .textfield.focus {
       border: solid 5px #969696;
     }
+`
+
+export default ({holdingPen, name, property, required, pattern, type, keyup, autofocus}) => html`
+
+    <input class="${styles.textfield}" value="${holdingPen[property]}" onfocus=${e => e.currentTarget.classList.add('sf-touched')} onkeyup=${e => keyup(e)} ${required ? `required` : ''} oninput=${formField(holdingPen, property)} placeholder="${name || ''}" type="${type}" style="${!formIsValid(holdingPen) ? '' : ''}" ${attribute(autofocus ? 'autofocus' : '')} />
     
 `
-
-export default ({holdingPen, name, property, required, pattern, type, keyup}) => html`
-
-    <input class="${styles.textfield}" value="${holdingPen[property]}" onfocus=${e => e.currentTarget.classList.add('sf-touched')} onkeyup=${e => keyup(e)} ${required ? `required` : ''} oninput=${formField(holdingPen, property)} placeholder="${name || ''}" type="${type}" style="${!formIsValid(holdingPen) ? '' : ''}" />
-    
-`
-
-/*
-
-
-import {html, formField} from 'halfcab'
-
-export default ({holdingPen, name, property, styles, type, required, pattern, keyup}) => html`
-
-    <div style="width: 90%;" class="mdc-textfield mdc-textfield--box mdc-textfield--upgraded" data-mdc-auto-init="MDCTextfield">
-        <input style="width: 100%;" value="${holdingPen[property]}" type="${type}"  class="mdc-textfield__input"  />
-        <label class="mdc-textfield__label">${name}</label>
-        <div class="mdc-textfield__bottom-line"></div>
-    </div>
-`
-
-
- */
