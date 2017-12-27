@@ -12,6 +12,9 @@ let styles = css`
     box-shadow: none !important;
     font-weight: normal;
     margin: 8px 0;
+    box-sizing: border-box;
+    font-family: inherit;
+    line-height: inherit
   }
   
   .label {
@@ -49,10 +52,14 @@ let styles = css`
 
 function change({e, holdingPen, property, label}){
   let ff = formField(holdingPen, property)(e)
-  if(holdingPen[property] === 0 || holdingPen[property]){
-    e.target.closest('label').querySelector(label.selector).style.opacity = 1
-  }else{
-    e.target.closest('label').querySelector(label.selector).style.opacity = 0
+  let closestLabel = e.target.closest('label')
+  let labelEl = closestLabel.querySelector(label.selector)
+  if(labelEl) {
+    if(holdingPen[property] === 0 || holdingPen[property]){
+      labelEl.style.opacity = 1
+    }else{
+      labelEl.style.opacity = 0
+    }
   }
 
   return ff
@@ -63,7 +70,7 @@ export default ({holdingPen, label, placeholder, property, required, pattern, ty
 
    <label style="width: 100%; text-align: left; position: relative;">
    ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
-   <span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}</span>
+   ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}</span>`:''}
    <input class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => keyup && keyup(e)} ${required ? {required: 'required'} : ''} oninput=${e => change({e, holdingPen, property, label: styles.label})} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}" type="${type || 'input'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} />
    </label>
 `

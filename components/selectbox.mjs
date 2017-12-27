@@ -4,6 +4,7 @@ import moreVertical from './moreVertical'
 let styles = css`
   .selectBox {
     -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
     padding: 10px;
     border: solid 5px #c9c9c9;
@@ -14,6 +15,13 @@ let styles = css`
     font-weight: normal;
     margin: 8px 0;
     background-color: white;
+    font-family: inherit;
+    line-height: inherit
+  }
+  
+  .selectBox:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
   }
   
   .label {
@@ -40,7 +48,7 @@ let styles = css`
 `
 
 
-export default ({holdingPen, label, property, required, type, keyup, options}) => html`
+export default ({holdingPen, label, property, options}) => html`
   <label style="width: 100%; text-align: left; position: relative;">
   <div class="${styles.down}">▾</div>
   <span class="${styles.label}" style="font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}</span>
