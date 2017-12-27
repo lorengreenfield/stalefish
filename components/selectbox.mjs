@@ -15,6 +15,8 @@ let styles = css`
     font-weight: normal;
     margin: 8px 0;
     background-color: white;
+    font-family: inherit;
+    line-height: inherit
   }
   
   .selectBox:-moz-focusring {

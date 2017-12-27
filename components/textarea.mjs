@@ -12,6 +12,8 @@ let styles = css`
     box-shadow: none !important;
     font-weight: normal;
     margin: 8px 0 3px 0;
+    font-family: inherit;
+    line-height: inherit
   }
   
   .label {

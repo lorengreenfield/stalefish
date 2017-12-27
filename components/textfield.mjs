@@ -13,6 +13,8 @@ let styles = css`
     font-weight: normal;
     margin: 8px 0;
     box-sizing: border-box;
+    font-family: inherit;
+    line-height: inherit
   }
   
   .label {
