@@ -16,16 +16,14 @@ let styles = css`
     background-color: rgba(255,255,255,0.8); 
   }
   
-  .label::has(.checkbox:focus) {
-    border: #969696 solid 2px;
-  }
   .checkbox.touched:invalid:not(:focus) {
     outline: red solid 2px;
   }
 `
 
 
-export default ({holdingPen, label, property, required, autofocus}) => html`
+export default ({holdingPen, label, property, required}) => html`
 
-   <label style="text-align: left; margin: 16px 0 26px 0;"><span class="${styles.label}">${label}<input class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" onchange=${formField(holdingPen, property)} onblur=${formField(holdingPen, property)} type="checkbox" ${autofocus ? {autofocus} : ''}  /></span></label>
+   <label style="text-align: left; margin: 16px 0 26px 0;">
+   <span class="${styles.label}">${label}<input class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true  ? { checked: 'checked' } : ''} onchange=${formField(holdingPen, property)} type="checkbox" ${required ? {required: 'required'} : ''} /></span></label>
 `
