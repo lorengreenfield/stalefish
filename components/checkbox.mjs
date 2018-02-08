@@ -8,14 +8,14 @@ let styles = css`
   .label {
     display: inline-flex; 
     align-items: center;
-    border-radius: 5px;
-    font-size: 16px; 
+    border-radius: 0;
+    font-size: 18px; 
     font-weight: normal; 
     color: #999; 
     margin-left: 5px; 
-    padding: 14px;
+    padding: 10px;
     background-color: rgba(255,255,255,0.8);
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+    border: solid 5px #c9c9c9;
   }
   
   .checkbox.touched:invalid:not(:focus) {

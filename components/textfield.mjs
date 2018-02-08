@@ -14,7 +14,10 @@ let styles = css`
     margin: 8px 0;
     box-sizing: border-box;
     font-family: inherit;
-    line-height: inherit
+    line-height: inherit;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   }
   
   .label {

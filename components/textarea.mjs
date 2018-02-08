@@ -13,7 +13,10 @@ let styles = css`
     font-weight: normal;
     margin: 8px 0 3px 0;
     font-family: inherit;
-    line-height: inherit
+    line-height: inherit;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   }
   
   .label {
