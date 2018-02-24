@@ -1,6 +1,6 @@
 {
   "name": "stalefish",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "Simple function based component library for hyperx/bel/halfcab tagged template literals",
   "main": "index.mjs",
   "module": "index.mjs",
@@ -31,6 +31,9 @@
   },
   "homepage": "https://github.com/lorengreenfield/stalefish#readme",
   "peerDependencies": {
-    "halfcab": "^8.0.5"
+    "halfcab": "^8.1.0"
+  },
+  "devDependencies": {
+    "halfcab": "^8.1.0"
   }
 }

@@ -2,12 +2,10 @@ import {html, css, geb} from 'halfcab'
 import close from './close'
 
 let styles = css`
-    
   .toast{
     width: 80%;
     min-width: 300px;
     max-width: 600px;
-    background-color: red;
     display: flex;
     align-items: center;
     color: white;
@@ -29,8 +27,8 @@ let styles = css`
 `
 
 export default ({on, message, colour, multiline}) => html`
-  <div class="${styles.toastContainer}" onclick=${e => geb.broadcast('errorDismissed')} style="colour: ${colour || 'red'}; ${on ? 'bottom: 0px;' : `bottom: -${multiline ? '100' : '50'}px;`}${multiline ? 'height: 100px;' : ''}">
-      <div class="${styles.toast}">
+  <div class="${styles.toastContainer}" onclick=${e => geb.broadcast('errorDismissed')} style="${on ? 'bottom: 0px;' : `bottom: -${multiline ? '100' : '50'}px;`}${multiline ? 'height: 100px;' : ''}">
+      <div class="${styles.toast}" style="background-color: ${colour || 'red'};">
           <div style="width: 100%; margin-left: 20px">${message}</div>
           <div style="margin-right: 10px; cursor: pointer;">${close({colour: 'white'})}</div>
       </div>
