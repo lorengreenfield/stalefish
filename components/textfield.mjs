@@ -73,7 +73,7 @@ export default ({holdingPen, label, placeholder, property, required, pattern, ty
 
    <label style="width: 100%; text-align: left; position: relative;">
    ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
-   ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}</span>`:''}
-   <input class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => keyup && keyup(e)} ${required ? {required: 'required'} : ''} oninput=${e => change({e, holdingPen, property, label: styles.label})} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}" type="${type || 'input'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} />
+   ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>`:''}
+   <input class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => keyup && keyup(e)} ${required ? {required: 'required'} : ''} oninput=${e => change({e, holdingPen, property, label: styles.label})} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${type || 'input'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} ${type.toLowerCase() === 'number' ? {step: '0.1'} : ''} />
    </label>
 `

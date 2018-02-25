@@ -48,11 +48,12 @@ let styles = css`
 `
 
 
-export default ({holdingPen, label, property, options}) => html`
+export default ({holdingPen, label, property, options, required}) => html`
   <label style="width: 100%; text-align: left; position: relative;">
   <div class="${styles.down}">▾</div>
-  <span class="${styles.label}" style="font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}</span>
+  <span class="${styles.label}" style="font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>
     <select class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${formField(holdingPen, property)} onblur=${formField(holdingPen, property)}>
+      <option value="${required ? 'Select an option' : ''}" ${holdingPen[property] === '' ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
       ${options.map(option => {
   return html`<option value="${option}" ${holdingPen[property] === option ? {selected: 'true'} : ''}>${option}</option>`
 })}
