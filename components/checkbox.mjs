@@ -27,5 +27,5 @@ let styles = css`
 export default ({holdingPen, label, property, required}) => html`
 
    <label style="text-align: left; margin: 16px 0 26px 0;">
-   <span class="${styles.label}">${label}<input class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true  ? { checked: 'checked' } : ''} onchange=${formField(holdingPen, property)} type="checkbox" ${required ? {required: 'required'} : ''} /></span></label>
+   <span class="${styles.label}">${label}${required ? ' *' : ''}<input class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true  ? { checked: 'checked' } : ''} onchange=${formField(holdingPen, property)} type="checkbox" ${required ? {required: 'required'} : ''} /></span></label>
 `
