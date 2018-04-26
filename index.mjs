@@ -10,5 +10,20 @@ import textarea from './components/textarea'
 import panel from './components/panel'
 import up from './components/up'
 import down from './components/down'
+import loader from './components/loader'
 
-export {button, textfield, toast, dropdown, moreVertical, close, selectbox, checkbox, textarea, panel, up, down}
+export {
+  button,
+  textfield,
+  toast,
+  dropdown,
+  moreVertical,
+  close,
+  selectbox,
+  checkbox,
+  textarea,
+  panel,
+  up,
+  down,
+  loader
+}
