@@ -7,5 +7,8 @@ import close from './components/close'
 import selectbox from './components/selectbox'
 import checkbox from './components/checkbox'
 import textarea from './components/textarea'
+import panel from './components/panel'
+import up from './components/up'
+import down from './components/down'
 
-export {button, textfield, toast, dropdown, moreVertical, close, selectbox, checkbox, textarea}
+export {button, textfield, toast, dropdown, moreVertical, close, selectbox, checkbox, textarea, panel, up, down}
