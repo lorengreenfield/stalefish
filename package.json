@@ -6,6 +6,7 @@
   "module": "index.mjs",
   "jsnext:main": "index.mjs",
   "@std/esm": true,
+  "esm": true,
   "scripts": {
     "test": "npm test",
     "npm-publish": "npm publish",
