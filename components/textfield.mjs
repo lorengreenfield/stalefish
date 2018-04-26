@@ -24,6 +24,7 @@ let styles = css`
     transition: opacity 0.75s;
     border-top-right-radius: 5px; 
     border-top-left-radius: 5px;
+    user-select: none;
   }
   
   .textfield:focus {

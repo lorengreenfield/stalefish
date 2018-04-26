@@ -16,6 +16,7 @@ let styles = css`
     padding: 10px;
     background-color: rgba(255,255,255,0.8);
     border: solid 5px #c9c9c9;
+    user-select: none;
   }
   
   .checkbox.touched:invalid:not(:focus) {
@@ -23,9 +24,14 @@ let styles = css`
   }
 `
 
+export default ({holdingPen, label, property, required, indeterminate}) => {
+  let checkboxEl = html`<input class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true  ? { checked: 'checked' } : ''} onchange=${formField(holdingPen, property)} type="checkbox" ${required ? {required: 'required'} : ''} />`
 
-export default ({holdingPen, label, property, required}) => html`
+  checkboxEl.indeterminate = indeterminate || false
 
-   <label style="text-align: left; margin: 16px 0 26px 0;">
-   <span class="${styles.label}">${label}${required ? ' *' : ''}<input class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true  ? { checked: 'checked' } : ''} onchange=${formField(holdingPen, property)} type="checkbox" ${required ? {required: 'required'} : ''} /></span></label>
+  return html`
+  <label style="text-align: left; margin: 16px 0 26px 0;">
+    <span class="${styles.label}">${label}${required ? ' *' : ''}${checkboxEl}</span>
+  </label>
 `
+}
