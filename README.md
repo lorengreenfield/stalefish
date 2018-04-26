@@ -1,6 +1,4 @@
 # stalefish
-Simple function based component library for hyperx tagged template literals
+Simple function based component library for hyperx/bel/halfcab/nanohtml tagged template literals
 
-- Requires reify or @std/esm for server side rendering as its only distributed as an ES module.
-
-...Work in progress
+- Requires the `esm` package (or node version with esm modules) for server side rendering as its only distributed as an ES module.
