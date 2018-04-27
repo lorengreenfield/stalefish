@@ -11,6 +11,7 @@ import panel from './components/panel'
 import up from './components/up'
 import down from './components/down'
 import loader from './components/loader'
+import toolbar from './components/toolbar'
 
 export {
   button,
@@ -25,5 +26,6 @@ export {
   panel,
   up,
   down,
-  loader
+  loader,
+  toolbar
 }
