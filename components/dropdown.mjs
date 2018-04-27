@@ -6,10 +6,10 @@ let styles = css`
     position: relative;
     display: inline-block;
   }
+  
   .dropdown:focus{
     outline:0;
   }
-  
   
   .dropdownContent {
     position: absolute;
@@ -17,7 +17,6 @@ let styles = css`
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
   }
-  
   
   .dropdownContent div {
     color: #666;
@@ -28,7 +27,6 @@ let styles = css`
     font-size: 18px;
   }
   
-  
   .dropdownContent div:hover {background-color: #f1f1f1}
   
   .separator{
@@ -36,14 +34,13 @@ let styles = css`
     margin: 0;
     border-style: solid;
   }
-    
 `
 
 export default ({menuItems, visible, side, width, margin}) => html`
 
 <div tabindex="-1" class="${styles.dropdown}" style="${!visible ? 'display: none;' : ''}${side === 'right' ? 'float: right;' : ''}">
   <div class="${styles.dropdownContent}" style="${side === 'right' ? 'right: 0;' : ''} width: ${width || '160px'};${margin ? `margin: ${margin};` : ''}">
-  ${menuItems.map(item => html`
+  ${menuItems.filter(item => !item.visibleUnder || (item.visibleUnder && typeof window !== 'undefined' && window.innerWidth <= parseInt(item.visibleUnder))).map(item => html`
     ${item.separator ? html`<hr class="${styles.separator}">` : html`<div onclick=${item.action}>${item.text}</div>`}
   `)}
   </div>
