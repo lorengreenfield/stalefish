@@ -1,4 +1,4 @@
-import { html, css, formField, fieldIsTouched } from 'halfcab'
+import { html, css, formField, fieldIsTouched, cache } from 'halfcab'
 
 let styles = css`
   .textfield {
@@ -14,7 +14,7 @@ let styles = css`
     margin: 8px 0;
     box-sizing: border-box;
     font-family: inherit;
-    line-height: inherit;
+    line-height: 1.4em;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -43,10 +43,11 @@ let styles = css`
     position: absolute;
     color: #AAA;
     font-size: 1.1em; 
+    line-height: 1.2em;
     font-weight: normal; 
     box-sizing: 
-    border-box; 
-    top: 37px; 
+    border-box;
+    top: 33px; 
     right: 7px; 
     background-color: #EEE; 
     padding: 10px;
@@ -85,12 +86,14 @@ function determineStep(type){
   return '1'
 }
 
-
-export default ({holdingPen, label, placeholder, property, required, pattern, type, keyup, autofocus, valueContext}) => html`
-
+const textfield = ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, keyup, autofocus, valueContext}) => html`
+<div ${wrapperStyle ? {'class': wrapperStyle} : ''}>
    <label style="width: 100%; text-align: left; position: relative;">
    ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
    ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>`:''}
    <input class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => keyup && keyup(e)} ${required ? {required: 'required'} : ''} oninput=${e => change({e, holdingPen, property, label: styles.label})} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} ${type.toLowerCase() === 'number' ? {step: determineStep(type)} : ''} />
    </label>
+</div>
 `
+
+export default args => cache(textfield, args)
