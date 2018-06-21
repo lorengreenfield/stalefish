@@ -32,9 +32,9 @@
   },
   "homepage": "https://github.com/lorengreenfield/stalefish#readme",
   "peerDependencies": {
-    "halfcab": "^9.0.0"
+    "halfcab": "^10.0.0"
   },
   "devDependencies": {
-    "halfcab": "^9.0.0"
+    "halfcab": "^10.0.0"
   }
 }
