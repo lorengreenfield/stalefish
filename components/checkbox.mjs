@@ -1,4 +1,4 @@
-import { html, css, formField, fieldIsTouched } from 'halfcab'
+import { html, css, formField, fieldIsTouched, cache } from 'halfcab'
 
 let styles = css`
   .checkbox {
@@ -12,7 +12,7 @@ let styles = css`
     font-size: 18px; 
     font-weight: normal; 
     color: #999; 
-    margin-left: 5px; 
+    margin: 5px 0px 5px 5px;
     padding: 10px;
     background-color: rgba(255,255,255,0.8);
     border: solid 5px #c9c9c9;
@@ -24,7 +24,7 @@ let styles = css`
   }
 `
 
-export default ({holdingPen, label, property, required, indeterminate}) => {
+const checkbox = ({holdingPen, label, property, required, indeterminate}) => {
   let checkboxEl = html`<input class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true  ? { checked: 'checked' } : ''} onchange=${formField(holdingPen, property)} type="checkbox" ${required ? {required: 'required'} : ''} />`
 
   checkboxEl.indeterminate = indeterminate || false
@@ -35,3 +35,5 @@ export default ({holdingPen, label, property, required, indeterminate}) => {
   </label>
 `
 }
+
+export default args => cache(checkbox, args)

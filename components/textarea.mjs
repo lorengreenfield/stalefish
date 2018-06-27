@@ -1,4 +1,4 @@
-import { html, css, formField, fieldIsTouched } from 'halfcab'
+import { html, css, formField, fieldIsTouched, cache } from 'halfcab'
 
 let styles = css`
   .textarea {
@@ -6,17 +6,19 @@ let styles = css`
     border: solid 5px #c9c9c9;
     transition: border 0.3s;
     outline: none;
-    width: 100%;
     font-size: 18px;
     border-radius: 0;
     box-shadow: none !important;
     font-weight: normal;
-    margin: 8px 0 3px 0;
+    margin: 24px 5px 5px 5px;
     font-family: inherit;
     line-height: inherit;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    box-sizing: border-box; 
+    width: calc(100% - 10px);
+    resize: vertical;
   }
   
   .label {
@@ -24,6 +26,9 @@ let styles = css`
     border-top-right-radius: 5px; 
     border-top-left-radius: 5px;
     user-select: none;
+    position: relative; 
+    top: 14px;
+    left: 5px
   }
   
   .textarea:focus {
@@ -51,7 +56,8 @@ function change({e, holdingPen, property, label}){
 }
 
 
-export default ({holdingPen, label, placeholder, property, required, pattern, type, keyup, autofocus, permanentTopPlaceholder = false}) => html`
-
+const textarea = ({holdingPen, label, placeholder, property, required, pattern, type, keyup, autofocus, permanentTopPlaceholder = false}) => html`
    <label style="width: 100%; text-align: left;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span><textarea class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => keyup && keyup(e)} ${required ? {required: 'required'} : ''} oninput=${e => change({e, holdingPen, property, label: styles.label})} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''}>${holdingPen[property] || ''}</textarea></label>
 `
+
+export default args => cache(textarea, args)

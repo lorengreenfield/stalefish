@@ -1,4 +1,4 @@
-import { html, css } from 'halfcab'
+import { html, css, cache } from 'halfcab'
 import close from './close'
 import up from './up'
 import down from './down'
@@ -24,7 +24,7 @@ let styles = css`
   .header {
     display: flex; 
     justify-content: left; 
-    background-color: #EDEDED; 
+    background-color: #F9F9F9; 
     align-content: center;
   }
 `
