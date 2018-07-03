@@ -24,7 +24,7 @@ let styles = css`
   }
 `
 
-const checkbox = ({holdingPen, label, property, required, indeterminate}) => {
+export default ({holdingPen, label, property, required, indeterminate}) => {
   let checkboxEl = html`<input class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true  ? { checked: 'checked' } : ''} onchange=${formField(holdingPen, property)} type="checkbox" ${required ? {required: 'required'} : ''} />`
 
   checkboxEl.indeterminate = indeterminate || false
@@ -35,5 +35,3 @@ const checkbox = ({holdingPen, label, property, required, indeterminate}) => {
   </label>
 `
 }
-
-export default args => cache(checkbox, args)

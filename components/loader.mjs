@@ -1,4 +1,4 @@
-import { html, css } from 'halfcab'
+import { html, css, cache } from 'halfcab'
 
 let styles = css`
   .progress {

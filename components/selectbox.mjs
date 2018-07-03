@@ -63,7 +63,7 @@ let styles = css`
   }
 `
 
-const selectbox = ({holdingPen, label, property, options, required}) => html`
+export default ({holdingPen, label, property, options, required}) => html`
   <label style="text-align: left; position: relative;">
     <div class="${styles.down}">${solidDown({colour: '#ccc'})}</div>
     <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
@@ -75,5 +75,3 @@ const selectbox = ({holdingPen, label, property, options, required}) => html`
     </select>
   </label>
 `
-
-export default args => cache(selectbox, args)
