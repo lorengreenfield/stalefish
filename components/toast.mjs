@@ -1,4 +1,4 @@
-import {html, css, geb} from 'halfcab'
+import { html, css, geb, cache } from 'halfcab'
 import close from './close'
 
 let styles = css`
@@ -25,7 +25,6 @@ let styles = css`
     left: 0px;
   }
 `
-
 export default ({on, message, colour, multiline}) => html`
   <div class="${styles.toastContainer}" onclick=${e => geb.broadcast('errorDismissed')} style="${on ? 'bottom: 0px;' : `bottom: -${multiline ? '100' : '50'}px;`}${multiline ? 'height: 100px;' : ''}">
       <div class="${styles.toast}" style="background-color: ${colour || 'red'};">

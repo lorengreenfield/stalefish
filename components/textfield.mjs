@@ -86,7 +86,7 @@ function determineStep(type){
   return '1'
 }
 
-const textfield = ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, keyup, autofocus, valueContext, permanentTopPlaceholder = false}) => html`
+export default ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, keyup, autofocus, valueContext, permanentTopPlaceholder = false}) => html`
 <div ${wrapperStyle ? {'class': wrapperStyle} : ''}>
    <label style="width: 100%; text-align: left; position: relative;">
    ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
@@ -95,5 +95,3 @@ const textfield = ({wrapperStyle = null, holdingPen, label, placeholder, propert
    </label>
 </div>
 `
-
-export default args => cache(textfield, args)

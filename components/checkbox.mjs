@@ -1,4 +1,4 @@
-import { html, css, formField, fieldIsTouched } from 'halfcab'
+import { html, css, formField, fieldIsTouched, cache } from 'halfcab'
 
 let styles = css`
   .checkbox {
@@ -12,7 +12,7 @@ let styles = css`
     font-size: 18px; 
     font-weight: normal; 
     color: #999; 
-    margin-left: 5px; 
+    margin: 5px 0px 5px 5px;
     padding: 10px;
     background-color: rgba(255,255,255,0.8);
     border: solid 5px #c9c9c9;

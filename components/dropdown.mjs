@@ -1,4 +1,4 @@
-import {html, css} from 'halfcab'
+import {html, css, cache} from 'halfcab'
 
 let styles = css`
 
@@ -44,6 +44,5 @@ export default ({menuItems, visible, side, width, margin}) => html`
     ${item.separator ? html`<hr class="${styles.separator}">` : html`<div onclick=${item.action}>${item.text}</div>`}
   `)}
   </div>
-</div>
-    
+</div>   
 `

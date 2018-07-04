@@ -18,7 +18,7 @@ let styles = css`
 export default ({content}) => html`
   <div class="${styles.toolbar}">
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      ${content}
+      ${typeof content === 'function' ? content() : content}
     </div>
   </div>
 `
