@@ -67,7 +67,7 @@ export default ({holdingPen, label, property, options, required}) => html`
   <label style="text-align: left; position: relative;">
     <div class="${styles.down}">${solidDown({colour: '#ccc'})}</div>
     <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
-    <select class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${formField(holdingPen, property)} onblur=${formField(holdingPen, property)}>
+    <select class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${formField(holdingPen, property)} onchange=${formField(holdingPen, property)} onblur=${formField(holdingPen, property)}>
       <option value="${required ? 'Select an option' : ''}" ${holdingPen[property] === '' ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
       ${options.map(option => {
   return html`<option value="${option}" ${holdingPen[property] === option ? {selected: 'true'} : ''}>${option}</option>`
