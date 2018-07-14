@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  test:
+  build:
     working_directory: ~/lorengreenfield/stalefish
     parallelism: 1
     shell: /bin/bash --login
