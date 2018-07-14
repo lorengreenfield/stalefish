@@ -1,4 +1,4 @@
-import { html, css, formField, fieldIsTouched, cache } from 'halfcab'
+import { html, css, formField, fieldIsTouched } from 'halfcab'
 
 let styles = css`
   .textarea {
@@ -55,7 +55,6 @@ function change({e, holdingPen, property, label}){
   return ff
 }
 
-
-export default ({holdingPen, label, placeholder, property, required, pattern, type, keyup, autofocus, permanentTopPlaceholder = false}) => html`
-   <label style="width: 100%; text-align: left;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span><textarea class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => keyup && keyup(e)} ${required ? {required: 'required'} : ''} oninput=${e => change({e, holdingPen, property, label: styles.label})} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''}>${holdingPen[property] || ''}</textarea></label>
+export default ({holdingPen, label, placeholder, property, required, pattern, type, keyup, autofocus, permanentTopPlaceholder = false, onchange, oninput}) => html`
+   <label style="width: 100%; text-align: left;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span><textarea class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => keyup && keyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => {onchange && onchange(e) ; return change({e, holdingPen, property, label: styles.label})}} oninput=${e => {oninput && oninput(e) ; return change({e, holdingPen, property, label: styles.label})}} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''}>${holdingPen[property] || ''}</textarea></label>
 `
