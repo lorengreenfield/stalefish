@@ -1,6 +1,6 @@
 {
   "name": "stalefish",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "Simple function based component library for hyperx/bel/halfcab tagged template literals",
   "main": "index.mjs",
   "module": "index.mjs",
@@ -9,6 +9,7 @@
   "esm": true,
   "scripts": {
     "test": "npm test",
+    "test:lint": "standard \"**/*.mjs\"",
     "npm-publish": "npm publish",
     "versionbump:fix": "npm version patch --no-git-tag-version",
     "versionbump:feature": "npm version minor --no-git-tag-version",
@@ -35,6 +36,7 @@
     "halfcab": "^10.0.0"
   },
   "devDependencies": {
-    "halfcab": "^10.0.0"
+    "halfcab": "^10.0.0",
+    "standard": "^11.0.1"
   }
 }
