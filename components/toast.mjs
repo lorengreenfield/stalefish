@@ -1,4 +1,4 @@
-import { html, css, geb, cache } from 'halfcab'
+import { html, css, geb } from 'halfcab'
 import close from './close'
 
 let styles = css`

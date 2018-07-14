@@ -1,4 +1,4 @@
-import {html, css, cache} from 'halfcab'
+import {html, css} from 'halfcab'
 
 let styles = css`
 

@@ -1,4 +1,4 @@
-import { html, css, formField, fieldIsTouched, injectHTML, cache } from 'halfcab'
+import { html, css, formField, fieldIsTouched } from 'halfcab'
 import solidDown from './solidDown'
 
 let styles = css`
@@ -14,7 +14,6 @@ let styles = css`
     border-radius: 0;
     font-weight: normal;
     margin: 40px 0px 5px 5px;
-    background-color: white;
     font-family: inherit;
     line-height: inherit;
     max-width: 260px;
@@ -63,15 +62,30 @@ let styles = css`
   }
 `
 
-export default ({holdingPen, label, property, options, required}) => html`
+export default ({holdingPen, label, property, options, required, onchange, oninput}) => {
+  let currentOption = options.find(option => {
+    if (typeof option === 'object') {
+      return option.value === holdingPen[property]
+    } else {
+      return option === holdingPen[property]
+    }
+  })
+  return html`
   <label style="text-align: left; position: relative;">
     <div class="${styles.down}">${solidDown({colour: '#ccc'})}</div>
     <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
-    <select class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${formField(holdingPen, property)} onchange=${formField(holdingPen, property)} onblur=${formField(holdingPen, property)}>
+    <select style="background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { oninput && oninput(e); return formField(holdingPen, property)(e) }} onchange=${e => { onchange && onchange(e); return formField(holdingPen, property)(e) }} onblur=${formField(holdingPen, property)}>
       <option value="${required ? 'Select an option' : ''}" ${holdingPen[property] === '' ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
       ${options.map(option => {
-  return html`<option value="${option}" ${holdingPen[property] === option ? {selected: 'true'} : ''}>${option}</option>`
-})}
+    let optionValue
+    if (typeof option === 'object' && option.value !== undefined) {
+      optionValue = option.value
+    } else {
+      optionValue = option
+    }
+    return html`<option value="${optionValue}" ${holdingPen[property] === optionValue ? {selected: 'true'} : ''}>${optionValue}</option>`
+  })}
     </select>
   </label>
 `
+}
