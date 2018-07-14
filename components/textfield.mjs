@@ -1,4 +1,4 @@
-import { html, css, formField, fieldIsTouched, cache } from 'halfcab'
+import { html, css, formField, fieldIsTouched } from 'halfcab'
 
 let styles = css`
   .textfield {
@@ -55,14 +55,14 @@ let styles = css`
   }
 `
 
-function change({e, holdingPen, property, label}){
+function change ({e, holdingPen, property, label}) {
   let ff = formField(holdingPen, property)(e)
   let closestLabel = e.target.closest('label')
   let labelEl = closestLabel.querySelector(label.selector)
-  if(labelEl) {
-    if(holdingPen[property] === 0 || holdingPen[property]){
+  if (labelEl) {
+    if (holdingPen[property] === 0 || holdingPen[property]) {
       labelEl.style.opacity = 1
-    }else{
+    } else {
       labelEl.style.opacity = 0
     }
   }
@@ -70,16 +70,16 @@ function change({e, holdingPen, property, label}){
   return ff
 }
 
-function determineType(type){
-  if(type.toLowerCase() === 'float' || type.toLowerCase() === 'integer'){
+function determineType (type) {
+  if (type.toLowerCase() === 'float' || type.toLowerCase() === 'integer') {
     return 'number'
   }
 
   return type || 'input'
 }
 
-function determineStep(type){
-  if(type.toLowerCase() === 'float' || type.toLowerCase() === 'number'){
+function determineStep (type) {
+  if (type.toLowerCase() === 'float' || type.toLowerCase() === 'number') {
     return '0.1'
   }
 
@@ -90,9 +90,8 @@ export default ({wrapperStyle = null, holdingPen, label, placeholder, property, 
 <div ${wrapperStyle ? {'class': wrapperStyle} : ''}>
    <label style="width: 100%; text-align: left; position: relative;">
    ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
-   ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>`:''}
-   <input class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => {onchange && onchange(e) ; return change({e, holdingPen, property, label: styles.label})}} oninput=${e => {oninput && oninput(e) ; return change({e, holdingPen, property, label: styles.label})}} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} ${type.toLowerCase() === 'number' ? {step: determineStep(type)} : ''} />
+   ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}
+   <input class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => { onchange && onchange(e); return change({e, holdingPen, property, label: styles.label}) }} oninput=${e => { oninput && oninput(e); return change({e, holdingPen, property, label: styles.label}) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} ${type.toLowerCase() === 'number' ? {step: determineStep(type)} : ''} />
    </label>
 </div>
 `
-

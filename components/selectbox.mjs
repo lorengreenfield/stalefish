@@ -1,4 +1,4 @@
-import { html, css, formField, fieldIsTouched, injectHTML } from 'halfcab'
+import { html, css, formField, fieldIsTouched } from 'halfcab'
 import solidDown from './solidDown'
 
 let styles = css`
@@ -64,7 +64,7 @@ let styles = css`
 
 export default ({holdingPen, label, property, options, required, onchange, oninput}) => {
   let currentOption = options.find(option => {
-    if(typeof option === 'object'){
+    if (typeof option === 'object') {
       return option.value === holdingPen[property]
     } else {
       return option === holdingPen[property]
@@ -74,11 +74,11 @@ export default ({holdingPen, label, property, options, required, onchange, oninp
   <label style="text-align: left; position: relative;">
     <div class="${styles.down}">${solidDown({colour: '#ccc'})}</div>
     <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
-    <select style="background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => {oninput && oninput(e); return formField(holdingPen, property)(e)}} onchange=${e => {onchange && onchange(e); return formField(holdingPen, property)(e)}} onblur=${formField(holdingPen, property)}>
+    <select style="background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { oninput && oninput(e); return formField(holdingPen, property)(e) }} onchange=${e => { onchange && onchange(e); return formField(holdingPen, property)(e) }} onblur=${formField(holdingPen, property)}>
       <option value="${required ? 'Select an option' : ''}" ${holdingPen[property] === '' ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
       ${options.map(option => {
     let optionValue
-    if(typeof option === 'object' && option.value !== undefined){
+    if (typeof option === 'object' && option.value !== undefined) {
       optionValue = option.value
     } else {
       optionValue = option
