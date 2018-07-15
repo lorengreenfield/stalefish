@@ -6,18 +6,17 @@ let styles = css`
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    padding: 10px;
+    padding: 12px;
     border: solid 5px #c9c9c9;
     outline: none;
     width: 100%;
     font-size: 18px;
     border-radius: 0;
     font-weight: normal;
-    margin: 40px 0px 5px 5px;
+    margin: 40px 5px 5px 5px;
     font-family: inherit;
     line-height: inherit;
-    max-width: 260px;
-    width: 96%;
+    width: calc(100% - 10px);
     position: relative;
     z-index: 2;
   }
@@ -33,7 +32,7 @@ let styles = css`
     border-top-left-radius: 5px;
     user-select: none;
     position: absolute; 
-    top: -53px; 
+    top: 4px; 
     left: 5px; 
     font-size: 16px; 
     font-weight: normal; 
@@ -41,6 +40,7 @@ let styles = css`
     margin-left: 5px; 
     padding: 9px; 
     background-color: rgba(255,255,255,0.8); 
+    box-sizing: border-box;
   }
   
   .selectBox:focus {
@@ -56,13 +56,13 @@ let styles = css`
     pointer-events: none;
     color: #c9c9c9;
     right: 20px;
-    top: -14px;
+    top: 44px;
     font-size: 2em;
     z-index: 3;
   }
 `
 
-export default ({holdingPen, label, property, options, required, onchange, oninput}) => {
+export default ({wrapperStyle = null, holdingPen, label, property, options, required, onchange, oninput}) => {
   let currentOption = options.find(option => {
     if (typeof option === 'object') {
       return option.value === holdingPen[property]
@@ -71,10 +71,10 @@ export default ({holdingPen, label, property, options, required, onchange, oninp
     }
   })
   return html`
-  <label style="text-align: left; position: relative;">
+  <label style="text-align: left; position: relative; display: inline-block; width: 100%;" ${wrapperStyle ? {'class': wrapperStyle} : ''}>
     <div class="${styles.down}">${solidDown({colour: '#ccc'})}</div>
     <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
-    <select style="background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { oninput && oninput(e); return formField(holdingPen, property)(e) }} onchange=${e => { onchange && onchange(e); return formField(holdingPen, property)(e) }} onblur=${formField(holdingPen, property)}>
+    <select style="background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
       <option value="${required ? 'Select an option' : ''}" ${holdingPen[property] === '' ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
       ${options.map(option => {
     let optionValue
