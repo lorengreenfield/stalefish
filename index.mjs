@@ -12,6 +12,7 @@ import up from './components/up'
 import down from './components/down'
 import loader from './components/loader'
 import toolbar from './components/toolbar'
+import fab from './components/fab'
 
 export {
   button,
@@ -27,5 +28,6 @@ export {
   up,
   down,
   loader,
-  toolbar
+  toolbar,
+  fab
 }
