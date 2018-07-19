@@ -25,5 +25,5 @@ export default ({diameter, text, action, colour, disabled, on, icon}) => html`
   position: fixed; 
   right: 15px; 
   bottom: ${on ? '15px' : `-${parseInt(diameter) + 10}px`};
-  box-shadow: 0 10px 10px 0px rgba(0,0,0,.3), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);">${icon ? injectHTML(icon) : text}</button>
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);">${icon ? injectHTML(icon) : text}</button>
 `
