@@ -15,7 +15,7 @@ let styles = css`
   }
   
   .tr:nth-child(even) {
-    background-color: #FDFDFD;}
+    background-color: #FDFDFD;
   }
 `
 
