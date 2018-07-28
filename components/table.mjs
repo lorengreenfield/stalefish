@@ -22,17 +22,17 @@ let styles = css`
 let _columns = [{
   title: 'Column 1',
   icon: null,
-  action: () => { alert('Column 1') },
+  action: () => { },
   width: '20%'
-},{
+}, {
   title: 'Column 2',
   icon: null,
-  action: () => { alert('Column 2') },
+  action: () => { },
   width: '40%'
-},{
+}, {
   title: 'Column 3',
   icon: null,
-  action: () => { alert('Column 3') },
+  action: () => { },
   width: '20%'
 }]
 
