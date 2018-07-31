@@ -13,6 +13,7 @@ import down from './components/down'
 import loader from './components/loader'
 import toolbar from './components/toolbar'
 import fab from './components/fab'
+import table from './components/table'
 
 export {
   button,
@@ -29,5 +30,6 @@ export {
   down,
   loader,
   toolbar,
-  fab
+  fab,
+  table
 }
