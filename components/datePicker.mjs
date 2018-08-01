@@ -77,7 +77,7 @@ function change ({e, holdingPen, property, label}) {
   return ff
 }
 
-const datePicker = ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}}) => {
+const datePicker = ({wrapperStyle = null, onkeyup, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}}) => {
   let el = html`
   <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
      <label style="width: 100%; text-align: left; position: relative; padding: 0;">
