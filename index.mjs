@@ -14,6 +14,7 @@ import loader from './components/loader'
 import toolbar from './components/toolbar'
 import fab from './components/fab'
 import table from './components/table'
+import dateTimePicker from './components/dateTimePicker'
 
 export {
   button,
@@ -31,5 +32,6 @@ export {
   loader,
   toolbar,
   fab,
-  table
+  table,
+  dateTimePicker
 }
