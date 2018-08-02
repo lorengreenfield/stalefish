@@ -58,7 +58,7 @@ let styles = css`
   }
 `
 
-function change ({e, holdingPen, property, label}) {
+function change ({e, holdingPen, property}) {
   let ff = formField(holdingPen, property)(e)
   e.target.blur()
   return ff
