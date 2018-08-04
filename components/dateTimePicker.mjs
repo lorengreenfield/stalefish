@@ -1,8 +1,8 @@
 import { html, css, formField, fieldIsTouched, cache } from 'halfcab'
 import flatpickr from 'flatpickr'
 import hash from 'hash-it'
-import calendarIcon from './calendarIcon'
-import timeIcon from './timeIcon'
+import calendarIcon from './icons/calendarIcon'
+import timeIcon from './icons/timeIcon'
 
 let styles = css`
   .textfield {
