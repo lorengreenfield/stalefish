@@ -1,5 +1,5 @@
 import { html, css, formField, fieldIsTouched } from 'halfcab'
-import solidDown from './solidDown'
+import solidDown from './icons/solidDown'
 
 let styles = css`
   .selectBox {
