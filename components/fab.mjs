@@ -18,7 +18,6 @@ let styles = css`
     box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
   }
   
-  
   .menuItem {
     width: auto;
     display: flex;
@@ -38,6 +37,7 @@ let styles = css`
     box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
     position: relative;
     transition: right 0.2s ease;
+    padding-top: 4px;
   }
   
   .menuItemLabel {
@@ -59,6 +59,7 @@ let styles = css`
     bottom: 100px;
   }
 `
+
 export default ({diameter, text, action, colour, disabled, on, icon, menuItems, menuOpen}) => html`<div>
 <div style="${!menuOpen ? 'visibility: hidden;' : ''} position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: rgba(240,240,240,0.9); z-index: 18999;">
   ${menuItems ? html`<div class="${styles.menu}">${menuItems.map((menuItem, index) => html`
