@@ -54,16 +54,15 @@ let styles = css`
   .menu {
     display: flex;
     flex-direction: column;
-    position: absolute;
+    position: fixed;
     right: 15px;
-    bottom: 100px;
   }
 `
 
 export default ({diameter, text, action, colour, disabled, on, icon, menuItems, menuOpen}) => html`<div>
 <div style="${!menuOpen ? 'visibility: hidden;' : ''} position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: rgba(240,240,240,0.9); z-index: 18999;">
-  ${menuItems ? html`<div class="${styles.menu}">${menuItems.map((menuItem, index) => html`
-    <div class="${styles.menuItem}" style="margin-right: ${(parseFloat(diameter) / 2) - (parseFloat(menuItem.diameter) / 2)}px;">
+  ${menuItems ? html`<div class="${styles.menu}" style="bottom: calc(${diameter} + 20px)">${menuItems.map((menuItem, index) => html`
+    <div class="${styles.menuItem}" style="margin-right: calc(${diameter}/2 - ${menuItem.diameter}/2);">
       <div class="${styles.menuItemLabel}" style="opacity: ${menuOpen ? '1' : '0'}; transition-delay: ${(0.1 * (index + 1)).toPrecision(2)}s;">${menuItem.text}</div>
       <button class="${styles.menuItemButton}" onclick=${e => menuItem.action(e)} style="right: ${menuOpen ? '0' : '-90'}px; transition-delay: ${(0.1 * (index + 1)).toPrecision(2)}s; width: ${menuItem.diameter}; height: ${menuItem.diameter}; background-color: ${menuItem.colour};">${menuItem.icon}</button>
     </div>
@@ -71,6 +70,6 @@ export default ({diameter, text, action, colour, disabled, on, icon, menuItems, 
   </div>
   <button class="${styles.fab}" onclick=${e => action(e)} 
   ${disabled ? 'disabled' : ''}
-  style="width: ${diameter}; height: ${diameter};background-color: ${colour};bottom: ${on ? '15px' : `-${parseInt(diameter) + 10}px`}; ${icon ? 'padding-top: 2px' : ''};">${icon || text}</button>
+  style="width: ${diameter}; height: ${diameter};background-color: ${colour};bottom: ${on ? '15px' : `calc(-1 * (${diameter} + 10px))`}; ${icon ? 'padding-top: 2px' : ''};">${icon || text}</button>
 </div>
 `

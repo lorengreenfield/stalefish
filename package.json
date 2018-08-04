@@ -1,6 +1,6 @@
 {
   "name": "stalefish",
-  "version": "4.5.2",
+  "version": "4.5.3",
   "description": "Simple function based component library for hyperx/bel/halfcab tagged template literals",
   "main": "index.mjs",
   "module": "index.mjs",
