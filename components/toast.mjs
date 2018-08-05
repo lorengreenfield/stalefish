@@ -23,13 +23,14 @@ let styles = css`
     flex-flow: row wrap;
     justify-content: center;
     left: 0px;
+    z-index: 999998;
   }
 `
-export default ({on, message, colour, multiline}) => html`
+export default ({on, message, colour, multiline, closeAction}) => html`
   <div class="${styles.toastContainer}" onclick=${() => geb.broadcast('errorDismissed')} style="${on ? 'bottom: 0px;' : `bottom: -${multiline ? '100' : '50'}px;`}${multiline ? 'height: 100px;' : ''}">
       <div class="${styles.toast}" style="background-color: ${colour || 'red'};">
           <div style="width: 100%; margin-left: 20px">${message}</div>
-          <div style="margin-right: 10px; cursor: pointer;">${close({colour: 'white'})}</div>
+          <div style="margin-right: 10px; cursor: pointer;" onclick=${e => closeAction && closeAction(e)}>${close({colour: 'white'})}</div>
       </div>
   </div>
 `
