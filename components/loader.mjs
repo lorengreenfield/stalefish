@@ -11,7 +11,7 @@ let styles = css`
     background-color: white;
     background-clip: padding-box;
     overflow: hidden;
-    z-index: 20000;
+    z-index: 999999;
   }
   
   .progress:before {
