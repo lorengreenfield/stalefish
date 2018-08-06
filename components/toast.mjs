@@ -12,6 +12,7 @@ let styles = css`
     padding: 10px 0px;
     box-sizing: border-box;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    pointer-events: auto;
   }
     
   .toastContainer{
@@ -24,6 +25,7 @@ let styles = css`
     justify-content: center;
     left: 0px;
     z-index: 999998;
+    pointer-events: none;
   }
 `
 export default ({on, message, colour, multiline, closeAction}) => html`
