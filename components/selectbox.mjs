@@ -62,7 +62,7 @@ let styles = css`
   }
 `
 
-export default ({wrapperStyle = null, holdingPen, label, property, options, required, onchange, oninput}) => {
+export default ({wrapperStyle = null, holdingPen, label, property, options, required, onchange, oninput, disabled}) => {
   let currentOption = options.find(option => {
     if (typeof option === 'object') {
       return option.value === holdingPen[property]
@@ -74,7 +74,7 @@ export default ({wrapperStyle = null, holdingPen, label, property, options, requ
   <label style="text-align: left; position: relative; display: inline-block; width: 100%;" ${wrapperStyle ? {'class': wrapperStyle} : ''}>
     <div class="${styles.down}">${solidDown({colour: '#ccc'})}</div>
     <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
-    <select style="background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
+    <select ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
       <option value="${required ? 'Select an option' : ''}" ${holdingPen[property] === '' ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
       ${options.map(option => {
     let optionValue
