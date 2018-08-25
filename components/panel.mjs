@@ -40,13 +40,13 @@ export default ({chevronStyle = null, on = true, content = () => '', heading = '
     ${optionsMenu ? html`<div style="position: absolute; right: 45px; top: 13px;"><div style="user-select: none; -ms-user-select: none; -webkit-user-select: none; -moz-user-select: none; cursor: pointer; width: 24px; height: 24px;" onclick=${optionsMenu.action} aria-label="Options menu">
       ${moreVertical({colour: '#ccc'})}
     </div>${dropdown({
-  side: 'right',
-  width: '200px',
-  margin: '5px',
-  visible: optionsMenu.on,
-  menuItems: optionsMenu.menuItems,
-  backgroundColour: 'white'
-})}` : ''} 
+    side: 'right',
+    width: '200px',
+    margin: '5px',
+    visible: optionsMenu.on,
+    menuItems: optionsMenu.menuItems,
+    backgroundColour: 'white'
+  })}` : ''} 
   
   </div></div></div>` : ''}
   
