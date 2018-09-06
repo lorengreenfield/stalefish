@@ -75,7 +75,7 @@ export default ({wrapperStyle = null, holdingPen, label, property, options, requ
     <div class="${styles.down}">${solidDown({colour: '#ccc'})}</div>
     <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
     <select ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
-      <option value="${required ? 'Select an option' : ''}" ${holdingPen[property] === '' ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
+      <option value="${required ? 'Select an option' : ''}" ${!holdingPen[property] ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
       ${options.map(option => {
     let optionValue
     if (typeof option === 'object' && option.value !== undefined) {
