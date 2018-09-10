@@ -32,12 +32,12 @@ let styles = css`
 `
 
 export default ({wrapperStyle, holdingPen, label, property, required, indeterminate, onchange, disabled}) => {
-  let checkboxEl = html`<input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true ? { checked: 'checked' } : ''} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} type="checkbox" ${required ? {required: 'required'} : ''} />`
+  let checkboxEl = html`<input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true ? { checked: 'checked' } : ''} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} type="checkbox" ${required ? {required: 'required'} : ''} />`
 
   checkboxEl.indeterminate = indeterminate || false
 
   return html`
-  <label style="text-align: left; width: 100%; display: inline-block; vertical-align: bottom;" ${wrapperStyle ? {'class': wrapperStyle} : ''}>
+  <label style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}text-align: left; width: 100%; display: inline-block; vertical-align: bottom;" ${wrapperStyle ? {'class': wrapperStyle} : ''}>
     <span class="${styles.label}">${label}${required ? ' *' : ''}${checkboxEl}</span>
   </label>
 `
