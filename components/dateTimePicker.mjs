@@ -60,8 +60,28 @@ let styles = css`
 
 function change ({e, holdingPen, property}) {
   let ff = formField(holdingPen, property)(e)
-  e.target.blur()
+  e.target.focus()
   return ff
+}
+
+function detectTouchscreen () {
+  var result = false
+  if (window.PointerEvent && ('maxTouchPoints' in navigator)) {
+    // if Pointer Events are supported, just check maxTouchPoints
+    if (navigator.maxTouchPoints > 0) {
+      result = true
+    }
+  } else {
+    // no Pointer Events...
+    if (window.matchMedia && window.matchMedia('(any-pointer:coarse)').matches) {
+      // check for any-pointer:coarse which mostly means touchscreen
+      result = true
+    } else if (window.TouchEvent || ('ontouchstart' in window)) {
+      // last resort - check for exposed touch events API / event handler
+      result = true
+    }
+  }
+  return result
 }
 
 const dateTimePicker = ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}, timeOnly = false, disabled}) => {
@@ -70,15 +90,15 @@ const dateTimePicker = ({wrapperStyle = null, holdingPen, label, placeholder, pr
      <label style="width: 100%; text-align: left; position: relative; padding: 0;">
      <div class="${styles.icon}" data-toggle>${timeOnly ? timeIcon({colour: '#ccc'}) : calendarIcon({colour: '#ccc'})}</div>
      ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}
-     <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="text" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''}  data-input />
+     <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''}  data-input />
      </label>
   </div>
   `
 
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && !detectTouchscreen()) {
     el.id = `datepicker-${hash({wrapperStyle, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder, onchange, oninput})}`
     el.isSameNode = target => el.id === target.id
-    flatpickr(el, Object.assign(flatpickrConfig, {wrap: true, disableMobile: true}, timeOnly ? {noCalendar: true, enableTime: true} : null))
+    flatpickr(el, Object.assign(flatpickrConfig, {wrap: true}, timeOnly ? {noCalendar: true, enableTime: true} : null))
   }
 
   return el
