@@ -49,7 +49,7 @@ export default ({columns = _columns, data = _data} = {}) => html`
         </tr>
     </thead>
     <tbody>
-       ${data.map(row => html`<tr class="${styles.tr}">${row.map(column => html`<td ${column.style ? {'class': column.style} : ''} style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 0; direction: rtl;">${typeof column.content === 'function' ? column.content() : column.content}</td>`)}</tr>`)}
+       ${data.map(row => html`<tr class="${styles.tr}">${row.map(column => html`<td class="${column.style || ''}" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap; max-width: 0; direction: rtl;">${typeof column.content === 'function' ? column.content() : column.content}</td>`)}</tr>`)}
     </tbody>
 </table>
 `
