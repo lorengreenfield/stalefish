@@ -1,6 +1,6 @@
 {
   "name": "stalefish",
-  "version": "4.8.0",
+  "version": "4.8.1",
   "description": "Simple function based component library for hyperx/bel/halfcab tagged template literals",
   "main": "index.mjs",
   "module": "index.mjs",
@@ -40,7 +40,6 @@
     "standard": "^11.0.1"
   },
   "dependencies": {
-    "flatpickr": "^4.5.1",
-    "hash-it": "^4.0.1"
+    "flatpickr": "^4.5.2"
   }
 }
