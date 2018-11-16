@@ -31,7 +31,7 @@ let styles = css`
   }
 `
 
-export default ({wrapperStyle, holdingPen, label, property, required, indeterminate, onchange, disabled}) => {
+export default ({wrapperStyle, holdingPen, label, property, required, indeterminate, onchange, disabled, uniqueKey}) => {
   let checkboxEl = html`<input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true ? { checked: 'checked' } : ''} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} type="checkbox" ${required ? {required: 'required'} : ''} />`
 
   checkboxEl.indeterminate = indeterminate || false
