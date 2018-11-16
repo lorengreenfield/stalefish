@@ -35,7 +35,7 @@ let styles = css`
   }
 `
 
-export default ({menuItems, visible, side, width, margin, backgroundColour}) => html`
+export default ({menuItems, visible, side, width, margin, backgroundColour, uniqueKey}) => html`
 
 <div tabindex="-1" class="${styles.dropdown}" style="position: relative; z-index: 100000; ${!visible ? 'display: none;' : ''}${side === 'right' ? 'float: right;' : ''}">
   <div class="${styles.dropdownContent}" style="background-color: ${backgroundColour || '#f9f9f9'}; ${side === 'right' ? 'right: 0;' : ''} width: ${width || '160px'};${margin ? `margin: ${margin};` : ''}">

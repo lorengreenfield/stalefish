@@ -84,7 +84,7 @@ function detectTouchscreen () {
   return result
 }
 
-const dateTimePicker = ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}, timeOnly = false, disabled}) => {
+const dateTimePicker = ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}, timeOnly = false, disabled, uniqueKey}) => {
   let el = html`
   <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
      <label style="width: 100%; text-align: left; position: relative; padding: 0;">
