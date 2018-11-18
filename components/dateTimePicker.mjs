@@ -23,6 +23,7 @@ let styles = css`
     z-index: 20;
     position: relative;
     height: 55px;
+    background-color: #FFF;
   }
   
   .label {
@@ -119,19 +120,19 @@ export default ({wrapperStyle = null, holdingPen, label, placeholder, property, 
     return false
   }}>clear</div>` : ''}
      <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" ${required ? {required: 'required'} : ''} onfocus=${e => {
-  e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onChange', (fpDate, dateString) => {
-    let fauxE = {
-      currentTarget: {
-        validity: {
-          valid: true
-        },
-        value: dateString
+    e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onChange', (fpDate, dateString) => {
+      let fauxE = {
+        currentTarget: {
+          validity: {
+            valid: true
+          },
+          value: dateString
+        }
       }
-    }
-    formField(holdingPen, property)(fauxE)
-    onchange && onchange(fauxE)
-  })
-}} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
+      formField(holdingPen, property)(fauxE)
+      onchange && onchange(fauxE)
+    })
+  }} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
      </div>
   </div>
   `
