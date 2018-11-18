@@ -22,6 +22,7 @@ let styles = css`
     appearance: none;
     z-index: 20;
     position: relative;
+    height: 55px;
   }
   
   .label {
@@ -54,6 +55,8 @@ let styles = css`
     top: -9px;
     font-size: 2em;
     z-index: 30;
+    position: absolute; 
+    top: 9px; 
   }
   
   .clear {
@@ -70,10 +73,13 @@ let styles = css`
     padding: 5px 10px;
     z-index: 30;
     border-radius: 3px;
+    position: absolute; 
+    top: 17px; 
   }
 `
 
 function change ({e, holdingPen, property}) {
+  e.target.defaultValue = ' '
   let ff = formField(holdingPen, property)(e)
   e.target.focus()
   return ff
@@ -102,18 +108,18 @@ function detectTouchscreen () {
 export default ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}, timeOnly = false, disabled, disableClear = false}) => {
   let el = html`
   <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
-     <label style="width: 100%; text-align: left; position: relative; padding: 0;">
+     <div style="display: inline-block; width: 100%; text-align: left; position: relative; padding: 0;">
      <div class="${styles.icon}">${timeOnly ? timeIcon({colour: '#ccc'}) : calendarIcon({colour: '#ccc'})}</div>
-     ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}
-     ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${e => {
+     ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
+     ${!disableClear && !(typeof window !== 'undefined' && 'ontouchstart' in window) ? html`<div data-clear class="${styles.clear}" onclick=${e => {
     e.stopPropagation()
     e.preventDefault()
-    e.target.parentElement.parentElement._flatpickr.clear()
-    e.target.parentElement.parentElement._flatpickr.close()
+    e.target.parentNode.parentNode._flatpickr.clear()
+    e.target.parentNode.parentNode._flatpickr.close()
     return false
   }}>clear</div>` : ''}
      <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" ${required ? {required: 'required'} : ''} onfocus=${e => {
-  e.target.parentElement.parentElement._flatpickr.set('onValueUpdate', (fpDate, dateString) => {
+  e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onChange', (fpDate, dateString) => {
     let fauxE = {
       currentTarget: {
         validity: {
@@ -126,7 +132,7 @@ export default ({wrapperStyle = null, holdingPen, label, placeholder, property, 
     onchange && onchange(fauxE)
   })
 }} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
-     </label>
+     </div>
   </div>
   `
 
