@@ -41,7 +41,7 @@ let _data = [
   ['C1-R2', () => 'C2-R2', () => 'C3-R2']
 ]
 
-export default ({columns = _columns, data = _data, uniqueKey} = {}) => html`
+export default ({columns = _columns, data = _data} = {}) => html`
    <table class="${styles.table}">
     <thead class="${styles.thRow}">
         <tr>

@@ -93,7 +93,7 @@ function determineStep (type) {
   return '1'
 }
 
-export default ({highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, onkeyup, autofocus, valueContext, permanentTopPlaceholder = false, onchange, oninput, disabled, uniqueKey}) => html`
+export default ({highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, onkeyup, autofocus, valueContext, permanentTopPlaceholder = false, onchange, oninput, disabled}) => html`
 <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
    <label style="width: 100%; text-align: left; position: relative; padding: 0;">
    ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}

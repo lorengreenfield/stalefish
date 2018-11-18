@@ -15,7 +15,7 @@ let styles = css`
   }
 `
 
-export default ({content, uniqueKey}) => html`
+export default ({content}) => html`
   <div class="${styles.toolbar}">
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
       ${typeof content === 'function' ? content() : content}

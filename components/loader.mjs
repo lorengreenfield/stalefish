@@ -63,6 +63,6 @@ let styles = css`
       right: -8%; } }
 `
 
-export default ({on, uniqueKey}) => html`
+export default ({on}) => html`
   ${on === true ? html`<div class="${styles.progress} indeterminate"></div>` : ''}
 `

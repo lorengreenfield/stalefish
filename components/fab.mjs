@@ -59,7 +59,7 @@ let styles = css`
   }
 `
 
-export default ({diameter, text, action, colour, disabled, on, icon, menuItems, menuOpen, uniqueKey}) => html`<div>
+export default ({diameter, text, action, colour, disabled, on, icon, menuItems, menuOpen}) => html`<div>
 <div style="${!menuOpen ? 'visibility: hidden;' : ''} position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: rgba(240,240,240,0.9); z-index: 18999;">
   ${menuItems ? html`<div class="${styles.menu}" style="bottom: calc(${diameter} + 20px)">${menuItems.map((menuItem, index) => html`
     <div class="${styles.menuItem}" style="margin-right: calc(${diameter}/2 - ${menuItem.diameter}/2);">
