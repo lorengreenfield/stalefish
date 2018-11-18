@@ -1,4 +1,4 @@
-import { html, css, formField, fieldIsTouched, cache, rerender } from 'halfcab'
+import { html, css, formField, fieldIsTouched } from 'halfcab'
 import flatpickr from 'flatpickr'
 import calendarIcon from './icons/calendarIcon'
 import timeIcon from './icons/timeIcon'
@@ -99,48 +99,57 @@ function detectTouchscreen () {
   return result
 }
 
-const dateTimePicker = ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}, timeOnly = false, disabled, uniqueKey}) => {
+export default ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}, timeOnly = false, disabled, disableClear = false}) => {
   let el = html`
   <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
      <label style="width: 100%; text-align: left; position: relative; padding: 0;">
      <div class="${styles.icon}">${timeOnly ? timeIcon({colour: '#ccc'}) : calendarIcon({colour: '#ccc'})}</div>
      ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}
-     <div data-clear class="${styles.clear}">clear</div>
-     <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
+     ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${e => {
+    e.stopPropagation()
+    e.preventDefault()
+    e.target.parentElement.parentElement._flatpickr.clear()
+    e.target.parentElement.parentElement._flatpickr.close()
+    return false
+  }}>clear</div>` : ''}
+     <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" ${required ? {required: 'required'} : ''} onfocus=${e => {
+  e.target.parentElement.parentElement._flatpickr.set('onValueUpdate', (fpDate, dateString) => {
+    let fauxE = {
+      currentTarget: {
+        validity: {
+          valid: true
+        },
+        value: dateString
+      }
+    }
+    formField(holdingPen, property)(fauxE)
+    onchange && onchange(fauxE)
+  })
+}} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
      </label>
   </div>
   `
 
   if (typeof window !== 'undefined' && !detectTouchscreen()) {
-    el.id = `datepicker-${uniqueKey}`
-    el.isSameNode = target => el.id === target.id
-    let inputEl = el.querySelector('input')
-    let fp = flatpickr(el, Object.assign(flatpickrConfig, {
+    el.isSameNode = target => {
+      return target._flatpickr && target._flatpickr === el._flatpickr
+    }
+    flatpickr(el, Object.assign(flatpickrConfig, {
       wrap: true,
-      onOpen: fpDate => {
-        if (!fpDate.length) { // there's nothing in it, so it will add '12:00'
-          let fauxE = {
-            target: inputEl,
-            currentTarget: inputEl
+      onValueUpdate: (fpDate, dateString) => {
+        let fauxE = {
+          currentTarget: {
+            validity: {
+              valid: true
+            },
+            value: dateString
           }
-          holdingPen[property] = '12:00'
-          onchange && onchange(fauxE)
         }
+        formField(holdingPen, property)(fauxE)
+        onchange && onchange(fauxE)
       }
     }, timeOnly ? { noCalendar: true, enableTime: true } : null))
-    let clearEl = el.querySelector('[data-clear]')
-    clearEl.onclick = e => {
-      e.stopPropagation()
-      e.preventDefault()
-      holdingPen[property] = ''
-      fp.clear()
-      fp.close()
-      rerender()
-      return false
-    }
   }
 
   return el
 }
-
-export default args => cache(dateTimePicker, args)

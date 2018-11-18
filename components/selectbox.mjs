@@ -62,7 +62,7 @@ let styles = css`
   }
 `
 
-export default ({wrapperStyle = null, holdingPen, label, property, options, required, onchange, oninput, disabled, uniqueKey}) => {
+export default ({wrapperStyle = null, holdingPen, label, property, options, required, onchange, oninput, disabled}) => {
   let currentOption = options.find(option => {
     if (typeof option === 'object') {
       return option.value === holdingPen[property]
