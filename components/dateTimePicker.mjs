@@ -23,6 +23,7 @@ let styles = css`
     z-index: 20;
     position: relative;
     height: 55px;
+    background-color: #FFF;
   }
   
   .label {
