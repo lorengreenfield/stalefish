@@ -1,4 +1,8 @@
-import { html, css, formField, fieldIsTouched } from 'halfcab'
+import { html, css, formField, fieldIsTouched, Component, LRU } from 'halfcab'
+import * as deepDiff from 'deep-object-diff'
+import clone from 'fast-clone'
+
+let cache = new LRU(300)
 
 let styles = css`
   .textfield {
@@ -20,43 +24,43 @@ let styles = css`
     z-index: 20;
     position: relative;
   }
-  
+
   .label {
     transition: opacity 0.75s;
-    border-top-right-radius: 5px; 
+    border-top-right-radius: 5px;
     border-top-left-radius: 5px;
     user-select: none;
     position: absolute;
     top: -55px;
     z-index: 10;
   }
-  
+
   .textfield.highlight {
     border-color: #ff4081;
   }
-  
+
   .textfield:focus {
     border: solid 5px #969696;
   }
-  
+
   .textfield::placeholder {
     color: #999;
   }
-  
+
   .textfield.touched:invalid:not(:focus) {
     border-color: red;
   }
-  
+
   .valueContext {
     position: absolute;
     color: #AAA;
-    font-size: 1.1em; 
+    font-size: 1.1em;
     line-height: 1.2em;
-    font-weight: normal; 
+    font-weight: normal;
     box-sizing: border-box;
-    top: -12px; 
-    right: 7px; 
-    background-color: #EEE; 
+    top: -12px;
+    right: 7px;
+    background-color: #EEE;
     padding: 10px;
     z-index: 30;
   }
@@ -93,12 +97,46 @@ function determineStep (type) {
   return '1'
 }
 
-export default ({highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, onkeyup, autofocus, valueContext, permanentTopPlaceholder = false, onchange, oninput, disabled}) => html`
-<div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
-   <label style="width: 100%; text-align: left; position: relative; padding: 0;">
-   ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
-   ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}
-   <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} ${type.toLowerCase() === 'number' ? {step: determineStep(type)} : ''} />
-   </label>
-</div>
-`
+class Textfield extends Component {
+  constructor () {
+    super()
+  }
+
+  createElement (args) {
+    this.args = clone(args)
+    let {highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, onkeyup, autofocus, valueContext, permanentTopPlaceholder = false, onchange, oninput, disabled} = args
+
+    return html`
+      <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
+         <label style="width: 100%; text-align: left; position: relative; padding: 0;">
+         ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
+         ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}
+         <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} ${type.toLowerCase() === 'number' ? {step: determineStep(type)} : ''} />
+         </label>
+      </div>
+      `
+  }
+
+  update (args) {
+    let diff = deepDiff.diff(this.args, args)
+    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
+  }
+}
+
+function textfield (args) {
+  let instance
+  if (args.uniqueKey) {
+    let found = cache.get(args.uniqueKey)
+    if (found) {
+      instance = found
+    } else {
+      instance = new Textfield()
+      cache.set(args.uniqueKey, instance)
+    }
+  } else {
+    instance = new Textfield()
+  }
+  return instance.render(args)
+}
+
+export default args => textfield(args)
