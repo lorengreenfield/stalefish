@@ -38,14 +38,9 @@ let styles = css`
 `
 
 class Panel extends Component {
-  constructor () {
-    super()
-  }
-
   createElement (args) {
     this.args = clone(args)
-    let {chevronStyle = null, on = true, content, contentArguments, heading = '', closeAction = null, collapseToggleAction = null, collapsed = false, headerAction = null, thinBorder = false, light = false, optionsMenu} = args
-
+    let {chevronStyle = null, on = true, content, heading = '', closeAction = null, collapseToggleAction = null, collapsed = false, headerAction = null, thinBorder = false, light = false, optionsMenu} = args
 
     return html`${on ? html`<div class="${styles.panel}" style='box-sizing: border-box; position: relative; top: 0; left: 0; text-align: left; box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12); border: solid ${thinBorder ? '3px' : '5px'} ${light ? '#DDD' : '#4371AD'}; background-color: #FBFBFB;'><div style="position: relative;">
   ${heading ? html`<div class="${styles.header}" onclick=${e => headerAction && headerAction(e)}>
@@ -54,13 +49,13 @@ class Panel extends Component {
     ${optionsMenu ? html`<div style="position: absolute; right: 45px; top: 13px;"><div style="user-select: none; -ms-user-select: none; -webkit-user-select: none; -moz-user-select: none; cursor: pointer; width: 24px; height: 24px;" onclick=${optionsMenu.action} aria-label="Options menu">
       ${moreVertical({colour: '#ccc'})}
     </div>${dropdown({
-      side: 'right',
-      width: '200px',
-      margin: '5px',
-      visible: optionsMenu.on,
-      menuItems: optionsMenu.menuItems,
-      backgroundColour: 'white'
-    })}` : ''} 
+    side: 'right',
+    width: '200px',
+    margin: '5px',
+    visible: optionsMenu.on,
+    menuItems: optionsMenu.menuItems,
+    backgroundColour: 'white'
+  })}` : ''} 
   
   </div></div></div>` : ''}
   
@@ -77,7 +72,6 @@ class Panel extends Component {
     return !!Object.keys(diff).find(key => key !== 'optionsMenu' && typeof diff[key] !== 'function')
   }
 }
-
 
 function panel (args) {
   let instance

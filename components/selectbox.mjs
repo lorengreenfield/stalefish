@@ -66,13 +66,7 @@ let styles = css`
   }
 `
 
-
-
 class Selectbox extends Component {
-  constructor () {
-    super()
-  }
-
   createElement (args) {
     this.args = clone(args)
     let {wrapperStyle = null, holdingPen, label, property, options, required, onchange, oninput, disabled} = args
@@ -93,14 +87,14 @@ class Selectbox extends Component {
       <select ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
         <option value="${required ? 'Select an option' : ''}" ${!holdingPen[property] ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
         ${options.map(option => {
-      let optionValue
-      if (typeof option === 'object' && option.value !== undefined) {
-        optionValue = option.value
-      } else {
-        optionValue = option
-      }
-      return html`<option value="${optionValue}" ${holdingPen[property] === optionValue ? {selected: 'true'} : ''}>${optionValue}</option>`
-    })}
+    let optionValue
+    if (typeof option === 'object' && option.value !== undefined) {
+      optionValue = option.value
+    } else {
+      optionValue = option
+    }
+    return html`<option value="${optionValue}" ${holdingPen[property] === optionValue ? {selected: 'true'} : ''}>${optionValue}</option>`
+  })}
       </select>
     </label>
   `
@@ -110,7 +104,6 @@ class Selectbox extends Component {
     let diff = deepDiff.diff(this.args, args)
     return this.currentOption !== args.currentOption || !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
   }
-
 }
 
 function selectbox (args) {

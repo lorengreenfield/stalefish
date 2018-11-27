@@ -64,11 +64,6 @@ let styles = css`
 `
 
 class Loader extends Component {
-  constructor () {
-    super()
-    this.on
-  }
-
   createElement ({on}) {
     this.on = on
     return on === true ? html`<div class="${styles.progress} indeterminate"></div>` : html`<div></div>`

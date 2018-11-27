@@ -98,10 +98,6 @@ function determineStep (type) {
 }
 
 class Textfield extends Component {
-  constructor () {
-    super()
-  }
-
   createElement (args) {
     this.args = clone(args)
     let {highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, onkeyup, autofocus, valueContext, permanentTopPlaceholder = false, onchange, oninput, disabled} = args
