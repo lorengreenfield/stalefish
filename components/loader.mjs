@@ -1,4 +1,4 @@
-import { html, css } from 'halfcab'
+import { html, css, Component } from 'halfcab'
 
 let styles = css`
   .progress {
@@ -63,6 +63,16 @@ let styles = css`
       right: -8%; } }
 `
 
-export default ({on}) => html`
-  ${on === true ? html`<div class="${styles.progress} indeterminate"></div>` : ''}
-`
+class Loader extends Component {
+  createElement ({on}) {
+    this.on = on
+    return on === true ? html`<div class="${styles.progress} indeterminate"></div>` : html`<div></div>`
+  }
+
+  update ({on}) {
+    return on !== this.on
+  }
+}
+
+let loader = new Loader()
+export default args => loader.render(args)

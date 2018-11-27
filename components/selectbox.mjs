@@ -1,5 +1,9 @@
-import { html, css, formField, fieldIsTouched } from 'halfcab'
+import { html, css, formField, fieldIsTouched, Component, LRU } from 'halfcab'
 import solidDown from './icons/solidDown'
+import * as deepDiff from 'deep-object-diff'
+import clone from 'fast-clone'
+
+let cache = new LRU(300)
 
 let styles = css`
   .selectBox {
@@ -62,21 +66,27 @@ let styles = css`
   }
 `
 
-export default ({wrapperStyle = null, holdingPen, label, property, options, required, onchange, oninput, disabled}) => {
-  let currentOption = options.find(option => {
-    if (typeof option === 'object') {
-      return option.value === holdingPen[property]
-    } else {
-      return option === holdingPen[property]
-    }
-  })
-  return html`
-  <label style="text-align: left; position: relative; display: inline-block; width: 100%;" ${wrapperStyle ? {'class': wrapperStyle} : ''}>
-    <div class="${styles.down}">${solidDown({colour: '#ccc'})}</div>
-    <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
-    <select ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
-      <option value="${required ? 'Select an option' : ''}" ${!holdingPen[property] ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
-      ${options.map(option => {
+class Selectbox extends Component {
+  createElement (args) {
+    this.args = clone(args)
+    let {wrapperStyle = null, holdingPen, label, property, options, required, onchange, oninput, disabled} = args
+
+    let currentOption = options.find(option => {
+      if (typeof option === 'object') {
+        return option.value === holdingPen[property]
+      } else {
+        return option === holdingPen[property]
+      }
+    })
+    this.currentOption = currentOption
+
+    return html`
+    <label style="text-align: left; position: relative; display: inline-block; width: 100%;" ${wrapperStyle ? {'class': wrapperStyle} : ''}>
+      <div class="${styles.down}">${solidDown({colour: '#ccc'})}</div>
+      <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
+      <select ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
+        <option value="${required ? 'Select an option' : ''}" ${!holdingPen[property] ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
+        ${options.map(option => {
     let optionValue
     if (typeof option === 'object' && option.value !== undefined) {
       optionValue = option.value
@@ -85,7 +95,31 @@ export default ({wrapperStyle = null, holdingPen, label, property, options, requ
     }
     return html`<option value="${optionValue}" ${holdingPen[property] === optionValue ? {selected: 'true'} : ''}>${optionValue}</option>`
   })}
-    </select>
-  </label>
-`
+      </select>
+    </label>
+  `
+  }
+
+  update (args) {
+    let diff = deepDiff.diff(this.args, args)
+    return this.currentOption !== args.currentOption || !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
+  }
 }
+
+function selectbox (args) {
+  let instance
+  if (args.uniqueKey) {
+    let found = cache.get(args.uniqueKey)
+    if (found) {
+      instance = found
+    } else {
+      instance = new Selectbox()
+      cache.set(args.uniqueKey, instance)
+    }
+  } else {
+    instance = new Selectbox()
+  }
+  return instance.render(args)
+}
+
+export default args => selectbox(args)

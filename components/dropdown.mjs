@@ -1,4 +1,8 @@
-import {html, css} from 'halfcab'
+import { html, css, Component, LRU } from 'halfcab'
+import * as deepDiff from 'deep-object-diff'
+import clone from 'fast-clone'
+
+let cache = new LRU(300)
 
 let styles = css`
 
@@ -35,13 +39,43 @@ let styles = css`
   }
 `
 
-export default ({menuItems, visible, side, width, margin, backgroundColour}) => html`
+class Dropdown extends Component {
+  createElement (args) {
+    this.args = clone(args)
+    let {menuItems, visible, side, width, margin, backgroundColour} = args
 
-<div tabindex="-1" class="${styles.dropdown}" style="position: relative; z-index: 100000; ${!visible ? 'display: none;' : ''}${side === 'right' ? 'float: right;' : ''}">
-  <div class="${styles.dropdownContent}" style="background-color: ${backgroundColour || '#f9f9f9'}; ${side === 'right' ? 'right: 0;' : ''} width: ${width || '160px'};${margin ? `margin: ${margin};` : ''}">
-  ${menuItems.filter(item => !item.visibleUnder || (item.visibleUnder && typeof window !== 'undefined' && window.innerWidth <= parseInt(item.visibleUnder))).map(item => html`
-    ${item.separator ? html`<hr class="${styles.separator}">` : html`<div onclick=${item.action}>${item.text}</div>`}
-  `)}
-  </div>
-</div>   
-`
+    return html`
+    <div tabindex="-1" class="${styles.dropdown}" style="position: relative; z-index: 100000; ${!visible ? 'display: none;' : ''}${side === 'right' ? 'float: right;' : ''}">
+      <div class="${styles.dropdownContent}" style="background-color: ${backgroundColour || '#f9f9f9'}; ${side === 'right' ? 'right: 0;' : ''} width: ${width || '160px'};${margin ? `margin: ${margin};` : ''}">
+      ${menuItems.filter(item => !item.visibleUnder || (item.visibleUnder && typeof window !== 'undefined' && window.innerWidth <= parseInt(item.visibleUnder)))
+    .map(item => html`
+        ${item.separator ? html`<hr class="${styles.separator}">` : html`<div onclick=${item.action}>${item.text}</div>`}
+      `)}
+      </div>
+    </div>   
+    `
+  }
+
+  update (args) {
+    let diff = deepDiff.diff(this.args, args)
+    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
+  }
+}
+
+function dropdown (args) {
+  let instance
+  if (args.uniqueKey) {
+    let found = cache.get(args.uniqueKey)
+    if (found) {
+      instance = found
+    } else {
+      instance = new Dropdown()
+      cache.set(args.uniqueKey, instance)
+    }
+  } else {
+    instance = new Dropdown()
+  }
+  return instance.render(args)
+}
+
+export default args => dropdown(args)

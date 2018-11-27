@@ -1,7 +1,11 @@
-import { html, css, formField, fieldIsTouched } from 'halfcab'
+import { html, css, formField, fieldIsTouched, Component, LRU } from 'halfcab'
 import flatpickr from 'flatpickr'
 import calendarIcon from './icons/calendarIcon'
 import timeIcon from './icons/timeIcon'
+import * as deepDiff from 'deep-object-diff'
+import clone from 'fast-clone'
+
+let cache = new LRU(300)
 
 let styles = css`
   .textfield {
@@ -106,21 +110,25 @@ function detectTouchscreen () {
   return result
 }
 
-export default ({wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}, timeOnly = false, disabled, disableClear = false}) => {
-  let el = html`
-  <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
-     <div style="display: inline-block; width: 100%; text-align: left; position: relative; padding: 0;">
-     <div class="${styles.icon}">${timeOnly ? timeIcon({colour: '#ccc'}) : calendarIcon({colour: '#ccc'})}</div>
-     ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
-     ${!disableClear && !(typeof window !== 'undefined' && 'ontouchstart' in window) ? html`<div data-clear class="${styles.clear}" onclick=${e => {
+class DateTimePicker extends Component {
+  createElement (args) {
+    this.args = clone(args)
+    let {wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}, timeOnly = false, disabled, disableClear = false} = args
+
+    let el = html`
+    <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
+       <div style="display: inline-block; width: 100%; text-align: left; position: relative; padding: 0;">
+       <div class="${styles.icon}">${timeOnly ? timeIcon({colour: '#ccc'}) : calendarIcon({colour: '#ccc'})}</div>
+       ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
+       ${!disableClear && !(typeof window !== 'undefined' && 'ontouchstart' in window) ? html`<div data-clear class="${styles.clear}" onclick=${e => {
     e.stopPropagation()
     e.preventDefault()
     e.target.parentNode.parentNode._flatpickr.clear()
     e.target.parentNode.parentNode._flatpickr.close()
     return false
   }}>clear</div>` : ''}
-     <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" ${required ? {required: 'required'} : ''} onfocus=${e => {
-  e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onChange', (fpDate, dateString) => {
+       <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" ${required ? {required: 'required'} : ''} onfocus=${e => {
+  e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onValueUpdate', (fpDate, dateString) => {
     let fauxE = {
       currentTarget: {
         validity: {
@@ -133,15 +141,11 @@ export default ({wrapperStyle = null, holdingPen, label, placeholder, property, 
     onchange && onchange(fauxE)
   })
 }} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
-     </div>
-  </div>
-  `
+       </div>
+    </div>
+    `
 
-  if (typeof window !== 'undefined' && !detectTouchscreen()) {
-    el.isSameNode = target => {
-      return target._flatpickr && target._flatpickr === el._flatpickr
-    }
-    flatpickr(el, Object.assign(flatpickrConfig, {
+    this.flatpickr = flatpickr(el, Object.assign(flatpickrConfig, {
       wrap: true,
       onValueUpdate: (fpDate, dateString) => {
         let fauxE = {
@@ -156,7 +160,30 @@ export default ({wrapperStyle = null, holdingPen, label, placeholder, property, 
         onchange && onchange(fauxE)
       }
     }, timeOnly ? { noCalendar: true, enableTime: true } : null))
+
+    return el
   }
 
-  return el
+  update (args) {
+    let diff = deepDiff.diff(this.args, args)
+    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
+  }
 }
+
+function dateTimePicker (args) {
+  let instance
+  if (args.uniqueKey) {
+    let found = cache.get(args.uniqueKey)
+    if (found) {
+      instance = found
+    } else {
+      instance = new DateTimePicker()
+      cache.set(args.uniqueKey, instance)
+    }
+  } else {
+    instance = new DateTimePicker()
+  }
+  return instance.render(args)
+}
+
+export default args => dateTimePicker(args)
