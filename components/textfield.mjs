@@ -120,7 +120,7 @@ class Textfield extends Component {
   update (args) {
     let diff = deepDiff.diff(this.args, args)
     Object.keys(diff).forEach(key => {
-      if(typeof diff[key] === 'function'){
+      if (typeof diff[key] === 'function') {
         this[key] = args[key]
       }
     })

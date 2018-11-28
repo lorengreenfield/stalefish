@@ -90,14 +90,14 @@ class Selectbox extends Component {
       <select ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); this.oninput && this.oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); this.onchange && this.onchange(e) }} onblur=${formField(holdingPen, property)}>
         <option value="${required ? 'Select an option' : ''}" ${!holdingPen[property] ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
         ${options.map(option => {
-      let optionValue
-      if (typeof option === 'object' && option.value !== undefined) {
-        optionValue = option.value
-      } else {
-        optionValue = option
-      }
-      return html`<option value="${optionValue}" ${holdingPen[property] === optionValue ? {selected: 'true'} : ''}>${optionValue}</option>`
-    })}
+    let optionValue
+    if (typeof option === 'object' && option.value !== undefined) {
+      optionValue = option.value
+    } else {
+      optionValue = option
+    }
+    return html`<option value="${optionValue}" ${holdingPen[property] === optionValue ? {selected: 'true'} : ''}>${optionValue}</option>`
+  })}
       </select>
     </label>
   `
@@ -106,7 +106,7 @@ class Selectbox extends Component {
   update (args) {
     let diff = deepDiff.diff(this.args, args)
     Object.keys(diff).forEach(key => {
-      if(typeof diff[key] === 'function'){
+      if (typeof diff[key] === 'function') {
         this[key] = args[key]
       }
     })
