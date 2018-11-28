@@ -38,11 +38,12 @@ let styles = css`
 class Checkbox extends Component {
   createElement (args) {
     this.args = clone(args)
-    let {wrapperStyle, holdingPen, label, property, required, indeterminate, onchange, disabled} = args
+    this.onchange = args.onchange
+    let {wrapperStyle, holdingPen, label, property, required, indeterminate, disabled} = args
 
     let checkboxEl = html`<input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true ? {checked: 'checked'} : ''} onchange=${e => {
       formField(holdingPen, property)(e)
-      onchange && onchange(e)
+      this.onchange && this.onchange(e)
     }} type="checkbox" ${required ? {required: 'required'} : ''} />`
 
     checkboxEl.indeterminate = indeterminate || false
@@ -56,6 +57,11 @@ class Checkbox extends Component {
 
   update (args) {
     let diff = deepDiff.diff(this.args, args)
+    Object.keys(diff).forEach(key => {
+      if (typeof diff[key] === 'function') {
+        this[key] = args[key]
+      }
+    })
     return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
   }
 }
@@ -70,10 +76,11 @@ function checkbox (args) {
       instance = new Checkbox()
       cache.set(args.uniqueKey, instance)
     }
+    return instance.render(args)
   } else {
     instance = new Checkbox()
+    return instance.createElement(args)
   }
-  return instance.render(args)
 }
 
 export default args => checkbox(args)

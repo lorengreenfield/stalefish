@@ -113,7 +113,10 @@ function detectTouchscreen () {
 class DateTimePicker extends Component {
   createElement (args) {
     this.args = clone(args)
-    let {wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, onchange, oninput, flatpickrConfig = {}, timeOnly = false, disabled, disableClear = false} = args
+    this.onchange = args.onchange
+    this.oninput = args.oninput
+
+    let {wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, flatpickrConfig = {}, timeOnly = false, disabled, disableClear = false} = args
 
     let el = html`
     <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
@@ -138,9 +141,9 @@ class DateTimePicker extends Component {
       }
     }
     formField(holdingPen, property)(fauxE)
-    onchange && onchange(fauxE)
+    this.onchange && this.onchange(fauxE)
   })
-}} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
+}} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); this.oninput && this.oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
        </div>
     </div>
     `
@@ -157,7 +160,7 @@ class DateTimePicker extends Component {
           }
         }
         formField(holdingPen, property)(fauxE)
-        onchange && onchange(fauxE)
+        this.onchange && this.onchange(fauxE)
       }
     }, timeOnly ? { noCalendar: true, enableTime: true } : null))
 
@@ -166,6 +169,11 @@ class DateTimePicker extends Component {
 
   update (args) {
     let diff = deepDiff.diff(this.args, args)
+    Object.keys(diff).forEach(key => {
+      if (typeof diff[key] === 'function') {
+        this[key] = args[key]
+      }
+    })
     return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
   }
 }
@@ -180,10 +188,11 @@ function dateTimePicker (args) {
       instance = new DateTimePicker()
       cache.set(args.uniqueKey, instance)
     }
+    return instance.render(args)
   } else {
     instance = new DateTimePicker()
+    return instance.createElement(args)
   }
-  return instance.render(args)
 }
 
 export default args => dateTimePicker(args)

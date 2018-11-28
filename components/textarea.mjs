@@ -62,15 +62,23 @@ function change ({e, holdingPen, property, label}) {
 class Textarea extends Component {
   createElement (args) {
     this.args = clone(args)
-    let {holdingPen, label, placeholder, property, required, pattern, onkeyup, autofocus, permanentTopPlaceholder = false, onchange, oninput, disabled} = args
+    this.onchange = args.onchange
+    this.oninput = args.oninput
+
+    let {holdingPen, label, placeholder, property, required, pattern, onkeyup, autofocus, permanentTopPlaceholder = false, disabled} = args
 
     return html`
-       <label ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}width: 100%; text-align: left; display: inline-block;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span><textarea style="${this.height ? `height: ${this.height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { this.height = window.getComputedStyle(this.element.querySelector('textarea')).height; change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''}>${holdingPen[property] || ''}</textarea></label>
+       <label ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}width: 100%; text-align: left; display: inline-block;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span><textarea style="${this.height ? `height: ${this.height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { this.height = window.getComputedStyle(this.element.querySelector('textarea')).height; change({e, holdingPen, property, label: styles.label}); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''}>${holdingPen[property] || ''}</textarea></label>
     `
   }
 
   update (args) {
     let diff = deepDiff.diff(this.args, args)
+    Object.keys(diff).forEach(key => {
+      if (typeof diff[key] === 'function') {
+        this[key] = args[key]
+      }
+    })
     return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
   }
 }
@@ -85,10 +93,11 @@ function textarea (args) {
       instance = new Textarea()
       cache.set(args.uniqueKey, instance)
     }
+    return instance.render(args)
   } else {
     instance = new Textarea()
+    return instance.createElement(args)
   }
-  return instance.render(args)
 }
 
 export default args => textarea(args)

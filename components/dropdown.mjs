@@ -42,6 +42,7 @@ let styles = css`
 class Dropdown extends Component {
   createElement (args) {
     this.args = clone(args)
+    // TODO - for menu items where the action changes, we need to use this.item.action
     let {menuItems, visible, side, width, margin, backgroundColour} = args
 
     return html`
@@ -72,10 +73,11 @@ function dropdown (args) {
       instance = new Dropdown()
       cache.set(args.uniqueKey, instance)
     }
+    return instance.render(args)
   } else {
     instance = new Dropdown()
+    return instance.createElement(args)
   }
-  return instance.render(args)
 }
 
 export default args => dropdown(args)
