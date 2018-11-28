@@ -100,14 +100,18 @@ function determineStep (type) {
 class Textfield extends Component {
   createElement (args) {
     this.args = clone(args)
-    let {highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, onkeyup, autofocus, valueContext, permanentTopPlaceholder = false, onchange, oninput, disabled} = args
+    this.onkeyup = args.onkeyup
+    this.oninput = args.oninput
+    this.onchange = args.onchange
+
+    let {highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, autofocus, valueContext, permanentTopPlaceholder = false, disabled} = args
 
     return html`
       <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
          <label style="width: 100%; text-align: left; position: relative; padding: 0;">
          ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
          ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}
-         <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); onchange && onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); oninput && oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} ${type.toLowerCase() === 'number' ? {step: determineStep(type)} : ''} />
+         <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => this.onkeyup && this.onkeyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} ${type.toLowerCase() === 'number' ? {step: determineStep(type)} : ''} />
          </label>
       </div>
       `
@@ -115,6 +119,11 @@ class Textfield extends Component {
 
   update (args) {
     let diff = deepDiff.diff(this.args, args)
+    Object.keys(diff).forEach(key => {
+      if(typeof diff[key] === 'function'){
+        this[key] = args[key]
+      }
+    })
     return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
   }
 }
@@ -129,10 +138,11 @@ function textfield (args) {
       instance = new Textfield()
       cache.set(args.uniqueKey, instance)
     }
+    return instance.render(args)
   } else {
     instance = new Textfield()
+    return instance.createElement(args)
   }
-  return instance.render(args)
 }
 
 export default args => textfield(args)

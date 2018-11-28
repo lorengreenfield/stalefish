@@ -42,13 +42,14 @@ let styles = css`
 class Dropdown extends Component {
   createElement (args) {
     this.args = clone(args)
+    // TODO - for menu items where the action changes, we need to use this.item.action
     let {menuItems, visible, side, width, margin, backgroundColour} = args
 
     return html`
     <div tabindex="-1" class="${styles.dropdown}" style="position: relative; z-index: 100000; ${!visible ? 'display: none;' : ''}${side === 'right' ? 'float: right;' : ''}">
       <div class="${styles.dropdownContent}" style="background-color: ${backgroundColour || '#f9f9f9'}; ${side === 'right' ? 'right: 0;' : ''} width: ${width || '160px'};${margin ? `margin: ${margin};` : ''}">
       ${menuItems.filter(item => !item.visibleUnder || (item.visibleUnder && typeof window !== 'undefined' && window.innerWidth <= parseInt(item.visibleUnder)))
-    .map(item => html`
+      .map(item => html`
         ${item.separator ? html`<hr class="${styles.separator}">` : html`<div onclick=${item.action}>${item.text}</div>`}
       `)}
       </div>
@@ -72,10 +73,11 @@ function dropdown (args) {
       instance = new Dropdown()
       cache.set(args.uniqueKey, instance)
     }
+    return instance.render(args)
   } else {
     instance = new Dropdown()
+    return instance.createElement(args)
   }
-  return instance.render(args)
 }
 
 export default args => dropdown(args)

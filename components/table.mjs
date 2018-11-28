@@ -81,10 +81,11 @@ function table (args) {
       instance = new Table()
       cache.set(args.uniqueKey, instance)
     }
+    return instance.render(args)
   } else {
     instance = new Table()
+    return instance.createElement(args)
   }
-  return instance.render(args)
 }
 
 export default args => table(args)
