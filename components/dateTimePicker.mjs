@@ -84,7 +84,6 @@ let styles = css`
 `
 
 function change ({e, holdingPen, property}) {
-  e.target.defaultValue = ' '
   let ff = formField(holdingPen, property)(e)
   e.target.focus()
   return ff
