@@ -84,7 +84,6 @@ let styles = css`
 `
 
 function change ({e, holdingPen, property}) {
-  e.target.defaultValue = ' '
   let ff = formField(holdingPen, property)(e)
   e.target.focus()
   return ff
@@ -123,27 +122,27 @@ class DateTimePicker extends Component {
        <div style="display: inline-block; width: 100%; text-align: left; position: relative; padding: 0;">
        <div class="${styles.icon}">${timeOnly ? timeIcon({colour: '#ccc'}) : calendarIcon({colour: '#ccc'})}</div>
        ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
-       ${!disableClear && !(typeof window !== 'undefined' && 'ontouchstart' in window) ? html`<div data-clear class="${styles.clear}" onclick=${e => {
-    e.stopPropagation()
-    e.preventDefault()
-    e.target.parentNode.parentNode._flatpickr.clear()
-    e.target.parentNode.parentNode._flatpickr.close()
-    return false
-  }}>clear</div>` : ''}
+       ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${e => {
+      e.stopPropagation()
+      e.preventDefault()
+      e.target.parentNode.parentNode._flatpickr.clear()
+      e.target.parentNode.parentNode._flatpickr.close()
+      return false
+    }}>clear</div>` : ''}
        <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" ${required ? {required: 'required'} : ''} onfocus=${e => {
-  e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onValueUpdate', (fpDate, dateString) => {
-    let fauxE = {
-      currentTarget: {
-        validity: {
-          valid: true
-        },
-        value: dateString
-      }
-    }
-    formField(holdingPen, property)(fauxE)
-    this.onchange && this.onchange(fauxE)
-  })
-}} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); this.oninput && this.oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
+      e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onValueUpdate', (fpDate, dateString) => {
+        let fauxE = {
+          currentTarget: {
+            validity: {
+              valid: true
+            },
+            value: dateString
+          }
+        }
+        formField(holdingPen, property)(fauxE)
+        this.onchange && this.onchange(fauxE)
+      })
+    }} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); this.oninput && this.oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
        </div>
     </div>
     `
