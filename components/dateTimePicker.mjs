@@ -85,7 +85,7 @@ let styles = css`
 
 function change ({e, holdingPen, property}) {
   let ff = formField(holdingPen, property)(e)
-  e.target.focus()
+  // e.target.focus()
   return ff
 }
 
@@ -129,7 +129,7 @@ class DateTimePicker extends Component {
       e.target.parentNode.parentNode._flatpickr.close()
       return false
     }}>clear</div>` : ''}
-       <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] || ''}" ${required ? {required: 'required'} : ''} onfocus=${e => {
+       <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ${required ? {required: 'required'} : ''} onfocus=${e => {
       e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onValueUpdate', (fpDate, dateString) => {
         let fauxE = {
           currentTarget: {
@@ -142,7 +142,7 @@ class DateTimePicker extends Component {
         formField(holdingPen, property)(fauxE)
         this.onchange && this.onchange(fauxE)
       })
-    }} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); this.oninput && this.oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} data-input />
+    }} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { e.target.defaultValue = ''; this.oninput && this.oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} value="${holdingPen[property] || ''}" data-input />
        </div>
     </div>
     `
@@ -167,13 +167,7 @@ class DateTimePicker extends Component {
   }
 
   update (args) {
-    let diff = deepDiff.diff(this.args, args)
-    Object.keys(diff).forEach(key => {
-      if (typeof diff[key] === 'function') {
-        this[key] = args[key]
-      }
-    })
-    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
+    return false // items that never change appearance from our own code never need to be rerendered
   }
 }
 
