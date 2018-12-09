@@ -3,6 +3,7 @@ import flatpickr from 'flatpickr'
 import calendarIcon from './icons/calendarIcon'
 import timeIcon from './icons/timeIcon'
 import clone from 'fast-clone'
+import * as deepDiff from 'deep-object-diff'
 
 let cache = new LRU(300)
 
@@ -165,7 +166,13 @@ class DateTimePicker extends Component {
     return el
   }
 
-  update () {
+  update (args) {
+    let diff = deepDiff.diff(this.args, args)
+    Object.keys(diff).forEach(key => {
+      if (typeof diff[key] === 'function') {
+        this[key] = args[key]
+      }
+    })
     return false // items that never change appearance from our own code never need to be rerendered
   }
 }
