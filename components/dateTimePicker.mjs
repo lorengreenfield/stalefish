@@ -173,7 +173,7 @@ class DateTimePicker extends Component {
         this[key] = args[key]
       }
     })
-    return false // items that never change appearance from our own code never need to be rerendered
+    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
   }
 }
 
