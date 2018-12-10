@@ -123,26 +123,26 @@ class DateTimePicker extends Component {
        <div class="${styles.icon}">${timeOnly ? timeIcon({colour: '#ccc'}) : calendarIcon({colour: '#ccc'})}</div>
        ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
        ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${e => {
-    e.stopPropagation()
-    e.preventDefault()
-    e.target.parentNode.parentNode._flatpickr.clear()
-    e.target.parentNode.parentNode._flatpickr.close()
-    return false
-  }}>clear</div>` : ''}
+      e.stopPropagation()
+      e.preventDefault()
+      e.target.parentNode.parentNode._flatpickr.clear()
+      e.target.parentNode.parentNode._flatpickr.close()
+      return false
+    }}>clear</div>` : ''}
        <input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ${required ? {required: 'required'} : ''} onfocus=${e => {
-  e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onValueUpdate', (fpDate, dateString) => {
-    let fauxE = {
-      currentTarget: {
-        validity: {
-          valid: true
-        },
-        value: dateString
-      }
-    }
-    formField(holdingPen, property)(fauxE)
-    this.onchange && this.onchange(fauxE)
-  })
-}} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { e.target.defaultValue = ''; this.oninput && this.oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} value="${holdingPen[property] || ''}" data-input />
+      e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onValueUpdate', (fpDate, dateString) => {
+        let fauxE = {
+          currentTarget: {
+            validity: {
+              valid: true
+            },
+            value: dateString
+          }
+        }
+        formField(holdingPen, property)(fauxE)
+        this.onchange && this.onchange(fauxE)
+      })
+    }} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { e.target.defaultValue = ''; this.oninput && this.oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} value="${holdingPen[property] || ''}" data-input />
        </div>
     </div>
     `
@@ -173,7 +173,7 @@ class DateTimePicker extends Component {
         this[key] = args[key]
       }
     })
-    return false // items that never change appearance from our own code never need to be rerendered
+    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
   }
 }
 
