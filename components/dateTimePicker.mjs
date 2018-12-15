@@ -115,7 +115,7 @@ class DateTimePicker extends Component {
     this.onchange = args.onchange
     this.oninput = args.oninput
 
-    let {wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, autofocus, permanentTopPlaceholder = true, flatpickrConfig = {}, timeOnly = false, disabled, disableClear = false} = args
+    let {wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, permanentTopPlaceholder = true, flatpickrConfig = {}, timeOnly = false, disabled, disableClear = false} = args
 
     let el = html`
     <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
@@ -142,7 +142,7 @@ class DateTimePicker extends Component {
     formField(holdingPen, property)(fauxE)
     this.onchange && this.onchange(fauxE)
   })
-}} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { e.target.defaultValue = ''; this.oninput && this.oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${autofocus ? {autofocus} : ''}  ${pattern ? {pattern} : ''} value="${holdingPen[property] || ''}" data-input />
+}} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { e.target.defaultValue = ''; this.oninput && this.oninput(e) }} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${detectTouchscreen() ? timeOnly ? 'time' : 'date' : 'text'}" ${pattern ? {pattern} : ''} value="${holdingPen[property] || ''}" data-input />
        </div>
     </div>
     `
