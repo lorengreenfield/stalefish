@@ -48,7 +48,7 @@ let styles = css`
   }
 `
 
-function change ({e, holdingPen, property, label}) {
+function change ({ e, holdingPen, property, label }) {
   let ff = formField(holdingPen, property)(e)
   if (holdingPen[property] === 0 || holdingPen[property]) {
     e.target.closest('label').querySelector(label.selector).style.opacity = 1
@@ -65,16 +65,16 @@ class Textarea extends Component {
     this.onchange = args.onchange
     this.oninput = args.oninput
 
-    let {holdingPen, label, placeholder, property, required, pattern, onkeyup, autofocus, permanentTopPlaceholder = false, disabled} = args
+    let { holdingPen, label, placeholder, property, required, pattern, onkeyup, autofocus, permanentTopPlaceholder = false, disabled } = args
 
-    let input = html`<textarea style="${this.height ? `height: ${this.height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { this.height = window.getComputedStyle(this.element.querySelector('textarea')).height; change({e, holdingPen, property, label: styles.label}); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${pattern ? {pattern} : ''}>${holdingPen[property] || ''}</textarea>`
+    let input = html`<textarea style="${this.height ? `height: ${this.height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); this.onchange && this.onchange(e) }} oninput=${e => { this.height = window.getComputedStyle(this.element.querySelector('textarea')).height; change({ e, holdingPen, property, label: styles.label }); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${pattern ? { pattern } : ''}>${holdingPen[property] || ''}</textarea>`
 
     if (autofocus) {
       input.autofocus = true
     }
 
     return html`
-       <label ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}width: 100%; text-align: left; display: inline-block;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>${input}</label>
+       <label ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}width: 100%; text-align: left; display: inline-block;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>${input}</label>
     `
   }
 

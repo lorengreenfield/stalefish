@@ -64,12 +64,12 @@ let styles = css`
 `
 
 class Loader extends Component {
-  createElement ({on}) {
+  createElement ({ on }) {
     this.on = on
     return on === true ? html`<div class="${styles.progress} indeterminate"></div>` : html`<div></div>`
   }
 
-  update ({on}) {
+  update ({ on }) {
     return on !== this.on
   }
 }

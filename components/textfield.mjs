@@ -66,7 +66,7 @@ let styles = css`
   }
 `
 
-function change ({e, holdingPen, property, label}) {
+function change ({ e, holdingPen, property, label }) {
   let ff = formField(holdingPen, property)(e)
   let closestLabel = e.target.closest('label')
   let labelEl = closestLabel.querySelector(label.selector)
@@ -104,16 +104,16 @@ class Textfield extends Component {
     this.oninput = args.oninput
     this.onchange = args.onchange
 
-    let {highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, autofocus, valueContext, permanentTopPlaceholder = false, disabled} = args
+    let { highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, autofocus, valueContext, permanentTopPlaceholder = false, disabled } = args
 
-    let input = html`<input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => this.onkeyup && this.onkeyup(e)} ${required ? {required: 'required'} : ''} onchange=${e => { change({e, holdingPen, property, label: styles.label}); this.onchange && this.onchange(e) }} oninput=${e => { change({e, holdingPen, property, label: styles.label}); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${pattern ? {pattern} : ''} ${type.toLowerCase() === 'number' ? {step: determineStep(type)} : ''} />`
+    let input = html`<input ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => this.onkeyup && this.onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); this.onchange && this.onchange(e) }} oninput=${e => { change({ e, holdingPen, property, label: styles.label }); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${pattern ? { pattern } : ''} ${type.toLowerCase() === 'number' ? { step: determineStep(type) } : ''} />`
 
     if (autofocus) {
       input.autofocus = true
     }
 
     return html`
-      <div ${wrapperStyle ? {'class': wrapperStyle} : ''} style="display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
+      <div ${wrapperStyle ? { 'class': wrapperStyle } : ''} style="display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
          <label style="width: 100%; text-align: left; position: relative; padding: 0;">
          ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
          ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}

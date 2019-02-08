@@ -39,17 +39,17 @@ class Checkbox extends Component {
   createElement (args) {
     this.args = clone(args)
     this.onchange = args.onchange
-    let {wrapperStyle, holdingPen, label, property, required, indeterminate, disabled} = args
+    let { wrapperStyle, holdingPen, label, property, required, indeterminate, disabled } = args
 
-    let checkboxEl = html`<input ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true ? {checked: 'checked'} : ''} onchange=${e => {
+    let checkboxEl = html`<input ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true ? { checked: 'checked' } : ''} onchange=${e => {
       formField(holdingPen, property)(e)
       this.onchange && this.onchange(e)
-    }} type="checkbox" ${required ? {required: 'required'} : ''} />`
+    }} type="checkbox" ${required ? { required: 'required' } : ''} />`
 
     checkboxEl.indeterminate = indeterminate || false
 
     return html`
-      <label style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}text-align: left; width: 100%; display: inline-block; vertical-align: bottom;" ${wrapperStyle ? {'class': wrapperStyle} : ''}>
+      <label style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}text-align: left; width: 100%; display: inline-block; vertical-align: bottom;" ${wrapperStyle ? { 'class': wrapperStyle } : ''}>
         <span class="${styles.label}">${label}${required ? ' *' : ''}${checkboxEl}</span>
       </label>
     `
