@@ -20,7 +20,7 @@ let styles = css`
 class Toolbar extends Component {
   createElement (args) {
     this.args = clone(args)
-    let {content} = args
+    let { content } = args
     return html`
       <div class="${styles.toolbar}">
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">

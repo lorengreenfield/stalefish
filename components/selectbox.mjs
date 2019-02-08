@@ -72,7 +72,7 @@ class Selectbox extends Component {
     this.onchange = args.onchange
     this.oninput = args.oninput
 
-    let {wrapperStyle = null, holdingPen, label, property, options, required, disabled} = args
+    let { wrapperStyle = null, holdingPen, label, property, options, required, disabled } = args
 
     let currentOption = options.find(option => {
       if (typeof option === 'object') {
@@ -84,11 +84,11 @@ class Selectbox extends Component {
     this.currentOption = currentOption
 
     return html`
-    <label style="text-align: left; position: relative; display: inline-block; width: 100%;" ${wrapperStyle ? {'class': wrapperStyle} : ''}>
-      <div class="${styles.down}">${solidDown({colour: '#ccc'})}</div>
+    <label style="text-align: left; position: relative; display: inline-block; width: 100%;" ${wrapperStyle ? { 'class': wrapperStyle } : ''}>
+      <div class="${styles.down}">${solidDown({ colour: '#ccc' })}</div>
       <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
-      <select ${disabled ? {disabled} : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); this.oninput && this.oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); this.onchange && this.onchange(e) }} onblur=${formField(holdingPen, property)}>
-        <option value="${required ? 'Select an option' : ''}" ${!holdingPen[property] ? {selected: 'true'} : ''} ${required ? {disabled: 'disabled'} : ''}>${required ? 'Select an option' : ''}</option>
+      <select ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); this.oninput && this.oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); this.onchange && this.onchange(e) }} onblur=${formField(holdingPen, property)}>
+        <option value="${required ? 'Select an option' : ''}" ${!holdingPen[property] ? { selected: 'true' } : ''} ${required ? { disabled: 'disabled' } : ''}>${required ? 'Select an option' : ''}</option>
         ${options.map(option => {
     let optionValue
     if (typeof option === 'object' && option.value !== undefined) {
@@ -96,7 +96,7 @@ class Selectbox extends Component {
     } else {
       optionValue = option
     }
-    return html`<option value="${optionValue}" ${holdingPen[property] === optionValue ? {selected: 'true'} : ''}>${optionValue}</option>`
+    return html`<option value="${optionValue}" ${holdingPen[property] === optionValue ? { selected: 'true' } : ''}>${optionValue}</option>`
   })}
       </select>
     </label>

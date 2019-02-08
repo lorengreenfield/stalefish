@@ -43,7 +43,7 @@ class Dropdown extends Component {
   createElement (args) {
     this.args = clone(args)
     // TODO - for menu items where the action changes, we need to use this.item.action
-    let {menuItems, visible, side, width, margin, backgroundColour} = args
+    let { menuItems, visible, side, width, margin, backgroundColour } = args
 
     return html`
     <div tabindex="-1" class="${styles.dropdown}" style="position: relative; z-index: 100000; ${!visible ? 'display: none;' : ''}${side === 'right' ? 'float: right;' : ''}">

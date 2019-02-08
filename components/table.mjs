@@ -49,13 +49,13 @@ let _data = [
 class Table extends Component {
   createElement (args) {
     this.args = clone(args)
-    let {columns = _columns, data = _data} = args
+    let { columns = _columns, data = _data } = args
 
     return html`
        <table class="${styles.table}">
         <thead class="${styles.thRow}">
             <tr>
-                ${columns.map(column => html`<th class="${styles.th} ${column.style || ''}" scope="col" ${column.action ? {onclick: column.action} : ''}>${column.title}${column.icon ? column.icon : ''}</th>`)}
+                ${columns.map(column => html`<th class="${styles.th} ${column.style || ''}" scope="col" ${column.action ? { onclick: column.action } : ''}>${column.title}${column.icon ? column.icon : ''}</th>`)}
             </tr>
         </thead>
         <tbody>
