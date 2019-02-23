@@ -57,7 +57,6 @@ let styles = css`
     pointer-events: none;
     color: #c9c9c9;
     right: 12px;
-    top: -9px;
     font-size: 2em;
     z-index: 30;
     position: absolute; 
@@ -115,13 +114,13 @@ class DateTimePicker extends Component {
     this.onchange = args.onchange
     this.oninput = args.oninput
 
-    let { wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, permanentTopPlaceholder = true, flatpickrConfig = {}, timeOnly = false, disabled, disableClear = false } = args
+    let { wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, permanentTopPlaceholder = true, permanentTopLabel = false, flatpickrConfig = {}, timeOnly = false, disabled, disableClear = false } = args
 
     let el = html`
     <div ${wrapperStyle ? { 'class': wrapperStyle } : ''} style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
        <div style="display: inline-block; width: 100%; text-align: left; position: relative; padding: 0;">
        <div class="${styles.icon}">${timeOnly ? timeIcon({ colour: '#ccc' }) : calendarIcon({ colour: '#ccc' })}</div>
-       ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || permanentTopPlaceholder ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
+       ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
        ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${e => {
     e.stopPropagation()
     e.preventDefault()

@@ -2,6 +2,7 @@ import textfield from './components/textfield'
 import button from './components/button'
 import toast from './components/toast'
 import dropdown from './components/dropdown'
+import uploader from './components/uploader'
 import selectbox from './components/selectbox'
 import checkbox from './components/checkbox'
 import textarea from './components/textarea'
@@ -39,5 +40,6 @@ export {
   dateTimePicker,
   calendarIcon,
   timeIcon,
-  solidDown
+  solidDown,
+  uploader
 }
