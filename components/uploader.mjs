@@ -1,4 +1,4 @@
-import { html, css, fieldIsTouched, Component, LRU, rerender } from 'halfcab'
+import { html, css, fieldIsTouched, Component, LRU } from 'halfcab'
 import raw from 'nanohtml/raw'
 import * as deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
@@ -88,6 +88,7 @@ class Uploader extends Component {
   createElement (args) {
     this.args = clone(args)
     this.onchange = args.onchange
+    this.onclear = args.onclear
     let { wrapperStyle, holdingPen, label, property, required, disabled, accept, imagePreview, disableClear, placeholder, permanentTopLabel, permanentTopPlaceholder, textPreview, progress } = args
 
     let uploaderEl = html`<input ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.uploader} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onchange=${this.onchange} type="file" ${required ? { required: 'required' } : ''} ${accept ? { accept } : ''} hidden />`
@@ -98,13 +99,7 @@ class Uploader extends Component {
          ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0};">${label}${required ? ' *' : ''}</span>` : ''}
         <span class="${styles.frame}">${!holdingPen[property] ? html`${placeholder}${required ? ' *' : ''}` : !imagePreview ? textPreview || holdingPen[property] : raw('&nbsp;')}${uploaderEl}<span style="opacity: 0.6; margin-left: -12px; width: ${progress}%; position: absolute; background-color: #EEE; height: 100%;"></span></span>
         ${imagePreview ? html`<img src="${imagePreview}" style="position: absolute; height: 35px; top: -9px; left: 20px; z-index: 30;"/>` : ''}
-  ${!disableClear ? html`<div class="${styles.clear}" onclick=${e => {
-    e.stopPropagation()
-    e.preventDefault()
-    holdingPen[property] = ''
-    rerender()
-    return false
-  }}>clear</div>` : ''}
+  ${!disableClear ? html`<div class="${styles.clear}" onclick=${this.onclear}>clear</div>` : ''}
         <div class="${styles.icon}">${uploadIcon({ colour: '#ccc', width: 28, height: 28 })}</div>
          </label>
       </div>
