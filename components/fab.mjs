@@ -2,7 +2,7 @@ import { html, css } from 'halfcab'
 
 let styles = css`
   .fab {
-    transition: bottom 0.2s ease;
+    transition: bottom 0.2s ease, opacity 0.4s ease;
     padding: 0;
     z-index: 19000;
     outline: none;
@@ -70,6 +70,6 @@ export default ({ diameter, text, action, colour, disabled, on, icon, menuItems,
   </div>
   <button class="${styles.fab}" onclick=${e => action(e)} 
   ${disabled ? 'disabled' : ''}
-  style="width: ${diameter}; height: ${diameter};background-color: ${colour};bottom: ${on ? '15px' : `calc(-1 * (${diameter} + 10px))`}; ${icon ? 'padding-top: 2px' : ''};">${icon || text}</button>
+  style="width: ${diameter}; height: ${diameter};background-color: ${colour};opacity: ${on ? '1' : '0'};bottom: ${on ? '15px' : `calc(-1 * (${diameter} + 10px))`}; ${icon ? 'padding-top: 2px' : ''};">${icon || text}</button>
 </div>
 `
