@@ -4,7 +4,7 @@ import up from './icons/up'
 import down from './icons/down'
 import moreVertical from './icons/moreVertical'
 import dropdown from './dropdown'
-import * as deepDiff from 'deep-object-diff'
+import deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
 
 let cache = new LRU(300)

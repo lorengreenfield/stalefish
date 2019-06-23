@@ -1,5 +1,5 @@
 import { html, css, Component, LRU } from 'halfcab'
-import * as deepDiff from 'deep-object-diff'
+import deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
 
 let cache = new LRU(100)
