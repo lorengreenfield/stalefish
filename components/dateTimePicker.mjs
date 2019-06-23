@@ -3,7 +3,7 @@ import flatpickr from 'flatpickr'
 import calendarIcon from './icons/calendarIcon'
 import timeIcon from './icons/timeIcon'
 import clone from 'fast-clone'
-import * as deepDiff from 'deep-object-diff'
+import deepDiff from 'deep-object-diff'
 
 let cache = new LRU(300)
 
