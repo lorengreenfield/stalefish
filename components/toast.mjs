@@ -1,6 +1,6 @@
 import { html, css, geb, Component } from 'halfcab'
 import close from './icons/close'
-import deepDiff from 'deep-object-diff'
+import * as deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
 
 let styles = css`

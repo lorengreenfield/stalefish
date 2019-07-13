@@ -1,6 +1,6 @@
 import { html, css, formField, fieldIsTouched, Component, LRU } from 'halfcab'
 import solidDown from './icons/solidDown'
-import deepDiff from 'deep-object-diff'
+import * as deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
 
 let cache = new LRU(300)
