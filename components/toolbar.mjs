@@ -1,6 +1,6 @@
 import { html, css, Component } from 'halfcab'
 import clone from 'fast-clone'
-import deepDiff from 'deep-object-diff'
+import * as deepDiff from 'deep-object-diff'
 
 let styles = css`
   .toolbar {
