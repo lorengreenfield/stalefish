@@ -41,7 +41,7 @@ class Checkbox extends Component {
     this.onchange = args.onchange
     let { wrapperStyle, holdingPen, label, property, required, indeterminate, disabled } = args
 
-    let checkboxEl = html`<input ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true ? { checked: 'checked' } : ''} onchange=${e => {
+    let checkboxEl = html`<input data-gramm="false" ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ${holdingPen[property] === true ? { checked: 'checked' } : ''} onchange=${e => {
       formField(holdingPen, property)(e)
       this.onchange && this.onchange(e)
     }} type="checkbox" ${required ? { required: 'required' } : ''} />`

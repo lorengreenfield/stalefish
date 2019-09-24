@@ -67,7 +67,7 @@ class Textarea extends Component {
 
     let { holdingPen, label, placeholder, property, required, pattern, onkeyup, autofocus, permanentTopPlaceholder = false, permanentTopLabel = false, disabled } = args
 
-    let input = html`<textarea style="${this.height ? `height: ${this.height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); this.onchange && this.onchange(e) }} oninput=${e => { this.height = window.getComputedStyle(this.element.querySelector('textarea')).height; change({ e, holdingPen, property, label: styles.label }); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${pattern ? { pattern } : ''}>${holdingPen[property] || ''}</textarea>`
+    let input = html`<textarea data-gramm="false" style="${this.height ? `height: ${this.height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); this.onchange && this.onchange(e) }} oninput=${e => { this.height = window.getComputedStyle(this.element.querySelector('textarea')).height; change({ e, holdingPen, property, label: styles.label }); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${pattern ? { pattern } : ''}>${holdingPen[property] || ''}</textarea>`
 
     if (autofocus) {
       input.autofocus = true
