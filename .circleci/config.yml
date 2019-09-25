@@ -5,8 +5,7 @@ jobs:
     parallelism: 1
     shell: /bin/bash --login
     docker:
-      - image: circleci/node:8.11.3
-        command: /sbin/init
+      - image: circleci/node:12.10.0
     steps:
       - checkout
       - run: export PATH="~/lorengreenfield/stalefish/node_modules/.bin:$PATH"

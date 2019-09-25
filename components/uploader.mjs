@@ -91,7 +91,7 @@ class Uploader extends Component {
     this.onclear = args.onclear
     let { wrapperStyle, holdingPen, label, property, required, disabled, accept, imagePreview, disableClear, placeholder, permanentTopLabel, permanentTopPlaceholder, textPreview, progress } = args
 
-    let uploaderEl = html`<input ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.uploader} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onchange=${this.onchange} type="file" ${required ? { required: 'required' } : ''} ${accept ? { accept } : ''} hidden />`
+    let uploaderEl = html`<input data-gramm="false" ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.uploader} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onchange=${this.onchange} type="file" ${required ? { required: 'required' } : ''} ${accept ? { accept } : ''} hidden />`
 
     return html` 
       <div ${wrapperStyle ? { 'class': wrapperStyle } : ''} style="display: inline-block; width: 100%; margin-top: 36px;">

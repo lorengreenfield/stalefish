@@ -128,7 +128,7 @@ class DateTimePicker extends Component {
     e.target.parentNode.parentNode._flatpickr.close()
     return false
   }}>clear</div>` : ''}
-       <input ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ${required ? { required: 'required' } : ''} onfocus=${e => {
+       <input data-gramm="false" ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ${required ? { required: 'required' } : ''} onfocus=${e => {
   e.target.parentNode.parentNode._flatpickr && e.target.parentNode.parentNode._flatpickr.set('onValueUpdate', (fpDate, dateString) => {
     let fauxE = {
       currentTarget: {
