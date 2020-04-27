@@ -43,6 +43,6 @@
     "deep-object-diff": "^1.1.0",
     "eslint": "^6.0.1",
     "fast-clone": "^1.5.3",
-    "flatpickr": "^4.5.2"
+    "flatpickr": "4.5.2"
   }
 }
