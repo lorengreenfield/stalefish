@@ -49,7 +49,7 @@ class Dropdown extends Component {
       <div class="${styles.dropdownContent}" style="background-color: ${backgroundColour || '#f9f9f9'}; ${side === 'right' ? 'right: 0;' : ''} width: ${width || '160px'};${margin ? `margin: ${margin};` : ''}">
       ${menuItems.filter(item => !item.visibleUnder || (item.visibleUnder && typeof window !== 'undefined' && window.innerWidth <= parseInt(item.visibleUnder)))
     .map(item => html`
-        ${item.separator ? html`<hr class="${styles.separator}">` : item.disabled === true ? html`<div style="opacity: 0.3;">${item.text}</div>` : html`<div style="cursor: pointer;" onclick=${item.action}>${item.text}</div>`}
+        ${item.separator ? html`<hr class="${styles.separator}">` : item.disabled === true ? html`<div style="opacity: 0.3; pointer-events: none;">${item.text}</div>` : html`<div style="cursor: pointer;" onclick=${item.action}>${item.text}</div>`}
       `)}
       </div>
     </div>   
