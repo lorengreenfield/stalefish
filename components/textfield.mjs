@@ -4,6 +4,7 @@ import clone from 'fast-clone'
 
 let cache = new LRU(300)
 
+// language=CSS
 let styles = css`
   .textfield {
     padding: 10px;
@@ -106,7 +107,7 @@ class Textfield extends Component {
 
     let { highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, autofocus, valueContext, permanentTopPlaceholder = false, permanentTopLabel = false, disabled, maxCharacters } = args
 
-    let input = html`<input data-gramm="false" ${disabled ? { disabled } : ''} ${maxCharacters ? { maxlength: maxCharacters } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] || ''}" onkeyup=${e => this.onkeyup && this.onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); this.onchange && this.onchange(e) }} oninput=${e => { change({ e, holdingPen, property, label: styles.label }); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${pattern ? { pattern } : ''} ${type.toLowerCase() === 'number' ? { step: determineStep(type) } : ''} />`
+    let input = html`<input data-gramm="false" ${disabled ? { disabled } : ''} ${maxCharacters ? { maxlength: maxCharacters } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] !== undefined && holdingPen[property] !== null ? holdingPen[property] : ''}" onkeyup=${e => this.onkeyup && this.onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); this.onchange && this.onchange(e) }} oninput=${e => { change({ e, holdingPen, property, label: styles.label }); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${pattern ? { pattern } : ''} ${type.toLowerCase() === 'number' ? { step: determineStep(type) } : ''} />`
 
     if (autofocus) {
       input.autofocus = true
