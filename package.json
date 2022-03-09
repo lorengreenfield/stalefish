@@ -1,15 +1,13 @@
 {
   "name": "stalefish",
-  "version": "6.2.1",
+  "version": "7.0.0",
   "description": "Simple function based component library for halfcab tagged template literals",
   "main": "index.mjs",
   "module": "index.mjs",
   "jsnext:main": "index.mjs",
-  "@std/esm": true,
-  "esm": true,
   "scripts": {
     "test": "npm run test:lint",
-    "test:lint": "standard \"**/*.mjs\" --fix",
+    "test:lint": "standard \"**/*.mjs\"",
     "npm-publish": "npm publish",
     "versionbump:fix": "npm version patch --no-git-tag-version",
     "versionbump:feature": "npm version minor --no-git-tag-version",
@@ -32,11 +30,8 @@
     "url": "https://github.com/lorengreenfield/stalefish/issues"
   },
   "homepage": "https://github.com/lorengreenfield/stalefish#readme",
-  "peerDependencies": {
-    "halfcab": "^12.0.1"
-  },
   "devDependencies": {
-    "halfcab": "^12.0.1",
+    "halfcab": "^13.0.5",
     "standard": "^12.0.1"
   },
   "dependencies": {
