@@ -98,7 +98,7 @@ class Selectbox extends Component {
     } else {
       optionValue = option
     }
-    return html`<option value="${optionValue}" ${holdingPen[property] === optionValue ? { selected: 'true' } : ''}>${optionName || optionValue}</option>`
+    return html`<option value="${optionValue}" ${holdingPen[property] == optionValue ? { selected: 'true' } : ''}>${optionName || optionValue}</option>`
   })}
       </select>
     </label>
