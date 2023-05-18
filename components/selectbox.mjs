@@ -91,12 +91,14 @@ class Selectbox extends Component {
         <option value="${required ? 'Select an option' : ''}" ${!holdingPen[property] ? { selected: 'true' } : ''} ${required ? { disabled: 'disabled' } : ''}>${required ? 'Select an option' : ''}</option>
         ${options.map(option => {
     let optionValue
+    let optionName
     if (typeof option === 'object' && option.value !== undefined) {
       optionValue = option.value
+      optionName = option.name
     } else {
       optionValue = option
     }
-    return html`<option value="${optionValue}" ${holdingPen[property] === optionValue ? { selected: 'true' } : ''}>${optionValue}</option>`
+    return html`<option value="${optionValue}" ${holdingPen[property] == optionValue ? { selected: 'true' } : ''}>${optionName || optionValue}</option>`
   })}
       </select>
     </label>
