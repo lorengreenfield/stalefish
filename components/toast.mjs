@@ -1,5 +1,5 @@
 import { html, css, geb, Component } from 'halfcab'
-import close from './icons/close'
+import close from './icons/close.mjs'
 import * as deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
 

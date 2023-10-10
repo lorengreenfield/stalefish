@@ -2,7 +2,7 @@ import { html, css, fieldIsTouched, Component, LRU } from 'halfcab'
 import raw from 'nanohtml/raw'
 import * as deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
-import uploadIcon from './icons/upload'
+import uploadIcon from './icons/upload.mjs'
 
 let cache = new LRU(300)
 

@@ -1,7 +1,7 @@
 import { html, css, formField, fieldIsTouched, Component, LRU } from 'halfcab'
 import flatpickr from 'flatpickr'
-import calendarIcon from './icons/calendarIcon'
-import timeIcon from './icons/timeIcon'
+import calendarIcon from './icons/calendarIcon.mjs'
+import timeIcon from './icons/timeIcon.mjs'
 import clone from 'fast-clone'
 import * as deepDiff from 'deep-object-diff'
 

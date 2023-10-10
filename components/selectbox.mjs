@@ -1,5 +1,5 @@
 import { html, css, formField, fieldIsTouched, Component, LRU } from 'halfcab'
-import solidDown from './icons/solidDown'
+import solidDown from './icons/solidDown.mjs'
 import * as deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
 
