@@ -10,44 +10,49 @@ import clone from 'fast-clone'
 let cache = new LRU(300)
 
 let styles = css`
-  .panel h3 {
-    font-weight: bold;
-  }
-  
-  .wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-    box-sizing: border-box;
-  }
-  
-  .innerWrapper {
-    width: 100%;
-    max-width: 600px;
-  }
-  
-  .header {
-    display: flex; 
-    justify-content: left; 
-    background-color: #F9F9F9; 
-    align-content: center;
-    user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;
-    cursor: default;
-  }
+    .panel h3 {
+        font-weight: bold;
+    }
+
+    .wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .innerWrapper {
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: left;
+        background-color: #F9F9F9;
+        align-content: center;
+        user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;
+        cursor: default;
+    }
 `
 
 class Panel extends Component {
   createElement (args) {
     this.args = clone(args)
     this.headerAction = args.headerAction
+    this.dragStartAction = args.dragStartAction
+    this.dragOverAction = args.dragOverAction
+    this.dragEndAction = args.dragEndAction
+    this.dragLeaveAction = args.dragLeaveAction
+    this.draggable = args.draggable
     this.collapseToggleAction = args.collapseToggleAction
     this.closeAction = args.closeAction
 
     let { chevronStyle = null, on = true, content, heading = '', collapsed = false, thinBorder = false, light = false, optionsMenu } = args
 
     return on ? html`<div class="${styles.panel}" style='box-sizing: border-box; position: relative; top: 0; left: 0; text-align: left; box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12); border: solid ${thinBorder ? '3px' : '5px'} ${light ? '#DDD' : '#4371AD'}; background-color: #FBFBFB;'>
-      <div style="position: relative;">
+      <div style="position: relative;" ondragleave="${e => this.dragLeaveAction && this.dragLeaveAction(e)}" ondragend="${e => this.dragEndAction && this.dragEndAction(e)}" ondragover="${e => this.dragOverAction && this.dragOverAction(e)}" ondragstart="${e => this.dragStartAction && this.dragStartAction(e)}" draggable="${this.draggable ? 'true' : ''}" >
         ${heading ? html`<div class="${styles.header}" onclick=${e => this.headerAction && this.headerAction(e)}>
           <h3 style="margin: 12px; color: ${light ? '#555' : '#22487e'}">${heading}</h3>
       
@@ -56,13 +61,13 @@ class Panel extends Component {
               ${moreVertical({ colour: '#ccc' })}
             </div>
   ${dropdown({
-    side: 'right',
-    width: '200px',
-    margin: '5px',
-    visible: optionsMenu.on,
-    menuItems: optionsMenu.menuItems,
-    backgroundColour: 'white'
-  })}
+      side: 'right',
+      width: '200px',
+      margin: '5px',
+      visible: optionsMenu.on,
+      menuItems: optionsMenu.menuItems,
+      backgroundColour: 'white'
+    })}
           </div>` : ''}
         </div>` : ''}
       </div>

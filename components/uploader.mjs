@@ -1,5 +1,5 @@
 import { html, css, fieldIsTouched, Component, LRU } from 'halfcab'
-import raw from 'nanohtml/raw'
+import raw from 'nanohtml/raw.js'
 import * as deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
 import uploadIcon from './icons/upload.mjs'
@@ -26,7 +26,6 @@ let styles = css`
     padding: 5px 10px;
     z-index: 30;
     border-radius: 3px;
-    position: absolute; 
     right: 54px; 
     top: 0px;
   }
@@ -39,7 +38,6 @@ let styles = css`
     top: -6px;
     font-size: 2em;
     z-index: 30;
-    position: absolute;
   }
   
   .frame {
