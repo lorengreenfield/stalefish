@@ -1,5 +1,5 @@
 import { html, css, formField, fieldIsTouched, Component, LRU } from 'halfcab'
-import solidDown from './icons/solidDown'
+import solidDown from './icons/solidDown.mjs'
 import * as deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
 
@@ -98,7 +98,7 @@ class Selectbox extends Component {
     } else {
       optionValue = option
     }
-    return html`<option value="${optionValue}" ${holdingPen[property] == optionValue ? { selected: 'true' } : ''}>${optionName || optionValue}</option>`
+    return html`<option value="${optionValue}" ${holdingPen[property] == optionValue ? { selected: 'true' } : ''}>${optionName || optionValue}</option>` // eslint-disable-line
   })}
       </select>
     </label>
