@@ -61,13 +61,13 @@ class Panel extends Component {
               ${moreVertical({ colour: '#ccc' })}
             </div>
   ${dropdown({
-      side: 'right',
-      width: '200px',
-      margin: '5px',
-      visible: optionsMenu.on,
-      menuItems: optionsMenu.menuItems,
-      backgroundColour: 'white'
-    })}
+    side: 'right',
+    width: '200px',
+    margin: '5px',
+    visible: optionsMenu.on,
+    menuItems: optionsMenu.menuItems,
+    backgroundColour: 'white'
+  })}
           </div>` : ''}
         </div>` : ''}
       </div>
