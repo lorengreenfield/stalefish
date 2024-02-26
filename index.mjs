@@ -19,6 +19,7 @@ import down from './components/icons/down.mjs'
 import calendarIcon from './components/icons/calendarIcon.mjs'
 import timeIcon from './components/icons/timeIcon.mjs'
 import solidDown from './components/icons/solidDown.mjs'
+import sideDrawer from './components/sideDrawer.mjs'
 
 export {
   button,
@@ -41,5 +42,6 @@ export {
   calendarIcon,
   timeIcon,
   solidDown,
-  uploader
+  uploader,
+  sideDrawer
 }
