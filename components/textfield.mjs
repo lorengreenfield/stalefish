@@ -6,65 +6,65 @@ let cache = new LRU(300)
 
 // language=CSS
 let styles = css`
-  .textfield {
-    padding: 10px;
-    border: solid 5px #c9c9c9;
-    transition: border 0.3s;
-    outline: none;
-    width: 100%;
-    font-size: 18px;
-    border-radius: 0;
-    box-shadow: none !important;
-    font-weight: normal;
-    box-sizing: border-box;
-    font-family: inherit;
-    line-height: 1.4em;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    z-index: 20;
-    position: relative;
-  }
+    .textfield {
+        padding: 10px;
+        border: solid 5px #c9c9c9;
+        transition: border 0.3s;
+        outline: none;
+        width: 100%;
+        font-size: 18px;
+        border-radius: 0;
+        box-shadow: none !important;
+        font-weight: normal;
+        box-sizing: border-box;
+        font-family: inherit;
+        line-height: 1.4em;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        z-index: 20;
+        position: relative;
+    }
 
-  .label {
-    transition: opacity 0.75s;
-    border-top-right-radius: 5px;
-    border-top-left-radius: 5px;
-    user-select: none;
-    position: absolute;
-    top: -55px;
-    z-index: 10;
-  }
+    .label {
+        transition: opacity 0.75s;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        user-select: none;
+        position: absolute;
+        top: -55px;
+        z-index: 10;
+    }
 
-  .textfield.highlight {
-    border-color: #ff4081;
-  }
+    .textfield.highlight {
+        border-color: #ff4081;
+    }
 
-  .textfield:focus {
-    border: solid 5px #969696;
-  }
+    .textfield:focus {
+        border: solid 5px #969696;
+    }
 
-  .textfield::placeholder {
-    color: #999;
-  }
+    .textfield::placeholder {
+        color: #999;
+    }
 
-  .textfield.touched:invalid:not(:focus) {
-    border-color: red;
-  }
+    .textfield.touched:invalid:not(:focus) {
+        border-color: red;
+    }
 
-  .valueContext {
-    position: absolute;
-    color: #AAA;
-    font-size: 1.1em;
-    line-height: 1.2em;
-    font-weight: normal;
-    box-sizing: border-box;
-    top: -12px;
-    right: 7px;
-    background-color: #EEE;
-    padding: 10px;
-    z-index: 30;
-  }
+    .valueContext {
+        position: absolute;
+        color: #AAA;
+        font-size: 1.1em;
+        line-height: 1.2em;
+        font-weight: normal;
+        box-sizing: border-box;
+        top: -12px;
+        right: 7px;
+        background-color: #EEE;
+        padding: 10px;
+        z-index: 30;
+    }
 `
 
 function change ({ e, holdingPen, property, label }) {
@@ -114,14 +114,14 @@ class Textfield extends Component {
     }
 
     return html`
-      <div ${wrapperStyle ? { 'class': wrapperStyle } : ''} style="display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
-         <label style="width: 100%; text-align: left; position: relative; padding: 0;">
-         ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
-         ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}
-         ${input}
-         </label>
-      </div>
-      `
+        <div ${wrapperStyle ? { 'class': wrapperStyle } : ''} style="display: inline-block; width: calc(100% - 10px); margin: ${label ? '40' : '5'}px 5px 5px 5px;">
+            <label style="width: 100%; text-align: left; position: relative; padding: 0;">
+                ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
+                ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}
+                ${input}
+            </label>
+        </div>
+    `
   }
 
   update (args) {
