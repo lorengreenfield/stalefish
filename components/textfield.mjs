@@ -105,7 +105,7 @@ class Textfield extends Component {
     this.oninput = args.oninput
     this.onchange = args.onchange
 
-    let { highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, autofocus, valueContext, permanentTopPlaceholder = false, permanentTopLabel = false, disabled, maxCharacters, maxNumber, minNumber } = args
+    let { highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, autofocus, valueContext, permanentTopPlaceholder = false, permanentTopLabel = false, disabled, maxCharacters, maxNumber, minNumber, darkBackground } = args
 
     let input = html`<input data-gramm="false" ${disabled ? { disabled } : ''} ${maxNumber ? { max: maxNumber } : ''} ${minNumber ? { min: minNumber } : ''} ${maxCharacters ? { maxlength: maxCharacters } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] !== undefined && holdingPen[property] !== null ? holdingPen[property] : ''}" onkeyup=${e => this.onkeyup && this.onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); this.onchange && this.onchange(e) }} oninput=${e => { change({ e, holdingPen, property, label: styles.label }); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${pattern ? { pattern } : ''} ${type.toLowerCase() === 'number' ? { step: determineStep(type) } : ''} />`
 
@@ -117,7 +117,7 @@ class Textfield extends Component {
         <div ${wrapperStyle ? { 'class': wrapperStyle } : ''} style="display: inline-block; width: calc(100% - 10px); margin: ${label ? '40' : '5'}px 5px 5px 5px;">
             <label style="width: 100%; text-align: left; position: relative; padding: 0;">
                 ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
-                ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); ">${label}${required ? ' *' : ''}</span>` : ''}
+                ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>` : ''}
                 ${input}
             </label>
         </div>

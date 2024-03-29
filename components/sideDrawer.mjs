@@ -12,7 +12,7 @@ const styles = css`
         z-index: 20000;
         width: ${width}px;
         height: 100vh;
-        background-color: black;
+        background-color: rgba(0,0,0,0.9);
         color: white;
     }
 
@@ -34,7 +34,7 @@ const styles = css`
 
 export default ({ on, topPadding, closeIcon, closeAction, content }) => html`
     <div class="${styles.sideDrawer}"
-         style="opacity: ${on ? '0.9' : '0'};left: ${on ? '0px' : `calc(-1 * (${width}px + 10px))`};${topPadding ? `padding-top: ${topPadding}` : ''}">
+         style="opacity: ${on ? 1 : 0};left: ${on ? '0px' : `calc(-1 * (${width}px + 10px))`};${topPadding ? `padding-top: ${topPadding}` : ''}">
         <div style="width: 100%; position: relative;">
             <div class="${styles.closeButton}"
                  onclick=${e => closeAction && closeAction(e)}>${closeIcon}
