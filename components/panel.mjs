@@ -52,10 +52,10 @@ class Panel extends Component {
     let { chevronStyle = null, on = true, content, heading = '', collapsed = false, thinBorder = false, light = false, optionsMenu, tooltipHeading = false } = args
 
     return on ? html`<div ondragover=${e => {
-        if (this.dragOverAction) {
-            e.preventDefault()
-            e.dataTransfer.dropEffect = 'move'
-        }
+      if (this.dragOverAction) {
+        e.preventDefault()
+        e.dataTransfer.dropEffect = 'move'
+      }
     }} class="${styles.panel}" style='box-sizing: border-box; position: relative; top: 0; left: 0; text-align: left; box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12); border: solid ${thinBorder ? '3px' : '5px'} ${light ? '#DDD' : '#4371AD'}; background-color: #FBFBFB;'>
         <div title="${tooltipHeading && collapsed ? heading : ''}" style="position: relative;" ondragleave="${e => this.dragLeaveAction && this.dragLeaveAction(e)}" ondragend="${e => this.dragEndAction && this.dragEndAction(e)}" ondragover="${e => this.dragOverAction && this.dragOverAction(e)}" ondragstart="${e => this.dragStartAction && this.dragStartAction(e)}" draggable="${this.draggable ? 'true' : ''}" >
             ${heading ? html`<div class="${styles.header}" onclick=${e => this.headerAction && this.headerAction(e)}>
@@ -65,14 +65,14 @@ class Panel extends Component {
                     <div style="user-select: none; -ms-user-select: none; -webkit-user-select: none; -moz-user-select: none; cursor: pointer; width: 24px; height: 24px;" onclick=${optionsMenu.action} aria-label="Options menu">
                         ${moreVertical({ colour: '#ccc' })}
                     </div>
-                    ${dropdown({
-                        side: 'right',
-                        width: '200px',
-                        margin: '5px',
-                        visible: optionsMenu.on,
-                        menuItems: optionsMenu.menuItems,
-                        backgroundColour: 'white'
-                    })}
+${dropdown({
+    side: 'right',
+    width: '200px',
+    margin: '5px',
+    visible: optionsMenu.on,
+    menuItems: optionsMenu.menuItems,
+    backgroundColour: 'white'
+  })}
                 </div>` : ''}
             </div>` : ''}
         </div>
