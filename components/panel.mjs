@@ -7,7 +7,7 @@ import dropdown from './dropdown.mjs'
 import * as deepDiff from 'deep-object-diff'
 import clone from 'fast-clone'
 
-let cache = new LRU(300)
+let cache = new LRU(2000)
 
 let styles = css`
     .panel h3 {
