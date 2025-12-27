@@ -19,6 +19,8 @@ state.demo = state.demo || {
   select: '',
   dropdown: '',
   date: '',
+  dateDMY: '',
+  datePretty: '',
   time: '',
   dateTime: '',
   // Uploader demo state
@@ -134,6 +136,25 @@ const Showcase = () => html`
     property: 'date',
     label: 'Date'
   })}
+      </div>
+
+      <div class="${styles.card}">
+        <div class="${styles.title}">Date picker (format variations)</div>
+        <div class="${styles.row}">
+          ${sf.datePicker({
+    holdingPen: state.demo,
+    property: 'dateDMY',
+    label: 'Date (DD/MM/YYYY)',
+    format: 'DD/MM/YYYY'
+  })}
+          ${sf.datePicker({
+    holdingPen: state.demo,
+    property: 'datePretty',
+    label: 'Date (MMM D, YYYY)',
+    format: 'MMM D, YYYY'
+  })}
+        </div>
+        <div class="${styles.subtle}">Both fields store values as YYYY-MM-DD in state; formats affect display only.</div>
       </div>
 
       <div class="${styles.card}">

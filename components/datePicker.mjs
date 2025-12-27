@@ -27,6 +27,11 @@ const styles = css`
     color: #999;
   }
 
+  .noType {
+    caret-color: transparent;
+    user-select: none;
+  }
+
   .textfield::placeholder { color: #999; }
 
   .label {
@@ -101,6 +106,34 @@ function parseYMD (str) {
 function toYMD (date) {
   if (!(date instanceof Date)) return ''
   return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`
+}
+
+// Lightweight moment-style formatter for display only
+// Supported tokens: YYYY, YY, MMMM, MMM, MM, M, DD, D
+// This avoids adding a dependency while covering common needs
+const MONTH_NAMES_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const MONTH_NAMES_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+function formatDate (date, fmt = 'YYYY-MM-DD') {
+  if (!(date instanceof Date)) return ''
+  const Y = date.getFullYear()
+  const M = date.getMonth() + 1
+  const D = date.getDate()
+  // Build a token map and replace via a single regex pass to prevent
+  // cascading replacements (e.g., replacing D inside Dec from MMM).
+  const tokenMap = {
+    YYYY: String(Y),
+    YY: String(Y).slice(-2),
+    MMMM: MONTH_NAMES_FULL[M - 1],
+    MMM: MONTH_NAMES_SHORT[M - 1],
+    MM: pad2(M),
+    M: String(M),
+    DD: pad2(D),
+    D: String(D)
+  }
+  // Longest tokens first in alternation to ensure correct matching
+  const re = /(YYYY|MMMM|MMM|YY|MM|M|DD|D)/g
+  return fmt.replace(re, (match) => tokenMap[match] ?? match)
 }
 
 function ensureState (holdingPen, property) {
@@ -196,6 +229,7 @@ export default function datePicker ({
   disableClear = false,
   onchange,
   oninput,
+  format = 'YYYY-MM-DD',
   uniqueKey
 } = {}) {
   const wrapperId = ensureId(holdingPen, property, uniqueKey)
@@ -227,24 +261,14 @@ export default function datePicker ({
     return false
   }
 
-  const onInputChange = (e) => {
-    const v = (e?.target?.value || '').trim()
-    const d = parseYMD(v)
-    if (d) {
-      state.tmpDate = d
-      // Adjust calendar view to the typed date
-      state.viewMonth = d.getMonth()
-      state.viewYear = d.getFullYear()
-      commit()
-    } else {
-      oninput && oninput(e)
-    }
-  }
+  // No typing allowed for date input; interaction is via popup only
 
   const open = (e) => {
     if (disabled) return
     e && e.stopPropagation()
-    state.open = !state.open
+    // Make opening idempotent to avoid double-toggle on focus+click
+    if (state.open) return
+    state.open = true
     rerender()
     if (typeof window !== 'undefined' && state.open) {
       const closeOnOutside = (ev) => {
@@ -272,7 +296,11 @@ export default function datePicker ({
       </div>`
     : ''
 
-  const displayValue = currentStr || ''
+  const displayValue = (() => {
+    const d = parseYMD(currentStr)
+    if (!d) return ''
+    return formatDate(d, format || 'YYYY-MM-DD')
+  })()
 
   return html`
     <div id="${wrapperId}" class="${wrapperStyle}" style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
@@ -280,10 +308,10 @@ export default function datePicker ({
         ${label ? html`<span class="${styles.label}" style="opacity: ${(holdingPen && (holdingPen[property] === 0 || holdingPen[property])) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
         ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${clearValue}>clear</div>` : ''}
         <div class="${styles.icon}">${calendarIcon({ colour: '#ccc', width: 20, height: 20 })}</div>
-        <input data-gramm="false" ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${styles.withRightIcon} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ${required ? { required: 'required' } : ''}
+        <input data-gramm="false" ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : 'cursor: pointer;'}" class="${styles.textfield} ${styles.noType} ${styles.withRightIcon} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ${required ? { required: 'required' } : ''}
           onclick=${open}
-          onchange=${onInputChange}
-          oninput=${onInputChange}
+          onfocus=${open}
+          readonly
           placeholder="${(placeholder || 'Date') + (required ? ' *' : '')}"
           type="text" ${pattern ? { pattern } : ''}
           .value=${displayValue} data-input />

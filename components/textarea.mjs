@@ -2,6 +2,7 @@ import { html, css, formField, fieldIsTouched } from 'halfcab'
 
 let styles = css`
   .textarea {
+    color: #999;
     padding: 10px;
     border: solid 5px #c9c9c9;
     transition: border 0.3s;
