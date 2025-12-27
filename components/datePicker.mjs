@@ -81,6 +81,15 @@ const styles = css`
   .monthLabel { position: relative; top: -2px; font-weight: 500; }
   .arrowIcon { display: inline-block; width: 13px; height: 13px; color: #c9c9c9; line-height: 0; }
   .arrowIcon > svg { display: block; width: 13px; height: 13px; }
+  .yearWrap { display: inline-flex; align-items: center; gap: 8px; }
+  .yearNum { color: #787878; min-width: 3ch; text-align: right; }
+  .yearControls { display: inline-flex; flex-direction: column; align-items: center; gap: 0; margin-left: 2px; }
+  .yearBtn { background: transparent; border: none; cursor: pointer; padding: 0; line-height: 1; width: 18px; height: 14px; display: flex; align-items: center; justify-content: center; }
+  .yearBtn + .yearBtn { margin-top: -2px; }
+  .yearBtn:focus { outline: none; }
+  .yearBtn:focus-visible { outline: 2px solid #c9c9c9; outline-offset: 2px; }
+  .yearArrowIcon { display: block; width: 12px; height: 12px; color: #c9c9c9; line-height: 0; }
+  .yearArrowIcon > svg { display: block; width: 12px; height: 12px; }
   .weekHead { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 2px 6px; font-size: 12px; opacity: 0.8; }
   .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 0 6px 6px; }
 `
@@ -183,7 +192,7 @@ function getMonthMatrix (year, month) {
   return cells
 }
 
-function buildCalendarUI ({ state, today, onPickDay, onPrevMonth, onNextMonth }) {
+function buildCalendarUI ({ state, today, onPickDay, onPrevMonth, onNextMonth, onPrevYear, onNextYear }) {
   const y = state.viewYear
   const m = state.viewMonth
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -198,7 +207,20 @@ function buildCalendarUI ({ state, today, onPickDay, onPrevMonth, onNextMonth })
       <button type="button" class="${styles.navBtn}" onclick=${onPrevMonth} aria-label="Previous month">
         <span class="${styles.arrowIcon}" style="transform: rotate(90deg);">${solidDown({ colour: '#ccc' })}</span>
       </button>
-      <div class="${styles.monthLabel}">${monthNames[m]} ${y}</div>
+      <div class="${styles.monthLabel}">
+        <span>${monthNames[m]}</span>
+        <span class="${styles.yearWrap}" aria-label="Year controls">
+          <span class="${styles.yearNum}">${y}</span>
+          <span class="${styles.yearControls}">
+            <button type="button" class="${styles.yearBtn}" onclick=${onNextYear} aria-label="Next year">
+              <span class="${styles.yearArrowIcon}" style="transform: rotate(180deg);">${solidDown({ colour: '#ccc' })}</span>
+            </button>
+            <button type="button" class="${styles.yearBtn}" onclick=${onPrevYear} aria-label="Previous year">
+              <span class="${styles.yearArrowIcon}" style="transform: rotate(0deg);">${solidDown({ colour: '#ccc' })}</span>
+            </button>
+          </span>
+        </span>
+      </div>
       <button type="button" class="${styles.navBtn}" onclick=${onNextMonth} aria-label="Next month">
         <span class="${styles.arrowIcon}" style="transform: rotate(270deg);">${solidDown({ colour: '#ccc' })}</span>
       </button>
@@ -291,7 +313,9 @@ export default function datePicker ({
           today: new Date(),
           onPickDay: (d) => { state.tmpDate = new Date(state.viewYear, state.viewMonth, d); commit() },
           onPrevMonth: () => { if (state.viewMonth === 0) { state.viewMonth = 11; state.viewYear -= 1 } else { state.viewMonth -= 1 }; rerender() },
-          onNextMonth: () => { if (state.viewMonth === 11) { state.viewMonth = 0; state.viewYear += 1 } else { state.viewMonth += 1 }; rerender() }
+          onNextMonth: () => { if (state.viewMonth === 11) { state.viewMonth = 0; state.viewYear += 1 } else { state.viewMonth += 1 }; rerender() },
+          onPrevYear: () => { state.viewYear -= 1; rerender() },
+          onNextYear: () => { state.viewYear += 1; rerender() }
         })}
       </div>`
     : ''
