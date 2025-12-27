@@ -1,11 +1,6 @@
-import { html, css, formField, fieldIsTouched, Component, LRU } from 'halfcab'
-import * as deepDiff from 'deep-object-diff'
-import clone from 'fast-clone'
-
-let cache = new LRU(300)
-
+import { html, css, formField, fieldIsTouched } from 'halfcab'
 // language=CSS
-let styles = css`
+const styles = css`
     .textfield {
         padding: 10px;
         border: solid 5px #c9c9c9;
@@ -24,6 +19,7 @@ let styles = css`
         appearance: none;
         z-index: 20;
         position: relative;
+        color: #999;
     }
 
     .label {
@@ -68,9 +64,9 @@ let styles = css`
 `
 
 function change ({ e, holdingPen, property, label }) {
-  let ff = formField(holdingPen, property)(e)
-  let closestLabel = e.target.closest('label')
-  let labelEl = closestLabel.querySelector(label.selector)
+  const ff = formField(holdingPen, property)(e)
+  const closestLabel = e.target.closest('label')
+  const labelEl = closestLabel.querySelector(label.selector)
   if (labelEl) {
     if (holdingPen[property] === 0 || holdingPen[property]) {
       labelEl.style.opacity = 1
@@ -83,73 +79,40 @@ function change ({ e, holdingPen, property, label }) {
 }
 
 function determineType (type) {
-  if (type.toLowerCase() === 'float' || type.toLowerCase() === 'integer') {
-    return 'number'
-  }
+  // Normalize and guard against undefined/null/non-string values
+  const t = (typeof type === 'string' ? type : (type != null ? String(type) : 'text'))
+  const tl = t.toLowerCase()
 
-  return type || 'input'
+  if (tl === 'float' || tl === 'integer') return 'number'
+  if (tl === 'string') return 'text'
+  if (tl === 'input') return 'text'
+  return t || 'text'
 }
 
 function determineStep (type) {
-  if (type.toLowerCase() === 'float' || type.toLowerCase() === 'number') {
-    return '0.1'
-  }
-
+  const tl = typeof type === 'string' ? type.toLowerCase() : ''
+  if (tl === 'float' || tl === 'number') return '0.1'
   return '1'
 }
 
-class Textfield extends Component {
-  createElement (args) {
-    this.args = clone(args)
-    this.onkeyup = args.onkeyup
-    this.oninput = args.oninput
-    this.onchange = args.onchange
+export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, autofocus, valueContext, permanentTopPlaceholder = false, permanentTopLabel = false, disabled, maxCharacters, maxNumber, minNumber, darkBackground, onkeyup, oninput, onchange }) => {
+  const normalizedType = determineType(type)
+  const isColor = normalizedType === 'color'
+  const isNumber = normalizedType === 'number'
 
-    let { highlightBorder = false, wrapperStyle = null, holdingPen, label, placeholder, property, required, pattern, type, autofocus, valueContext, permanentTopPlaceholder = false, permanentTopLabel = false, disabled, maxCharacters, maxNumber, minNumber, darkBackground } = args
+  const input = html`<input data-gramm="false" ${disabled ? { disabled } : ''} ${maxNumber ? { max: maxNumber } : ''} ${minNumber ? { min: minNumber } : ''} ${maxCharacters ? { maxlength: maxCharacters } : ''} style="${isColor ? 'height: 50px; padding: 2px 3px;' : ''}${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] !== undefined && holdingPen[property] !== null ? holdingPen[property] : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); onchange && onchange(e) }} oninput=${e => { change({ e, holdingPen, property, label: styles.label }); oninput && oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${normalizedType}" ${pattern ? { pattern } : ''} ${isNumber ? { step: determineStep(normalizedType) } : ''} />`
 
-    let input = html`<input data-gramm="false" ${disabled ? { disabled } : ''} ${maxNumber ? { max: maxNumber } : ''} ${minNumber ? { min: minNumber } : ''} ${maxCharacters ? { maxlength: maxCharacters } : ''} style="${type === 'color' ? 'height: 50px; padding: 2px 3px;' : ''}${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}" value="${holdingPen[property] !== undefined && holdingPen[property] !== null ? holdingPen[property] : ''}" onkeyup=${e => this.onkeyup && this.onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); this.onchange && this.onchange(e) }} oninput=${e => { change({ e, holdingPen, property, label: styles.label }); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" type="${determineType(type)}" ${pattern ? { pattern } : ''} ${type.toLowerCase() === 'number' ? { step: determineStep(type) } : ''} />`
-
-    if (autofocus) {
-      input.autofocus = true
-    }
-
-    return html`
-        <div ${wrapperStyle ? { 'class': wrapperStyle } : ''} style="display: inline-block; width: calc(100% - 10px); margin: ${label ? '40' : '5'}px 5px 5px 5px;">
-            <label style="width: 100%; text-align: left; position: relative; padding: 0;">
-                ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
-                ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>` : ''}
-                ${input}
-            </label>
-        </div>
-    `
+  if (autofocus) {
+    input.autofocus = true
   }
 
-  update (args) {
-    let diff = deepDiff.diff(this.args, args)
-    Object.keys(diff).forEach(key => {
-      if (typeof diff[key] === 'function') {
-        this[key] = args[key]
-      }
-    })
-    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
-  }
+  return html`
+      <div ${wrapperStyle ? { class: wrapperStyle } : ''} style="display: inline-block; width: calc(100% - 10px); margin: ${label ? '40' : '5'}px 5px 5px 5px;">
+          <label style="width: 100%; text-align: left; position: relative; padding: 0;">
+              ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
+              ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>` : ''}
+              ${input}
+          </label>
+      </div>
+  `
 }
-
-function textfield (args) {
-  let instance
-  if (args.uniqueKey) {
-    let found = cache.get(args.uniqueKey)
-    if (found) {
-      instance = found
-    } else {
-      instance = new Textfield()
-      cache.set(args.uniqueKey, instance)
-    }
-    return instance.render(args)
-  } else {
-    instance = new Textfield()
-    return instance.createElement(args)
-  }
-}
-
-export default args => textfield(args)

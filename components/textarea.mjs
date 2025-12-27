@@ -1,8 +1,4 @@
-import { html, css, formField, fieldIsTouched, Component, LRU } from 'halfcab'
-import * as deepDiff from 'deep-object-diff'
-import clone from 'fast-clone'
-
-let cache = new LRU(300)
+import { html, css, formField, fieldIsTouched } from 'halfcab'
 
 let styles = css`
   .textarea {
@@ -59,51 +55,14 @@ function change ({ e, holdingPen, property, label }) {
   return ff
 }
 
-class Textarea extends Component {
-  createElement (args) {
-    this.args = clone(args)
-    this.onchange = args.onchange
-    this.oninput = args.oninput
+export default ({ holdingPen, label, placeholder, property, required, pattern, onkeyup, autofocus, permanentTopPlaceholder = false, permanentTopLabel = false, disabled, darkBackground, onchange, height, oninput, element }) => {
+  let input = html`<textarea data-gramm="false" style="${height ? `height: ${height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); onchange && onchange(e) }} oninput=${e => { height = window.getComputedStyle(element.querySelector('textarea')).height; change({ e, holdingPen, property, label: styles.label }); oninput && oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${pattern ? { pattern } : ''}>${holdingPen[property] || ''}</textarea>`
 
-    let { holdingPen, label, placeholder, property, required, pattern, onkeyup, autofocus, permanentTopPlaceholder = false, permanentTopLabel = false, disabled, darkBackground } = args
-
-    let input = html`<textarea data-gramm="false" style="${this.height ? `height: ${this.height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ${required ? { required: 'required' } : ''} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); this.onchange && this.onchange(e) }} oninput=${e => { this.height = window.getComputedStyle(this.element.querySelector('textarea')).height; change({ e, holdingPen, property, label: styles.label }); this.oninput && this.oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${pattern ? { pattern } : ''}>${holdingPen[property] || ''}</textarea>`
-
-    if (autofocus) {
-      input.autofocus = true
-    }
-
-    return html`
-       <label ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}width: 100%; text-align: left; display: inline-block;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>${input}</label>
-    `
+  if (autofocus) {
+    input.autofocus = true
   }
 
-  update (args) {
-    let diff = deepDiff.diff(this.args, args)
-    Object.keys(diff).forEach(key => {
-      if (typeof diff[key] === 'function') {
-        this[key] = args[key]
-      }
-    })
-    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
-  }
+  return html`
+     <label ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}width: 100%; text-align: left; display: inline-block;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>${input}</label>
+  `
 }
-
-function textarea (args) {
-  let instance
-  if (args.uniqueKey) {
-    let found = cache.get(args.uniqueKey)
-    if (found) {
-      instance = found
-    } else {
-      instance = new Textarea()
-      cache.set(args.uniqueKey, instance)
-    }
-    return instance.render(args)
-  } else {
-    instance = new Textarea()
-    return instance.createElement(args)
-  }
-}
-
-export default args => textarea(args)

@@ -12,6 +12,8 @@ import toolbar from './components/toolbar.mjs'
 import fab from './components/fab.mjs'
 import table from './components/table.mjs'
 import dateTimePicker from './components/dateTimePicker.mjs'
+import datePicker from './components/datePicker.mjs'
+import timePicker from './components/timePicker.mjs'
 import moreVertical from './components/icons/moreVertical.mjs'
 import close from './components/icons/close.mjs'
 import up from './components/icons/up.mjs'
@@ -39,6 +41,8 @@ export {
   fab,
   table,
   dateTimePicker,
+  datePicker,
+  timePicker,
   calendarIcon,
   timeIcon,
   solidDown,

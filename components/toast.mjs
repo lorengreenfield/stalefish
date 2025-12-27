@@ -1,7 +1,5 @@
-import { html, css, geb, Component } from 'halfcab'
+import { html, css, geb } from 'halfcab'
 import close from './icons/close.mjs'
-import * as deepDiff from 'deep-object-diff'
-import clone from 'fast-clone'
 
 let styles = css`
   .toast{
@@ -31,11 +29,8 @@ let styles = css`
   }
 `
 
-class Toast extends Component {
-  createElement (args) {
-    this.args = clone(args)
-    let { on, message, colour, multiline, closeAction } = args
-    return html`
+export default ({ on, message, colour, multiline, closeAction }) => {
+  return html`
       <div class="${styles.toastContainer}" onclick=${() => geb.broadcast('errorDismissed')} style="${on ? 'bottom: 0px;' : `bottom: -${multiline ? '100' : '50'}px; opacity: 0; `}${multiline ? 'height: 100px;' : ''}">
           <div class="${styles.toast}" style="background-color: ${colour || 'red'};">
               <div style="width: 100%; margin-left: 20px">${message}</div>
@@ -43,13 +38,4 @@ class Toast extends Component {
           </div>
       </div>
     `
-  }
-
-  update (args) {
-    let diff = deepDiff.diff(this.args, args)
-    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
-  }
 }
-
-let toast = new Toast()
-export default args => toast.render(args)

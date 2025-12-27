@@ -1,6 +1,4 @@
-import { html, css, Component } from 'halfcab'
-import clone from 'fast-clone'
-import * as deepDiff from 'deep-object-diff'
+import { html, css } from 'halfcab'
 
 let styles = css`
   .toolbar {
@@ -17,24 +15,10 @@ let styles = css`
   }
 `
 
-class Toolbar extends Component {
-  createElement (args) {
-    this.args = clone(args)
-    let { content } = args
-    return html`
-      <div class="${styles.toolbar}">
+export default ({ content }) => html`
+    <div class="${styles.toolbar}">
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-          ${typeof content === 'function' ? content() : content}
+            ${typeof content === 'function' ? content() : content}
         </div>
-      </div>
-    `
-  }
-
-  update (args) {
-    let diff = deepDiff.diff(this.args, args)
-    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
-  }
-}
-
-let toolbar = new Toolbar()
-export default args => toolbar.render(args)
+    </div>
+`

@@ -1,11 +1,7 @@
-import { html, css, formField, fieldIsTouched, Component, LRU } from 'halfcab'
+import { html, css, formField, fieldIsTouched } from 'halfcab'
 import solidDown from './icons/solidDown.mjs'
-import * as deepDiff from 'deep-object-diff'
-import clone from 'fast-clone'
 
-let cache = new LRU(300)
-
-let styles = css`
+const styles = css`
   .selectBox {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -66,29 +62,22 @@ let styles = css`
   }
 `
 
-class Selectbox extends Component {
-  createElement (args) {
-    this.args = clone(args)
-    this.onchange = args.onchange
-    this.oninput = args.oninput
+export default ({ wrapperStyle = null, holdingPen, label, property, options, required, disabled, onchange, oninput }) => {
+  const currentOption = options.find(option => {
+    if (typeof option === 'object') {
+      return option.value === holdingPen[property]
+    } else {
+      return option === holdingPen[property]
+    }
+  })
+  // text color is always #999 per latest design; placeholder state no longer affects color
 
-    let { wrapperStyle = null, holdingPen, label, property, options, required, disabled } = args
-
-    let currentOption = options.find(option => {
-      if (typeof option === 'object') {
-        return option.value === holdingPen[property]
-      } else {
-        return option === holdingPen[property]
-      }
-    })
-    this.currentOption = currentOption
-
-    return html`
-    <label style="text-align: left; position: relative; display: inline-block; width: 100%;" ${wrapperStyle ? { 'class': wrapperStyle } : ''}>
+  return html`
+    <label style="text-align: left; position: relative; display: inline-block; width: 100%;" ${wrapperStyle ? { class: wrapperStyle } : ''}>
       <div class="${styles.down}">${solidDown({ colour: '#ccc' })}</div>
       <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
-      <select ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); this.oninput && this.oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); this.onchange && this.onchange(e) }} onblur=${formField(holdingPen, property)}>
-        <option value="${required ? 'Select an option' : ''}" ${!holdingPen[property] ? { selected: 'true' } : ''} ${required ? { disabled: 'disabled' } : ''}>${required ? 'Select an option' : ''}</option>
+      <select ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}; color: #999;" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
+        <option value="${required ? 'Select an option' : ''}" ?selected=${!holdingPen[property]} ?disabled=${required} : ''}>${required ? 'Select an option' : ''}</option>
         ${options.map(option => {
     let optionValue
     let optionName
@@ -98,39 +87,9 @@ class Selectbox extends Component {
     } else {
       optionValue = option
     }
-    return html`<option value="${optionValue}" ${holdingPen[property] == optionValue ? { selected: 'true' } : ''}>${optionName || optionValue}</option>` // eslint-disable-line
+    return html`<option value="${optionValue}" ?selected=${holdingPen[property] == optionValue}>${optionName || optionValue}</option>` // eslint-disable-line
   })}
       </select>
     </label>
   `
-  }
-
-  update (args) {
-    let diff = deepDiff.diff(this.args, args)
-    Object.keys(diff).forEach(key => {
-      if (typeof diff[key] === 'function') {
-        this[key] = args[key]
-      }
-    })
-    return this.currentOption !== args.currentOption || !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
-  }
 }
-
-function selectbox (args) {
-  let instance
-  if (args.uniqueKey) {
-    let found = cache.get(args.uniqueKey)
-    if (found) {
-      instance = found
-    } else {
-      instance = new Selectbox()
-      cache.set(args.uniqueKey, instance)
-    }
-    return instance.render(args)
-  } else {
-    instance = new Selectbox()
-    return instance.createElement(args)
-  }
-}
-
-export default args => selectbox(args)

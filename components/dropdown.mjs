@@ -1,10 +1,6 @@
-import { html, css, Component, LRU } from 'halfcab'
-import * as deepDiff from 'deep-object-diff'
-import clone from 'fast-clone'
+import { html, css } from 'halfcab'
 
-let cache = new LRU(300)
-
-let styles = css`
+const styles = css`
 
   .dropdown {
     position: relative;
@@ -38,45 +34,35 @@ let styles = css`
   }
 `
 
-class Dropdown extends Component {
-  createElement (args) {
-    this.args = clone(args)
-    // TODO - for menu items where the action changes, we need to use this.item.action
-    let { menuItems, visible, side, width, margin, backgroundColour } = args
+export default ({ menuItems = [], options = [], visible = true, side, width, margin, backgroundColour }) => {
+  const items = Array.isArray(menuItems) ? menuItems : (Array.isArray(options) ? options : [])
+  const filtered = items.filter(item => {
+    if (!item) return false
+    if (!item.visibleUnder) return true
+    if (typeof window === 'undefined') return false
+    const limit = parseInt(item.visibleUnder, 10)
+    return Number.isFinite(limit) ? window.innerWidth <= limit : true
+  })
 
-    return html`
+  return html`
     <div tabindex="-1" class="${styles.dropdown}" style="position: relative; z-index: 100000; ${!visible ? 'display: none;' : ''}${side === 'right' ? 'float: right;' : ''}">
       <div class="${styles.dropdownContent}" style="background-color: ${backgroundColour || '#f9f9f9'}; ${side === 'right' ? 'right: 0;' : ''} width: ${width || '160px'};${margin ? `margin: ${margin};` : ''}">
-      ${menuItems.filter(item => !item.visibleUnder || (item.visibleUnder && typeof window !== 'undefined' && window.innerWidth <= parseInt(item.visibleUnder)))
-    .map(item => html`
-        ${item.separator ? html`<hr class="${styles.separator}">` : item.disabled === true ? html`<div style="opacity: 0.3; pointer-events: none;">${item.text}</div>` : html`<div style="cursor: pointer;" onclick=${item.action}>${item.text}</div>`}
-      `)}
+      ${filtered.map(item => {
+        const label = item.text != null ? item.text : (item.name != null ? item.name : '')
+        const disabled = item.disabled === true
+        const hasAction = typeof item.action === 'function'
+        if (item.separator) {
+          return html`<hr class="${styles.separator}">`
+        }
+        if (disabled) {
+          return html`<div style="opacity: 0.3; pointer-events: none;">${label}</div>`
+        }
+        if (hasAction) {
+          return html`<div style="cursor: pointer;" onclick=${item.action}>${label}</div>`
+        }
+        return html`<div>${label}</div>`
+      })}
       </div>
-    </div>   
-    `
-  }
-
-  update (args) {
-    let diff = deepDiff.diff(this.args, args)
-    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
-  }
+    </div>
+  `
 }
-
-function dropdown (args) {
-  let instance
-  if (args.uniqueKey) {
-    let found = cache.get(args.uniqueKey)
-    if (found) {
-      instance = found
-    } else {
-      instance = new Dropdown()
-      cache.set(args.uniqueKey, instance)
-    }
-    return instance.render(args)
-  } else {
-    instance = new Dropdown()
-    return instance.createElement(args)
-  }
-}
-
-export default args => dropdown(args)

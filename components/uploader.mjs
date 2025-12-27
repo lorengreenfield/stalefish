@@ -1,12 +1,7 @@
-import { html, css, fieldIsTouched, Component, LRU } from 'halfcab'
-import raw from 'nanohtml/raw.js'
-import * as deepDiff from 'deep-object-diff'
-import clone from 'fast-clone'
+import { html, css, fieldIsTouched } from 'halfcab'
 import uploadIcon from './icons/upload.mjs'
 
-let cache = new LRU(300)
-
-let styles = css`
+const styles = css`
   .uploader {
     margin: 0 10px 0 20px !important;
     position: absolute;
@@ -81,55 +76,49 @@ let styles = css`
     outline: red solid 2px;
   }
 `
+/**
+ * Functional uploader component compatible with halfcab's lit-html base.
+ * No internal instance caching; simply returns a template.
+ */
+export default function uploader (args) {
+  const {
+    wrapperStyle,
+    holdingPen,
+    label,
+    property,
+    required,
+    disabled,
+    accept,
+    imagePreview,
+    disableClear,
+    placeholder,
+    permanentTopLabel,
+    permanentTopPlaceholder,
+    textPreview,
+    progress,
+    onchange,
+    onclear
+  } = args
 
-class Uploader extends Component {
-  createElement (args) {
-    this.args = clone(args)
-    this.onchange = args.onchange
-    this.onclear = args.onclear
-    let { wrapperStyle, holdingPen, label, property, required, disabled, accept, imagePreview, disableClear, placeholder, permanentTopLabel, permanentTopPlaceholder, textPreview, progress } = args
+  const uploaderEl = html`<input data-gramm="false" ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.uploader} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onchange=${onchange} type="file" ${required ? { required: 'required' } : ''} ${accept ? { accept } : ''} hidden />`
 
-    let uploaderEl = html`<input data-gramm="false" ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.uploader} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onchange=${this.onchange} type="file" ${required ? { required: 'required' } : ''} ${accept ? { accept } : ''} hidden />`
-
-    return html` 
-      <div ${wrapperStyle ? { 'class': wrapperStyle } : ''} style="display: inline-block; width: 100%; margin-top: 36px;">
-         <label style="width: 100%; text-align: left; position: relative; padding: 0; cursor: pointer;">
-         ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0};">${label}${required ? ' *' : ''}</span>` : ''}
-        <span class="${styles.frame}">${!holdingPen[property] ? html`${placeholder}${required ? ' *' : ''}` : !imagePreview ? textPreview || holdingPen[property] : raw('&nbsp;')}${uploaderEl}<span style="opacity: 0.6; margin-left: -12px; width: ${progress}%; position: absolute; background-color: #EEE; height: 100%;"></span></span>
+  return html`
+    <div ${wrapperStyle ? { class: wrapperStyle } : ''} style="display: inline-block; width: 100%; margin-top: 36px;">
+      <label style="width: 100%; text-align: left; position: relative; padding: 0; cursor: pointer;">
+        ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0};">${label}${required ? ' *' : ''}</span>` : ''}
+        <span class="${styles.frame}">
+          ${!holdingPen[property]
+            ? html`${placeholder}${required ? ' *' : ''}`
+            : !imagePreview
+              ? (textPreview || holdingPen[property])
+              : '\u00A0'}
+          ${uploaderEl}
+          <span style="opacity: 0.6; margin-left: -12px; width: ${progress}%; position: absolute; background-color: #EEE; height: 100%;"></span>
+        </span>
         ${imagePreview ? html`<img src="${imagePreview}" style="position: absolute; height: 35px; top: -9px; left: 20px; z-index: 30;"/>` : ''}
-  ${!disableClear ? html`<div class="${styles.clear}" onclick=${this.onclear}>clear</div>` : ''}
+        ${!disableClear ? html`<div class="${styles.clear}" onclick=${onclear}>clear</div>` : ''}
         <div class="${styles.icon}">${uploadIcon({ colour: '#ccc', width: 28, height: 28 })}</div>
-         </label>
-      </div>
-    `
-  }
-
-  update (args) {
-    let diff = deepDiff.diff(this.args, args)
-    Object.keys(diff).forEach(key => {
-      if (typeof diff[key] === 'function') {
-        this[key] = args[key]
-      }
-    })
-    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
-  }
+      </label>
+    </div>
+  `
 }
-
-function uploader (args) {
-  let instance
-  if (args.uniqueKey) {
-    let found = cache.get(args.uniqueKey)
-    if (found) {
-      instance = found
-    } else {
-      instance = new Uploader()
-      cache.set(args.uniqueKey, instance)
-    }
-    return instance.render(args)
-  } else {
-    instance = new Uploader()
-    return instance.createElement(args)
-  }
-}
-
-export default args => uploader(args)
