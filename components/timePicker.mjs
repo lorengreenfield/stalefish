@@ -219,7 +219,40 @@ export default function timePicker ({
   if (typeof state.tmpMinute !== 'number') state.tmpMinute = hm.min
 
   const stepMinute = (delta) => () => {
-    // roll minutes and hours together by delta minutes
+    // If stepping by 15 minutes, snap to quarters (00, 15, 30, 45) instead of adding to arbitrary minutes
+    if (minuteStep === 15) {
+      const dir = delta >= 0 ? 1 : -1
+      let h = Number(state.tmpHour) || 0
+      let m = Number(state.tmpMinute) || 0
+
+      // Clamp m into [0,59]
+      if (m < 0) m = 0
+      if (m > 59) m = 59
+
+      if (dir > 0) {
+        // Move to the next quarter strictly greater than current minutes
+        if (m < 15) m = 15
+        else if (m < 30) m = 30
+        else if (m < 45) m = 45
+        else { m = 0; h = (h + 1) % 24 }
+      } else {
+        // Move to the previous quarter strictly less than current minutes
+        if (m > 45) m = 45
+        else if (m > 30) m = 30
+        else if (m > 15) m = 15
+        else if (m > 0) m = 0
+        else { m = 45; h = (h + 24 - 1) % 24 }
+      }
+
+      state.tmpHour = h
+      state.tmpMinute = m
+      const valueStr = `${pad2(h)}:${pad2(m)}`
+      commitValue({ holdingPen, property, onchange, valueStr })
+      rerender()
+      return
+    }
+
+    // Default behavior: roll minutes and hours together by delta minutes
     const total = ((state.tmpHour * 60 + state.tmpMinute + delta) % (24 * 60) + (24 * 60)) % (24 * 60)
     state.tmpHour = Math.floor(total / 60)
     state.tmpMinute = total % 60
@@ -263,12 +296,170 @@ export default function timePicker ({
     const isCaretAtEnd = selStart === before.length && selEnd === selStart
     const inputDigitsLen = before.replace(/[^0-9]/g, '').length
 
-    // Special case: from-scratch entry of two hour digits should prefill minutes with 00
-    // so typing "12" immediately becomes "12:00" and the caret moves to the minutes tens.
-    const committedStr = holdingPen && property ? (holdingPen[property] || '') : ''
-    const fromScratch = (!committedStr) || before === ''
+    // If the current text already contains a colon, treat it as mask editing (HH:MM)
+    // Enforce max 2 digits per segment and perform true replacement for the edited segment.
+    if (before.includes(':')) {
+      const colonIdx = before.indexOf(':')
+      // If the user selected across the colon (or the whole value) and starts typing,
+      // treat it as a fresh entry so the first two digits go into hours, then minutes.
+      const selectionSpansColon = (selStart <= colonIdx) && (selEnd > colonIdx)
+      const typedChar0 = (typeof e.data === 'string' && e.data.length === 1 && /[0-9]/.test(e.data)) ? e.data : null
+      if (selectionSpansColon && typedChar0 && e && e.inputType === 'insertText') {
+        if (typeof inputEl?.value === 'string') {
+          inputEl.value = typedChar0
+          try {
+            if (typeof window !== 'undefined' && inputEl.setSelectionRange) {
+              const raf = (typeof window.requestAnimationFrame === 'function')
+                ? window.requestAnimationFrame.bind(window)
+                : (fn) => setTimeout(fn, 0)
+              raf(() => inputEl.setSelectionRange(1, 1))
+            }
+          } catch {}
+        }
+        oninput && oninput(e)
+        return
+      }
+      const left = before.slice(0, colonIdx)
+      const right = before.slice(colonIdx + 1)
+      const hRawDigits = (left.match(/[0-9]/g) || []).join('')
+      const mRawDigits = (right.match(/[0-9]/g) || []).join('')
+
+      // Determine which segment is being edited based on caret/selection
+      const targetIsMinutes = selEnd > colonIdx
+      const typedChar = (typeof e.data === 'string' && e.data.length === 1 && /[0-9]/.test(e.data)) ? e.data : null
+      const isInsertText = (e && e.inputType === 'insertText')
+
+      // Build baseline digits (truncate to max length 2, but we will overwrite precisely below)
+      const baseHours = hRawDigits.slice(0, 2)
+      const baseMinutes = mRawDigits.slice(0, 2)
+
+      // Helper to set value and caret within a segment
+      const commitMaskWithCaret = (hDigits, mDigits, caretInMinutesIdx) => {
+        const hText = hDigits
+        const mText = mDigits
+        const masked = `${hText}:${mText}`
+        if (typeof inputEl?.value === 'string' && inputEl.value !== masked) {
+          inputEl.value = masked
+        }
+        try {
+          if (typeof window !== 'undefined' && inputEl.setSelectionRange) {
+            const raf = (typeof window.requestAnimationFrame === 'function')
+              ? window.requestAnimationFrame.bind(window)
+              : (fn) => setTimeout(fn, 0)
+            raf(() => {
+              const pos = (caretInMinutesIdx != null)
+                ? Math.min(masked.length, masked.indexOf(':') + 1 + Math.max(0, caretInMinutesIdx))
+                : Math.min(masked.length, Math.max(0, hText.length))
+              inputEl.setSelectionRange(pos, pos)
+            })
+          }
+        } catch {}
+      }
+
+      // Overwrite semantics while typing single digits inside a segment
+      if (isInsertText && typedChar) {
+        if (targetIsMinutes) {
+          // The browser has already applied the typedChar to the input value at this point.
+          // So we should NOT re-insert it. Instead, read current digits and clamp to 2.
+          const minutesStart = colonIdx + 1
+          const relStart = Math.max(0, Math.min(2, selStart - minutesStart))
+          // Use digits as they exist after the browser edit
+          let mDigits = mRawDigits
+          // Keep at most 2 digits (prevents doubling like 12:44 when typing 124)
+          mDigits = mDigits.slice(0, 2)
+          // Place caret within minutes based on current caret relative position
+          const caretInMinutes = Math.min(2, Math.max(0, relStart))
+          commitMaskWithCaret(baseHours, mDigits, caretInMinutes)
+          oninput && oninput(e)
+          return
+        } else {
+          // Editing hours: same principle — do not re-insert the typedChar, just clamp
+          const hoursStart = 0
+          const relStart = Math.max(0, Math.min(2, selStart - hoursStart))
+          let hDigits = hRawDigits
+          hDigits = hDigits.slice(0, 2)
+          const hText = hDigits
+          const mText = baseMinutes
+          const masked = `${hText}:${mText}`
+          if (typeof inputEl?.value === 'string' && inputEl.value !== masked) {
+            inputEl.value = masked
+          }
+          try {
+            if (typeof window !== 'undefined' && inputEl.setSelectionRange) {
+              const raf = (typeof window.requestAnimationFrame === 'function')
+                ? window.requestAnimationFrame.bind(window)
+                : (fn) => setTimeout(fn, 0)
+              raf(() => {
+                const pos = Math.min(masked.length, Math.max(0, relStart))
+                inputEl.setSelectionRange(pos, pos)
+              })
+            }
+          } catch {}
+          oninput && oninput(e)
+          return
+        }
+      }
+
+      // Fallback for non-insertText events (paste, drag, IME, etc.):
+      // simply truncate to max 2 digits per segment from the left.
+      const hDigits = baseHours
+      const mDigits = baseMinutes
+
+      // Build masked text without forcing zero-padding during typing
+      const hText = hDigits
+      const mText = mDigits
+      const masked = `${hText}:${mText}`
+
+      // If both segments have 1–2 digits and caret at the end, allow immediate commit
+      const fullMaskAtEnd = /^\s*([0-9]{1,2}):([0-9]{1,2})\s*$/.test(masked) && isCaretAtEnd
+      if (fullMaskAtEnd) {
+        const mm = /^\s*([0-9]{1,2}):([0-9]{1,2})\s*$/.exec(masked)
+        let h = parseInt(mm[1], 10)
+        let min = parseInt(mm[2], 10)
+        if (!Number.isFinite(h)) h = 0
+        if (!Number.isFinite(min)) min = 0
+        if (h > 23) h = 23
+        if (min > 59) min = 59
+        const valueStr = `${pad2(h)}:${pad2(min)}`
+        if (typeof inputEl?.value === 'string' && inputEl.value !== valueStr) {
+          inputEl.value = valueStr
+        }
+        state.tmpHour = h
+        state.tmpMinute = min
+        commitValue({ holdingPen, property, onchange, valueStr })
+        rerender()
+        return
+      }
+
+      // Otherwise, reflect the truncated masked value and keep caret inside the edited segment
+      if (typeof inputEl?.value === 'string' && inputEl.value !== masked) {
+        inputEl.value = masked
+        try {
+          if (typeof window !== 'undefined' && inputEl.setSelectionRange) {
+            const raf = (typeof window.requestAnimationFrame === 'function')
+              ? window.requestAnimationFrame.bind(window)
+              : (fn) => setTimeout(fn, 0)
+            raf(() => {
+              if (targetIsMinutes) {
+                const start = (masked.indexOf(':') + 1)
+                inputEl.setSelectionRange(start + mText.length, start + mText.length)
+              } else {
+                const start = 0
+                inputEl.setSelectionRange(start + hText.length, start + hText.length)
+              }
+            })
+          }
+        } catch {}
+      }
+      oninput && oninput(e)
+      return
+    }
+
+    // Special case: entry of exactly two digits with no ':' present should prefill minutes with 00
+    // This should work even if the user previously used the arrow controls (i.e., not strictly "from scratch").
+    // Example: user clicks field (with any existing value), types "12" → becomes "12:00" and caret moves after the colon.
     const hasColon = before.indexOf(':') !== -1
-    if (fromScratch) {
+    {
       const digitsRaw = before.replace(/[^0-9]/g, '').slice(0, 4)
       if (digitsRaw.length === 2 && !hasColon) {
         let hh = parseInt(digitsRaw, 10)
@@ -339,6 +530,34 @@ export default function timePicker ({
     if (digits.length === 0) {
       // Treat empty as a clear action when leaving the field
       commitValue({ holdingPen, property, onchange, valueStr: '' })
+      rerender()
+      return
+    }
+
+    // If a colon is present, parse as HH:MM preserving intended segments to avoid hour shifting
+    if (hasColon) {
+      const parts = v.split(':')
+      const hDigits = (parts[0] || '').replace(/[^0-9]/g, '').slice(0, 2)
+      const mDigitsRaw = (parts[1] || '').replace(/[^0-9]/g, '').slice(0, 2)
+      if (hDigits.length === 0 && mDigitsRaw.length === 0) {
+        commitValue({ holdingPen, property, onchange, valueStr: '' })
+        rerender()
+        return
+      }
+      let h = parseInt(hDigits || '0', 10)
+      let m
+      if (mDigitsRaw.length === 0) m = 0
+      else if (mDigitsRaw.length === 1) m = parseInt(`0${mDigitsRaw}`, 10) // "2" → 02
+      else m = parseInt(mDigitsRaw, 10)
+      if (!Number.isFinite(h)) h = 0
+      if (!Number.isFinite(m)) m = 0
+      if (h > 23) h = 23
+      if (m > 59) m = 59
+      const valueStr = `${pad2(h)}:${pad2(m)}`
+      state.tmpHour = h
+      state.tmpMinute = m
+      commitValue({ holdingPen, property, onchange, valueStr })
+      if (e && e.target) e.target.value = valueStr
       rerender()
       return
     }
