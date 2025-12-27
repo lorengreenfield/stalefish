@@ -21,6 +21,10 @@ state.demo = state.demo || {
   date: '',
   time: '',
   dateTime: '',
+  // Uploader demo state
+  fileImage: '',
+  fileVideo: '',
+  filePdf: '',
   file: ''
 }
 
@@ -146,11 +150,57 @@ const Showcase = () => html`
         <div class="${styles.title}">Uploader</div>
         ${sf.uploader({
     holdingPen: state.demo,
-    property: 'file',
-    label: 'Upload a file',
-    placeholder: 'Choose a file',
+    property: 'fileImage',
+    label: 'Upload image',
+    placeholder: 'Choose/drop an image',
+    accept: '.jpg, .jpeg, .gif, .bmp, .tif, .tiff, .png, .svg',
     onchange: (e) => {
-      const f = e && e.target && e.target.files && e.target.files[0]
+      const files = (e && e.files) || (e && e.target && (e.target.files || e.target._droppedFiles))
+      const f = files && files[0]
+      state.demo.fileImage = f ? f.name : ''
+      rerender()
+    },
+    onclear: () => { state.demo.fileImage = ''; rerender() }
+  })}
+
+        ${sf.uploader({
+    holdingPen: state.demo,
+    property: 'fileVideo',
+    label: 'Upload video',
+    placeholder: 'Choose/drop a video',
+    accept: '.mxf, .mkv, .webm, .mov, .wmv, .mp4, .3gp, .avi, .mpg, .mpeg, .flv, .asx, .asf, .divx, .rm, .m1v, .m2v, .m4v',
+    onchange: (e) => {
+      const files = (e && e.files) || (e && e.target && (e.target.files || e.target._droppedFiles))
+      const f = files && files[0]
+      state.demo.fileVideo = f ? f.name : ''
+      rerender()
+    },
+    onclear: () => { state.demo.fileVideo = ''; rerender() }
+  })}
+
+        ${sf.uploader({
+    holdingPen: state.demo,
+    property: 'filePdf',
+    label: 'Upload PDF',
+    placeholder: 'Choose/drop a PDF',
+    accept: '.pdf',
+    onchange: (e) => {
+      const files = (e && e.files) || (e && e.target && (e.target.files || e.target._droppedFiles))
+      const f = files && files[0]
+      state.demo.filePdf = f ? f.name : ''
+      rerender()
+    },
+    onclear: () => { state.demo.filePdf = ''; rerender() }
+  })}
+
+        ${sf.uploader({
+    holdingPen: state.demo,
+    property: 'file',
+    label: 'Upload any file',
+    placeholder: 'Choose/drop a file',
+    onchange: (e) => {
+      const files = (e && e.files) || (e && e.target && (e.target.files || e.target._droppedFiles))
+      const f = files && files[0]
       state.demo.file = f ? f.name : ''
       rerender()
     },
