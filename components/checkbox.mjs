@@ -30,10 +30,10 @@ let styles = css`
 `
 
 export default ({ wrapperStyle, holdingPen, label, property, required, indeterminate, disabled, darkBackground, onchange }) => {
-  let checkboxEl = html`<input data-gramm="false" ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ?checked=${holdingPen[property] === true} onchange=${e => {
+  let checkboxEl = html`<input data-gramm="false" ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.checkbox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" value="${holdingPen[property] === true ? 'true' : null}" ?checked=${holdingPen[property] === true} onchange=${e => {
     formField(holdingPen, property)(e)
     onchange && onchange(e)
-  }} type="checkbox" ${required ? { required: 'required' } : ''} />`
+  }} type="checkbox" ?required=${required} />`
 
   checkboxEl.indeterminate = indeterminate || false
 

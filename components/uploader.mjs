@@ -14,6 +14,28 @@ const styles = css`
     top: 16.5px;
   }
   
+  .placeholder {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: block;
+    /* Leave room for the upload icon and the clear button (approx +40px) */
+    padding-right: 84px;
+  }
+
+  .value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: block;
+    /* Leave room for the upload icon and the clear button (approx +40px) */
+    padding-right: 84px;
+  }
+
   .clear {
     cursor: pointer;
     position: absolute;
@@ -454,23 +476,140 @@ export default function uploader (args) {
     }
   }
 
-  const uploaderEl = html`<input data-gramm="false" ${disabled ? { disabled } : ''} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.uploader} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onchange=${onchange} type="file" ${required ? { required: 'required' } : ''} ${accept ? { accept } : ''} hidden />`
+  // Wrap input change to enforce accept-based validation for normal selections (not just drag/drop)
+  const handleInputChange = (e) => {
+    try {
+      const input = e && e.currentTarget
+      const frame = input && (input.closest ? input.closest(`.${styles.frame}`) : input.parentElement)
+      const files = input && input.files
+      // If no accept rules, pass through
+      if (!acceptList || acceptList.length === 0) {
+        if (typeof onchange === 'function') onchange(e)
+        return
+      }
+
+      let ok = true
+      if (files && files.length) {
+        for (let i = 0; i < files.length; i++) {
+          if (!fileMatches(files[i])) { ok = false; break }
+        }
+      } else {
+        // No files selected (cancel) — allow through to consumer if desired
+        ok = true
+      }
+
+      if (ok) {
+        if (typeof onchange === 'function') onchange(e)
+      } else {
+        // Visual feedback similar to invalid drop
+        if (frame) {
+          addDragClass(frame, styles.dragReject)
+          setTimeout(() => clearDragClasses(frame), 180)
+        }
+        // Clear the selection so no invalid value sticks
+        try { input.value = '' } catch {}
+      }
+    } catch (err) {
+      // On unexpected errors, fall back to default handler to avoid blocking
+      if (typeof onchange === 'function') onchange(e)
+    }
+  }
+
+  // Normalize accept list for both native input filtering and our own logic
+  const acceptAttr = (typeof accept === 'string' && accept)
+    ? accept.split(',').map(s => s.trim()).filter(Boolean).join(',')
+    : ''
+
+  // Note: set accept as a literal attribute to ensure the browser sees it
+  const uploaderEl = html`<input data-gramm="false" ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed;' : ''}" class="${styles.uploader} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onchange=${handleInputChange} type="file" ?required=${required} accept=${acceptAttr} hidden />`
+
+  // Show a transient "Opening files..." message while the native file dialog is opening
+  const showOpeningWhileChoosing = (inputEl) => {
+    try {
+      if (!inputEl || disabled) return
+      const frame = inputEl.closest ? inputEl.closest(`.${styles.frame}`) : inputEl.parentElement
+      if (!frame || frame.dataset.opening === '1') return
+      const placeholderEl = frame.querySelector(`.${styles.placeholder}`)
+      if (!placeholderEl) return // only show when placeholder is currently visible
+
+      frame.dataset.opening = '1'
+      if (!placeholderEl.dataset.originalText) placeholderEl.dataset.originalText = placeholderEl.textContent || ''
+      placeholderEl.textContent = 'Opening files...'
+
+      const clearOpening = () => {
+        try {
+          delete frame.dataset.opening
+          if (placeholderEl && placeholderEl.dataset && typeof placeholderEl.dataset.originalText === 'string') {
+            placeholderEl.textContent = placeholderEl.dataset.originalText
+          }
+        } catch {}
+        window.removeEventListener('focus', onWindowFocus, true)
+      }
+
+      const onWindowFocus = () => {
+        // When the file dialog closes (open or cancel), window regains focus
+        // Use a micro delay to ensure order after possible change event
+        setTimeout(clearOpening, 0)
+      }
+
+      // Clear once a file is selected or dialog is dismissed
+      inputEl.addEventListener('change', clearOpening, { once: true })
+      window.addEventListener('focus', onWindowFocus, true)
+    } catch {}
+  }
 
   return html`
     <div ${wrapperStyle ? { class: wrapperStyle } : ''} style="display: inline-block; width: 100%; margin-top: 36px;">
       <label style="width: 100%; text-align: left; position: relative; padding: 0; cursor: pointer;">
         ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0};">${label}${required ? ' *' : ''}</span>` : ''}
-        <span class="${styles.frame}" data-accept="${accept || ''}" data-disabled="${!!disabled}" ondragenter=${onDragEnter} ondragover=${onDragOver} ondragleave=${onDragLeave} ondrop=${onDrop}>
+        <span class="${styles.frame}" data-accept="${acceptAttr || ''}" data-disabled="${!!disabled}" ondragenter=${onDragEnter} ondragover=${onDragOver} ondragleave=${onDragLeave} ondrop=${onDrop} onmousedown=${(e) => {
+          if (disabled) return
+          try {
+            const frame = e.currentTarget
+            const input = frame && frame.querySelector('input[type="file"]')
+            showOpeningWhileChoosing(input)
+          } catch {}
+        }}>
           ${!holdingPen[property]
-            ? html`${placeholder}${required ? ' *' : ''}`
+            ? html`<span class="${styles.placeholder}">${placeholder}${required ? ' *' : ''}</span>`
             : !imagePreview
-              ? (textPreview || holdingPen[property])
+              ? html`<span class="${styles.value}">${textPreview || holdingPen[property]}</span>`
               : '\u00A0'}
           ${uploaderEl}
           <span style="opacity: 0.6; margin-left: -12px; width: ${progress}%; position: absolute; background-color: #EEE; height: 100%;"></span>
         </span>
         ${imagePreview ? html`<img src="${imagePreview}" style="position: absolute; height: 35px; top: -9px; left: 20px; z-index: 30;"/>` : ''}
-        ${!disableClear ? html`<div class="${styles.clear}" onclick=${onclear}>clear</div>` : ''}
+        ${!disableClear
+          ? html`
+          <div
+            class="${styles.clear}"
+            role="button"
+            tabindex="0"
+            onclick=${(e) => {
+              // Prevent the label's default behavior of triggering the hidden file input
+              e.preventDefault()
+              e.stopPropagation()
+              // Only clear when there is a value; otherwise do nothing
+              if (holdingPen && Object.prototype.hasOwnProperty.call(holdingPen, property) && holdingPen[property]) {
+                if (typeof onclear === 'function') onclear(e)
+              }
+            }}
+            onkeydown=${(e) => {
+              // Also handle keyboard activation without triggering the file chooser
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                e.stopPropagation()
+                if (holdingPen && Object.prototype.hasOwnProperty.call(holdingPen, property) && holdingPen[property]) {
+                  if (typeof onclear === 'function') onclear(e)
+                }
+              }
+            }}
+            aria-disabled=${!holdingPen || !holdingPen[property]}
+          >
+            clear
+          </div>
+        `
+          : ''}
         <div class="${styles.icon}">${uploadIcon({ colour: '#ccc', width: 28, height: 28 })}</div>
       </label>
     </div>

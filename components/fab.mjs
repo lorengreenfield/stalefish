@@ -69,7 +69,7 @@ export default ({ diameter, text, action, colour, disabled, on, icon, menuItems,
   `)}</div>` : ''}
   </div>
   <button class="${styles.fab}" onclick=${e => action(e)} 
-  ${disabled ? 'disabled' : ''}
+  ?disabled=${disabled}
   style="width: ${diameter}; height: ${diameter};background-color: ${colour};opacity: ${on ? '1' : '0'};bottom: ${on ? '15px' : `calc(-1 * (${diameter} + 10px))`}; ${icon ? 'padding-top: 2px' : ''};">${icon || text}</button>
 </div>
 `
