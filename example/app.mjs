@@ -22,6 +22,9 @@ state.demo = state.demo || {
   dateDMY: '',
   datePretty: '',
   time: '',
+  // Pre-populated demo fields
+  timePre: '12:15',
+  datePre: '2025-12-28',
   dateTime: '',
   // Uploader demo state
   fileImage: '',
@@ -139,6 +142,16 @@ const Showcase = () => html`
       </div>
 
       <div class="${styles.card}">
+        <div class="${styles.title}">Date picker (pre-populated)</div>
+        ${sf.datePicker({
+    holdingPen: state.demo,
+    property: 'datePre',
+    label: 'Date (starts with today)'
+  })}
+        <div class="${styles.subtle}">Initial value set to 2025-12-28 for testing.</div>
+      </div>
+
+      <div class="${styles.card}">
         <div class="${styles.title}">Date picker (format variations)</div>
         <div class="${styles.row}">
           ${sf.datePicker({
@@ -165,6 +178,17 @@ const Showcase = () => html`
     label: 'Time',
     minuteStep: 15
   })}
+      </div>
+
+      <div class="${styles.card}">
+        <div class="${styles.title}">Time picker (pre-populated 12:15)</div>
+        ${sf.timePicker({
+    holdingPen: state.demo,
+    property: 'timePre',
+    label: 'Time (starts at 12:15)',
+    minuteStep: 15
+  })}
+        <div class="${styles.subtle}">Use the arrows to verify the first step respects the pre-loaded value.</div>
       </div>
 
       <div class="${styles.card}">

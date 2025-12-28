@@ -171,7 +171,12 @@ function ensureState (holdingPen, property) {
   }
   const map = holdingPen[STATE_SYMBOL]
   if (!map[property]) {
-    map[property] = { tmpHour: 0, tmpMinute: 0 }
+    // Initialize without numeric defaults so the first render can
+    // derive tmpHour/tmpMinute from any pre-populated value in holdingPen[property].
+    // Using numbers here (e.g. 0) prevents the later typeof checks from
+    // pulling in the server-loaded time, which caused the initial arrow click
+    // to jump from 00:00 to 00:15/23:45 regardless of the actual starting time.
+    map[property] = { tmpHour: undefined, tmpMinute: undefined }
   }
   return map[property]
 }
