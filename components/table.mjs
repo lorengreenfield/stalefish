@@ -1,22 +1,22 @@
 import { html, css } from 'halfcab'
 
 let styles = css`
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  .th {
-    text-align: left;
-    background-color: #F9F9F9;
-  }
-  
-  .thRow {
-    background-color: #F9F9F9;
-  }
-  
-  .tr:nth-child(even) {
-    background-color: #FDFDFD;
-  }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .th {
+        text-align: left;
+        background-color: #F9F9F9;
+    }
+
+    .thRow {
+        background-color: #F9F9F9;
+    }
+
+    .tr:nth-child(even) {
+        background-color: #FDFDFD;
+    }
 `
 
 let _columns = [

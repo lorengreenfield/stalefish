@@ -1,22 +1,21 @@
 import { html, css } from 'halfcab'
 
 const styles = css`
-
   .dropdown {
     position: relative;
     display: inline-block;
   }
-  
+
   .dropdown:focus{
     outline:0;
   }
-  
+
   .dropdownContent {
     position: absolute;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
   }
-  
+
   .dropdownContent div {
     color: #666;
     padding: 12px 16px;
@@ -24,9 +23,9 @@ const styles = css`
     display: block;
     font-size: 18px;
   }
-  
-  .dropdownContent div:hover {background-color: #f1f1f1}
-  
+
+  .dropdownContent div:hover { background-color: #f1f1f1 }
+
   .separator{
     border-color: #c9c9c9;
     margin: 0;
@@ -47,21 +46,21 @@ export default ({ menuItems = [], options = [], visible = true, side, width, mar
   return html`
     <div tabindex="-1" class="${styles.dropdown}" style="position: relative; z-index: 100000; ${!visible ? 'display: none;' : ''}${side === 'right' ? 'float: right;' : ''}">
       <div class="${styles.dropdownContent}" style="background-color: ${backgroundColour || '#f9f9f9'}; ${side === 'right' ? 'right: 0;' : ''} width: ${width || '160px'};${margin ? `margin: ${margin};` : ''}">
-      ${filtered.map(item => {
-        const label = item.text != null ? item.text : (item.name != null ? item.name : '')
-        const disabled = item.disabled === true
-        const hasAction = typeof item.action === 'function'
-        if (item.separator) {
-          return html`<hr class="${styles.separator}">`
-        }
-        if (disabled) {
-          return html`<div style="opacity: 0.3; pointer-events: none;">${label}</div>`
-        }
-        if (hasAction) {
-          return html`<div style="cursor: pointer;" onclick=${item.action}>${label}</div>`
-        }
-        return html`<div>${label}</div>`
-      })}
+        ${filtered.map(item => {
+          const label = item.text != null ? item.text : (item.name != null ? item.name : '')
+          const disabled = item.disabled === true
+          const hasAction = typeof item.action === 'function'
+          if (item.separator) {
+            return html`<hr class="${styles.separator}">`
+          }
+          if (disabled) {
+            return html`<div style="opacity: 0.3; pointer-events: none;">${label}</div>`
+          }
+          if (hasAction) {
+            return html`<div style="cursor: pointer;" onclick=${item.action}>${label}</div>`
+          }
+          return html`<div>${label}</div>`
+        })}
       </div>
     </div>
   `

@@ -3,119 +3,119 @@ import timeIcon from './icons/timeIcon.mjs'
 import solidDown from './icons/solidDown.mjs'
 
 const styles = css`
-  .textfield {
-    padding: 10px;
-    border: solid 5px #c9c9c9;
-    transition: border 0.3s;
-    outline: none;
-    width: 100%;
-    font-size: 18px;
-    border-radius: 0;
-    box-shadow: none !important;
-    font-weight: normal;
-    box-sizing: border-box;
-    font-family: inherit;
-    line-height: 1.4em;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    z-index: 20;
-    position: relative;
-    height: 55px;
-    background-color: #FFF;
-    color: #999;
-  }
+    .textfield {
+        padding: 10px;
+        border: solid 5px #c9c9c9;
+        transition: border 0.3s;
+        outline: none;
+        width: 100%;
+        font-size: 18px;
+        border-radius: 0;
+        box-shadow: none !important;
+        font-weight: normal;
+        box-sizing: border-box;
+        font-family: inherit;
+        line-height: 1.4em;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        z-index: 20;
+        position: relative;
+        height: 55px;
+        background-color: #FFF;
+        color: #999;
+    }
 
-  /* Placeholder text color */
-  .textfield::placeholder {
-    color: #999;
-  }
+    /* Placeholder text color */
+    .textfield::placeholder {
+        color: #999;
+    }
 
-  .label {
-    transition: opacity 0.75s;
-    border-top-right-radius: 5px;
-    border-top-left-radius: 5px;
-    user-select: none;
-    position: absolute;
-    top: -55px;
-    z-index: 10;
-  }
+    .label {
+        transition: opacity 0.75s;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        user-select: none;
+        position: absolute;
+        top: -55px;
+        z-index: 10;
+    }
 
-  .controls {
-    position: absolute;
-    right: 100px; /* move 20px closer to the clear button */
-    top: 50%; /* precisely center the stacked arrows vertically */
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column; /* stack arrows vertically */
-    align-items: center;
-    gap: 2px; /* remove gap so buttons sit closer */
-    z-index: 30;
-    width: 24px; /* fixed width so both buttons center to the same x-position */
-  }
+    .controls {
+        position: absolute;
+        right: 100px; /* move 20px closer to the clear button */
+        top: 50%; /* precisely center the stacked arrows vertically */
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column; /* stack arrows vertically */
+        align-items: center;
+        gap: 2px; /* remove gap so buttons sit closer */
+        z-index: 30;
+        width: 24px; /* fixed width so both buttons center to the same x-position */
+    }
 
-  .btn {
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    padding: 0; /* remove horizontal padding to avoid visual shift */
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center; /* ensure both arrows are perfectly aligned */
-    width: 24px;  /* match controls width */
-    height: 16px; /* consistent height for each arrow button */
-  }
+    .btn {
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        padding: 0; /* remove horizontal padding to avoid visual shift */
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center; /* ensure both arrows are perfectly aligned */
+        width: 24px;  /* match controls width */
+        height: 16px; /* consistent height for each arrow button */
+    }
 
-  /* Make the second button 3px overlap to bring arrows 5px closer vs previous 2px gap */
-  .btn + .btn { margin-top: -3px; }
+    /* Make the second button 3px overlap to bring arrows 5px closer vs previous 2px gap */
+    .btn + .btn { margin-top: -3px; }
 
-  /* Do not show border/outline on mouse click; keep it for keyboard nav */
-  .btn:focus { outline: none; }
-  .btn:focus-visible { outline: 2px solid #c9c9c9; outline-offset: 2px; }
+    /* Do not show border/outline on mouse click; keep it for keyboard nav */
+    .btn:focus { outline: none; }
+    .btn:focus-visible { outline: 2px solid #c9c9c9; outline-offset: 2px; }
 
-  /* Arrow icon size increased by ~20% (10px → 12px); block so rotate centers perfectly */
-  .arrowIcon {
-    display: block;
-    width: 12px;
-    height: 12px;
-    color: #c9c9c9;
-    line-height: 0;
-    transform-origin: 50% 50%;
-    margin: 0 auto; /* ensure centered inside the fixed-width button */
-  }
-  .arrowIcon > svg { display: block; width: 12px; height: 12px; }
+    /* Arrow icon size increased by ~20% (10px → 12px); block so rotate centers perfectly */
+    .arrowIcon {
+        display: block;
+        width: 12px;
+        height: 12px;
+        color: #c9c9c9;
+        line-height: 0;
+        transform-origin: 50% 50%;
+        margin: 0 auto; /* ensure centered inside the fixed-width button */
+    }
+    .arrowIcon > svg { display: block; width: 12px; height: 12px; }
 
-  .clear {
-    cursor: pointer;
-    position: absolute;
-    color: #AAA;
-    font-size: 0.8em;
-    line-height: 0.9em;
-    font-weight: normal;
-    box-sizing: border-box;
-    right: 44px; /* place clear close to the icon; arrows are further left */
-    background-color: #EEE;
-    padding: 5px 10px;
-    z-index: 30;
-    border-radius: 3px;
-    top: 17px;
-  }
+    .clear {
+        cursor: pointer;
+        position: absolute;
+        color: #AAA;
+        font-size: 0.8em;
+        line-height: 0.9em;
+        font-weight: normal;
+        box-sizing: border-box;
+        right: 44px; /* place clear close to the icon; arrows are further left */
+        background-color: #EEE;
+        padding: 5px 10px;
+        z-index: 30;
+        border-radius: 3px;
+        top: 17px;
+    }
 
-  .icon {
-    position: absolute;
-    right: 12px;
-    top: 17px;
-    width: 20px;
-    height: 20px;
-    opacity: 0.8;
-    z-index: 25;
-    pointer-events: none;
-  }
+    .icon {
+        position: absolute;
+        right: 12px;
+        top: 17px;
+        width: 20px;
+        height: 20px;
+        opacity: 0.8;
+        z-index: 25;
+        pointer-events: none;
+    }
 
-  .withRightIcon {
-    padding-right: 44px;
-  }
+    .withRightIcon {
+        padding-right: 44px;
+    }
 `
 
 const STATE_SYMBOL = Symbol.for('stalefish.time.state')
@@ -615,41 +615,45 @@ export default function timePicker ({
 
   const displayValue = holdingPen && property ? (holdingPen[property] || '') : ''
 
-  return html`
-    <div id="${wrapperId}" class="${wrapperStyle}" style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
-      <div style="display: inline-block; width: 100%; text-align: left; position: relative; padding: 0;">
-        ${label ? html`<span class="${styles.label}" style="opacity: ${(holdingPen && (holdingPen[property] === 0 || holdingPen[property])) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
-        ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${clearValue}>clear</div>` : ''}
-        <div class="${styles.icon}">${timeIcon({ colour: '#ccc', width: 20, height: 20 })}</div>
-        <input data-gramm="false" ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${styles.withRightIcon} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ?required=${required}
-          onchange=${onTypedChange}
-          oninput=${onTypedChange}
-          onblur=${finalizeTypedValue}
-          onkeydown=${(ev) => {
-            if (ev.key === 'ArrowUp') {
-              ev.preventDefault()
-              stepMinute(minuteStep)()
-            } else if (ev.key === 'ArrowDown') {
-              ev.preventDefault()
-              stepMinute(-minuteStep)()
-            } else if (ev.key === 'Enter') {
-              ev.preventDefault()
-              finalizeTypedValue(ev)
-            }
-          }}
-          placeholder="${(placeholder || 'Time') + (required ? ' *' : '')}"
-          type="text" ${pattern ? { pattern } : ''}
-          .value=${displayValue} data-input />
+  const wrapperClassName = wrapperStyle
+    ? (typeof wrapperStyle === 'string' ? wrapperStyle : (wrapperStyle && wrapperStyle.toString ? wrapperStyle.toString() : ''))
+    : ''
 
-        <div class="${styles.controls}">
-          <button type="button" tabindex="-1" class="${styles.btn}" onclick=${stepMinute(minuteStep)} aria-label="Increase time by ${minuteStep} minutes">
-            <span class="${styles.arrowIcon}" style="transform: rotate(180deg); display:inline-block;">${solidDown({ colour: '#ccc' })}</span>
-          </button>
-          <button type="button" tabindex="-1" class="${styles.btn}" onclick=${stepMinute(-minuteStep)} aria-label="Decrease time by ${minuteStep} minutes">
-            <span class="${styles.arrowIcon}" style="transform: rotate(0deg); display:inline-block;">${solidDown({ colour: '#ccc' })}</span>
-          </button>
-        </div>
+  return html`
+      <div id="${wrapperId}" class="${wrapperClassName}" style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
+          <div style="display: inline-block; width: 100%; text-align: left; position: relative; padding: 0;">
+              ${label ? html`<span class="${styles.label}" style="opacity: ${(holdingPen && (holdingPen[property] === 0 || holdingPen[property])) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
+              ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${clearValue}>clear</div>` : ''}
+              <div class="${styles.icon}">${timeIcon({ colour: '#ccc', width: 20, height: 20 })}</div>
+              <input data-gramm="false" ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${styles.withRightIcon} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ?required=${required}
+                     onchange=${onTypedChange}
+                     oninput=${onTypedChange}
+                     onblur=${finalizeTypedValue}
+                     onkeydown=${(ev) => {
+                         if (ev.key === 'ArrowUp') {
+                             ev.preventDefault()
+                             stepMinute(minuteStep)()
+                         } else if (ev.key === 'ArrowDown') {
+                             ev.preventDefault()
+                             stepMinute(-minuteStep)()
+                         } else if (ev.key === 'Enter') {
+                             ev.preventDefault()
+                             finalizeTypedValue(ev)
+                         }
+                     }}
+                     placeholder="${(placeholder || 'Time') + (required ? ' *' : '')}"
+                     type="text" ${pattern ? { pattern } : ''}
+                     .value=${displayValue} data-input />
+
+              <div class="${styles.controls}">
+                  <button type="button" tabindex="-1" class="${styles.btn}" onclick=${stepMinute(minuteStep)} aria-label="Increase time by ${minuteStep} minutes">
+                      <span class="${styles.arrowIcon}" style="transform: rotate(180deg); display:inline-block;">${solidDown({ colour: '#ccc' })}</span>
+                  </button>
+                  <button type="button" tabindex="-1" class="${styles.btn}" onclick=${stepMinute(-minuteStep)} aria-label="Decrease time by ${minuteStep} minutes">
+                      <span class="${styles.arrowIcon}" style="transform: rotate(0deg); display:inline-block;">${solidDown({ colour: '#ccc' })}</span>
+                  </button>
+              </div>
+          </div>
       </div>
-    </div>
   `
 }

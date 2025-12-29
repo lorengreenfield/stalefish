@@ -7,117 +7,117 @@ const VIDEO_EXTS = new Set(['.mxf', '.mkv', '.webm', '.mov', '.wmv', '.mp4', '.3
 const PDF_EXTS = new Set(['.pdf'])
 
 const styles = css`
-  .uploader {
-    margin: 0 10px 0 20px !important;
-    position: absolute;
-    right: 4px;
-    top: 16.5px;
-  }
-  
-  .placeholder {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1 1 auto;
-    min-width: 0;
-    display: block;
-    /* Leave room for the upload icon and the clear button (approx +40px) */
-    padding-right: 84px;
-  }
+    .uploader {
+        margin: 0 10px 0 20px !important;
+        position: absolute;
+        right: 4px;
+        top: 16.5px;
+    }
 
-  .value {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1 1 auto;
-    min-width: 0;
-    display: block;
-    /* Leave room for the upload icon and the clear button (approx +40px) */
-    padding-right: 84px;
-  }
+    .placeholder {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1 1 auto;
+        min-width: 0;
+        display: block;
+        /* Leave room for the upload icon and the clear button (approx +40px) */
+        padding-right: 84px;
+    }
 
-  .clear {
-    cursor: pointer;
-    position: absolute;
-    color: #AAA;
-    font-size: 0.8em; 
-    line-height: 0.9em;
-    font-weight: normal; 
-    box-sizing: border-box;
-    background-color: #EEE; 
-    padding: 5px 10px;
-    z-index: 30;
-    border-radius: 3px;
-    right: 54px; 
-    top: 0px;
-  }
-  
-  .icon {
-    position: absolute;
-    pointer-events: none;
-    color: #c9c9c9;
-    right: 17px; 
-    top: -6px;
-    font-size: 2em;
-    z-index: 30;
-  }
-  
-  .frame {
-    position: relative;
-    display: inline-flex; 
-    align-items: center;
-    border-radius: 0;
-    font-size: 18px; 
-    font-weight: normal; 
-    color: #999; 
-    margin: 5px 5px 5px 5px;
-    padding: 10px;
-    background-color: rgba(255,255,255,0.8);
-    border: solid 5px #c9c9c9;
-    user-select: none;
-    padding: 12px; 
-    box-sizing: border-box;
-    width: calc(100% - 10px);
-    z-index: 20;
-  }
-  
-  .dragOver {}
-  .dragAccept {}
-  .dragReject {}
+    .value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1 1 auto;
+        min-width: 0;
+        display: block;
+        /* Leave room for the upload icon and the clear button (approx +40px) */
+        padding-right: 84px;
+    }
 
-  .frame.dragOver {
-    /* neutral: no visual change on generic drag over */
-  }
+    .clear {
+        cursor: pointer;
+        position: absolute;
+        color: #AAA;
+        font-size: 0.8em;
+        line-height: 0.9em;
+        font-weight: normal;
+        box-sizing: border-box;
+        background-color: #EEE;
+        padding: 5px 10px;
+        z-index: 30;
+        border-radius: 3px;
+        right: 54px;
+        top: 0px;
+    }
 
-  .frame.dragAccept {
-    border-color: #6edf74;
-  }
+    .icon {
+        position: absolute;
+        pointer-events: none;
+        color: #c9c9c9;
+        right: 17px;
+        top: -6px;
+        font-size: 2em;
+        z-index: 30;
+    }
 
-  .frame.dragReject {
-    border-color: #ef6c00;
-  }
+    .frame {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 0;
+        font-size: 18px;
+        font-weight: normal;
+        color: #999;
+        margin: 5px 5px 5px 5px;
+        padding: 10px;
+        background-color: rgba(255,255,255,0.8);
+        border: solid 5px #c9c9c9;
+        user-select: none;
+        padding: 12px;
+        box-sizing: border-box;
+        width: calc(100% - 10px);
+        z-index: 20;
+    }
 
-  .label {
-    transition: opacity 0.75s;
-    border-top-right-radius: 5px; 
-    border-top-left-radius: 5px;
-    user-select: none;
-    
-    font-size: 16px; 
-    font-weight: normal; 
-    color: #999; 
-    margin-left: 5px; 
-    padding: 9px; 
-    background-color: rgba(255,255,255,0.8); 
-    position: absolute;
-    top: -55px;
-    left: 5px;
-    z-index: 10;
-  }
-  
-  .uploader.touched:invalid:not(:focus) {
-    outline: red solid 2px;
-  }
+    .dragOver {}
+    .dragAccept {}
+    .dragReject {}
+
+    .frame.dragOver {
+        /* neutral: no visual change on generic drag over */
+    }
+
+    .frame.dragAccept {
+        border-color: #6edf74;
+    }
+
+    .frame.dragReject {
+        border-color: #ef6c00;
+    }
+
+    .label {
+        transition: opacity 0.75s;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        user-select: none;
+
+        font-size: 16px;
+        font-weight: normal;
+        color: #999;
+        margin-left: 5px;
+        padding: 9px;
+        background-color: rgba(255,255,255,0.8);
+        position: absolute;
+        top: -55px;
+        left: 5px;
+        z-index: 10;
+    }
+
+    .uploader.touched:invalid:not(:focus) {
+        outline: red solid 2px;
+    }
 `
 
 // Utility available across this module to clear all uploader drag classes
@@ -558,60 +558,64 @@ export default function uploader (args) {
     } catch {}
   }
 
+  const wrapperClassName = wrapperStyle
+    ? (typeof wrapperStyle === 'string' ? wrapperStyle : (wrapperStyle && wrapperStyle.toString ? wrapperStyle.toString() : ''))
+    : ''
+
   return html`
-    <div ${wrapperStyle ? { class: wrapperStyle } : ''} style="display: inline-block; width: 100%; margin-top: 36px;">
-      <label style="width: 100%; text-align: left; position: relative; padding: 0; cursor: pointer;">
-        ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0};">${label}${required ? ' *' : ''}</span>` : ''}
-        <span class="${styles.frame}" data-accept="${acceptAttr || ''}" data-disabled="${!!disabled}" ondragenter=${onDragEnter} ondragover=${onDragOver} ondragleave=${onDragLeave} ondrop=${onDrop} onmousedown=${(e) => {
-          if (disabled) return
-          try {
-            const frame = e.currentTarget
-            const input = frame && frame.querySelector('input[type="file"]')
-            showOpeningWhileChoosing(input)
-          } catch {}
-        }}>
+      <div class="${wrapperClassName}" style="display: inline-block; width: 100%; margin-top: 36px;">
+          <label style="width: 100%; text-align: left; position: relative; padding: 0; cursor: pointer;">
+              ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0};">${label}${required ? ' *' : ''}</span>` : ''}
+              <span class="${styles.frame}" data-accept="${acceptAttr || ''}" data-disabled="${!!disabled}" ondragenter=${onDragEnter} ondragover=${onDragOver} ondragleave=${onDragLeave} ondrop=${onDrop} onmousedown=${(e) => {
+                  if (disabled) return
+                  try {
+                      const frame = e.currentTarget
+                      const input = frame && frame.querySelector('input[type="file"]')
+                      showOpeningWhileChoosing(input)
+                  } catch {}
+              }}>
           ${!holdingPen[property]
-            ? html`<span class="${styles.placeholder}">${placeholder}${required ? ' *' : ''}</span>`
-            : !imagePreview
-              ? html`<span class="${styles.value}">${textPreview || holdingPen[property]}</span>`
-              : '\u00A0'}
+                  ? html`<span class="${styles.placeholder}">${placeholder}${required ? ' *' : ''}</span>`
+                  : !imagePreview
+                          ? html`<span class="${styles.value}">${textPreview || holdingPen[property]}</span>`
+                          : '\u00A0'}
           ${uploaderEl}
           <span style="opacity: 0.6; margin-left: -12px; width: ${progress}%; position: absolute; background-color: #EEE; height: 100%;"></span>
         </span>
-        ${imagePreview ? html`<img src="${imagePreview}" style="position: absolute; height: 35px; top: -9px; left: 20px; z-index: 30;"/>` : ''}
-        ${!disableClear
-          ? html`
-          <div
-            class="${styles.clear}"
-            role="button"
-            tabindex="0"
-            onclick=${(e) => {
-              // Prevent the label's default behavior of triggering the hidden file input
-              e.preventDefault()
-              e.stopPropagation()
-              // Only clear when there is a value; otherwise do nothing
-              if (holdingPen && Object.prototype.hasOwnProperty.call(holdingPen, property) && holdingPen[property]) {
-                if (typeof onclear === 'function') onclear(e)
-              }
-            }}
-            onkeydown=${(e) => {
-              // Also handle keyboard activation without triggering the file chooser
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                e.stopPropagation()
-                if (holdingPen && Object.prototype.hasOwnProperty.call(holdingPen, property) && holdingPen[property]) {
-                  if (typeof onclear === 'function') onclear(e)
-                }
-              }
-            }}
-            aria-disabled=${!holdingPen || !holdingPen[property]}
-          >
-            clear
-          </div>
-        `
-          : ''}
-        <div class="${styles.icon}">${uploadIcon({ colour: '#ccc', width: 28, height: 28 })}</div>
-      </label>
-    </div>
+              ${imagePreview ? html`<img src="${imagePreview}" style="position: absolute; height: 35px; top: -9px; left: 20px; z-index: 30;"/>` : ''}
+              ${!disableClear
+                      ? html`
+                          <div
+                                  class="${styles.clear}"
+                                  role="button"
+                                  tabindex="0"
+                                  onclick=${(e) => {
+                                      // Prevent the label's default behavior of triggering the hidden file input
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                      // Only clear when there is a value; otherwise do nothing
+                                      if (holdingPen && Object.prototype.hasOwnProperty.call(holdingPen, property) && holdingPen[property]) {
+                                          if (typeof onclear === 'function') onclear(e)
+                                      }
+                                  }}
+                                  onkeydown=${(e) => {
+                                      // Also handle keyboard activation without triggering the file chooser
+                                      if (e.key === 'Enter' || e.key === ' ') {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                          if (holdingPen && Object.prototype.hasOwnProperty.call(holdingPen, property) && holdingPen[property]) {
+                                              if (typeof onclear === 'function') onclear(e)
+                                          }
+                                      }
+                                  }}
+                                  aria-disabled=${!holdingPen || !holdingPen[property]}
+                          >
+                              clear
+                          </div>
+                      `
+                      : ''}
+              <div class="${styles.icon}">${uploadIcon({ colour: '#ccc', width: 28, height: 28 })}</div>
+          </label>
+      </div>
   `
 }

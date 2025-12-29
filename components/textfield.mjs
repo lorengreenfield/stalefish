@@ -106,8 +106,12 @@ export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, labe
     input.autofocus = true
   }
 
+  const wrapperClassName = wrapperStyle
+    ? (typeof wrapperStyle === 'string' ? wrapperStyle : (wrapperStyle.toString ? wrapperStyle.toString() : ''))
+    : ''
+
   return html`
-      <div ${wrapperStyle ? { class: wrapperStyle } : ''} style="display: inline-block; width: calc(100% - 10px); margin: ${label ? '40' : '5'}px 5px 5px 5px;">
+      <div class="${wrapperClassName}" style="display: inline-block; width: calc(100% - 10px); margin: ${label ? '40' : '5'}px 5px 5px 5px;">
           <label style="width: 100%; text-align: left; position: relative; padding: 0;">
               ${valueContext ? html`<div class="${styles.valueContext}">${valueContext}</div>` : ''}
               ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>` : ''}

@@ -1,48 +1,48 @@
 import { html, css, formField, fieldIsTouched } from 'halfcab'
 
 let styles = css`
-  .textarea {
-    color: #999;
-    padding: 10px;
-    border: solid 5px #c9c9c9;
-    transition: border 0.3s;
-    outline: none;
-    font-size: 18px;
-    border-radius: 0;
-    box-shadow: none !important;
-    font-weight: normal;
-    margin: 24px 5px 5px 5px;
-    font-family: inherit;
-    line-height: inherit;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    box-sizing: border-box; 
-    width: calc(100% - 10px);
-    resize: vertical;
-  }
-  
-  .label {
-    transition: opacity 0.75s;
-    border-top-right-radius: 5px; 
-    border-top-left-radius: 5px;
-    user-select: none;
-    position: relative; 
-    top: 14px;
-    left: 5px
-  }
-  
-  .textarea:focus {
-    border: solid 5px #969696;
-  }
-  
-  .textarea::placeholder {
-    color: #999;
-  }
-  
-  .textarea.touched:invalid:not(:focus) {
-    border-color: red;
-  }
+    .textarea {
+        color: #999;
+        padding: 10px;
+        border: solid 5px #c9c9c9;
+        transition: border 0.3s;
+        outline: none;
+        font-size: 18px;
+        border-radius: 0;
+        box-shadow: none !important;
+        font-weight: normal;
+        margin: 24px 5px 5px 5px;
+        font-family: inherit;
+        line-height: inherit;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        box-sizing: border-box;
+        width: calc(100% - 10px);
+        resize: vertical;
+    }
+
+    .label {
+        transition: opacity 0.75s;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        user-select: none;
+        position: relative;
+        top: 14px;
+        left: 5px
+    }
+
+    .textarea:focus {
+        border: solid 5px #969696;
+    }
+
+    .textarea::placeholder {
+        color: #999;
+    }
+
+    .textarea.touched:invalid:not(:focus) {
+        border-color: red;
+    }
 `
 
 function change ({ e, holdingPen, property, label }) {
@@ -64,6 +64,6 @@ export default ({ holdingPen, label, placeholder, property, required, pattern, o
   }
 
   return html`
-     <label ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}width: 100%; text-align: left; display: inline-block;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>${input}</label>
+      <label ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}width: 100%; text-align: left; display: inline-block;"><span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>${input}</label>
   `
 }
