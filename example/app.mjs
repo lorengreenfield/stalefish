@@ -7,7 +7,9 @@ const styles = css`
   .card { padding: 12px; border: 1px solid #8884; border-radius: 8px; background: #efefef; }
   .title { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
   .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  .subtle { font-size: 12px; opacity: 0.7; }
+  .subtle { font-size: 12px; opacity: 0.7; },
+  .textfieldSelectBox { width: 260px }
+  .variantSelectFull { width: 100%; }
 `
 
 // Demo form state
@@ -43,12 +45,12 @@ const Showcase = () => html`
       <div class="${styles.card}">
         <div class="${styles.title}">Text field</div>
         <div class="${styles.row}">
-          <label style="display:flex; align-items:center; gap:8px;">
-            <span class="${styles.subtle}">variant</span>
+          <div style="width: 100%;">
             ${sf.selectbox({
     holdingPen: state.demo,
     property: 'textType',
-    label: 'Type',
+    label: 'Variant',
+    wrapperStyle: styles.variantSelectFull,
     options: [
       { name: 'string', value: 'string' },
       { name: 'number', value: 'number' },
@@ -73,15 +75,17 @@ const Showcase = () => html`
       rerender()
     }
   })}
-          </label>
+          </div>
         </div>
         ${sf.textfield({
-    holdingPen: state.demo,
-    property: 'text',
-    label: 'Value',
-    placeholder: state.demo.textType === 'color' ? '#rrggbb' : (state.demo.textType === 'number' || state.demo.textType === 'integer' ? 'enter a number' : 'e.g. Ada Lovelace'),
-    type: state.demo.textType
-  })}
+          holdingPen: state.demo,
+          property: 'text',
+          label: 'Value',
+          placeholder: state.demo.textType === 'color' ? '#rrggbb' : (state.demo.textType === 'number' || state.demo.textType === 'integer' ? 'enter a number' : 'e.g. Ada Lovelace'),
+          type: state.demo.textType,
+          valueContext: 'longer',
+          wrapperStyle: styles.textfieldSelectBox
+        })}
       </div>
 
       <div class="${styles.card}">

@@ -86,6 +86,9 @@ const styles = css`
     }
     .arrowIcon > svg { display: block; width: 12px; height: 12px; }
 
+    /* Programmatic visual focus when clicking custom controls */
+    .activeFocus { border: solid 5px #969696; }
+
     .clear {
         cursor: pointer;
         position: absolute;
@@ -223,7 +226,33 @@ export default function timePicker ({
   if (typeof state.tmpHour !== 'number') state.tmpHour = hm.h
   if (typeof state.tmpMinute !== 'number') state.tmpMinute = hm.min
 
+  // Emphasize focus styling on the input and keep it until blur
+  const pulseActive = () => {
+    if (typeof window === 'undefined') return
+    setTimeout(() => {
+      const el = document.querySelector(`#${wrapperId} [data-input]`)
+      if (!el || el.disabled) return
+      try { el.focus && el.focus({ preventScroll: true }) } catch (e) {}
+      el.classList && el.classList.add(styles.activeFocus)
+      // Do not auto-remove; rely on onblur handler below to clear the class
+    }, 0)
+  }
+
   const stepMinute = (delta) => () => {
+    // Before stepping, resync internal state from the visible input value if possible.
+    // This ensures that after manual typing (e.g., "12" → auto "12:00"), the arrows
+    // operate on the currently displayed HH:MM rather than any stale tmp state.
+    if (typeof document !== 'undefined') {
+      try {
+        const el = document.querySelector(`#${wrapperId} [data-input]`)
+        const txt = el && typeof el.value === 'string' ? el.value.trim() : ''
+        const parsed = parseHM(txt)
+        if (parsed && Number.isFinite(parsed.h) && Number.isFinite(parsed.min)) {
+          state.tmpHour = Math.max(0, Math.min(23, parsed.h | 0))
+          state.tmpMinute = Math.max(0, Math.min(59, parsed.min | 0))
+        }
+      } catch {}
+    }
     // If stepping by 15 minutes, snap to quarters (00, 15, 30, 45) instead of adding to arbitrary minutes
     if (minuteStep === 15) {
       const dir = delta >= 0 ? 1 : -1
@@ -254,6 +283,7 @@ export default function timePicker ({
       const valueStr = `${pad2(h)}:${pad2(m)}`
       commitValue({ holdingPen, property, onchange, valueStr })
       rerender()
+      pulseActive()
       return
     }
 
@@ -264,6 +294,7 @@ export default function timePicker ({
     const valueStr = `${pad2(state.tmpHour)}:${pad2(state.tmpMinute)}`
     commitValue({ holdingPen, property, onchange, valueStr })
     rerender()
+    pulseActive()
   }
 
   // Helpers for caret-preserving normalization
@@ -483,6 +514,10 @@ export default function timePicker ({
             }
           } catch (err) { /* ignore */ }
         }
+        // Keep internal state in sync so arrow controls operate on the visible value (HH:00)
+        // Do not commit yet to avoid disrupting the user's minute entry; arrows will commit when used.
+        state.tmpHour = hh
+        state.tmpMinute = 0
         // Do not commit yet; allow subsequent typing to edit minutes naturally
         oninput && oninput(e)
         return
@@ -610,6 +645,7 @@ export default function timePicker ({
     if (e) { e.stopPropagation(); e.preventDefault() }
     commitValue({ holdingPen, property, onchange, valueStr: '' })
     rerender()
+    pulseActive()
     return false
   }
 
@@ -625,10 +661,19 @@ export default function timePicker ({
               ${label ? html`<span class="${styles.label}" style="opacity: ${(holdingPen && (holdingPen[property] === 0 || holdingPen[property])) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
               ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${clearValue}>clear</div>` : ''}
               <div class="${styles.icon}">${timeIcon({ colour: '#ccc', width: 20, height: 20 })}</div>
-              <input data-gramm="false" ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${styles.withRightIcon} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ?required=${required}
+              <input id="${wrapperId}-input" data-gramm="false" ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}" class="${styles.textfield} ${styles.withRightIcon} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ?required=${required}
                      onchange=${onTypedChange}
                      oninput=${onTypedChange}
-                     onblur=${finalizeTypedValue}
+                     onfocus=${() => {
+                       const el = typeof document !== 'undefined' && document.querySelector(`#${wrapperId} [data-input]`)
+                       if (el && el.classList) el.classList.add(styles.activeFocus)
+                     }}
+                     onblur=${(ev) => {
+                       // finalize value and remove active class on blur
+                       finalizeTypedValue(ev)
+                       const el = ev && ev.target
+                       if (el && el.classList) el.classList.remove(styles.activeFocus)
+                     }}
                      onkeydown=${(ev) => {
                          if (ev.key === 'ArrowUp') {
                              ev.preventDefault()
@@ -646,11 +691,11 @@ export default function timePicker ({
                      .value=${displayValue} data-input />
 
               <div class="${styles.controls}">
-                  <button type="button" tabindex="-1" class="${styles.btn}" onclick=${stepMinute(minuteStep)} aria-label="Increase time by ${minuteStep} minutes">
-                      <span class="${styles.arrowIcon}" style="transform: rotate(180deg); display:inline-block;">${solidDown({ colour: '#ccc' })}</span>
+                  <button type="button" tabindex="-1" class="${styles.btn}" style="transform: rotate(180deg);" onmousedown=${(e) => e.preventDefault()} onclick=${stepMinute(minuteStep)} aria-label="Increase time by ${minuteStep} minutes">
+                      <span class="${styles.arrowIcon}">${solidDown({ colour: '#ccc', width: '12', height: '12' })}</span>
                   </button>
-                  <button type="button" tabindex="-1" class="${styles.btn}" onclick=${stepMinute(-minuteStep)} aria-label="Decrease time by ${minuteStep} minutes">
-                      <span class="${styles.arrowIcon}" style="transform: rotate(0deg); display:inline-block;">${solidDown({ colour: '#ccc' })}</span>
+                  <button type="button" tabindex="-1" class="${styles.btn}" onmousedown=${(e) => e.preventDefault()} onclick=${stepMinute(-minuteStep)} aria-label="Decrease time by ${minuteStep} minutes">
+                      <span class="${styles.arrowIcon}">${solidDown({ colour: '#ccc', width: '12', height: '12' })}</span>
                   </button>
               </div>
           </div>

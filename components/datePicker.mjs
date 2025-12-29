@@ -34,6 +34,9 @@ const styles = css`
 
     .textfield::placeholder { color: #999; }
 
+    /* Programmatic visual focus when interacting via popup/nav */
+    .activeFocus { border: solid 5px #969696; }
+
     .label {
         transition: opacity 0.75s;
         border-top-right-radius: 5px;
@@ -204,25 +207,25 @@ function buildCalendarUI ({ state, today, onPickDay, onPrevMonth, onNextMonth, o
 
   return html`
       <div class="${styles.calHeader}">
-          <button type="button" class="${styles.navBtn}" onclick=${onPrevMonth} aria-label="Previous month">
-              <span class="${styles.arrowIcon}" style="transform: rotate(90deg);">${solidDown({ colour: '#ccc' })}</span>
+          <button type="button" class="${styles.navBtn}" onclick=${onPrevMonth} aria-label="Previous month" style="transform: rotate(90deg);" tabindex="-1" onmousedown=${(e) => e.preventDefault()}>
+              <span class="${styles.arrowIcon}">${solidDown({ colour: '#ccc', width: '13', height: '13' })}</span>
           </button>
           <div class="${styles.monthLabel}">
               <span>${monthNames[m]}</span>
               <span class="${styles.yearWrap}" aria-label="Year controls">
           <span class="${styles.yearNum}">${y}</span>
           <span class="${styles.yearControls}">
-            <button type="button" class="${styles.yearBtn}" onclick=${onNextYear} aria-label="Next year">
-              <span class="${styles.yearArrowIcon}" style="transform: rotate(180deg);">${solidDown({ colour: '#ccc' })}</span>
+            <button type="button" class="${styles.yearBtn}" onclick=${onNextYear} aria-label="Next year" style="transform: rotate(180deg);" tabindex="-1" onmousedown=${(e) => e.preventDefault()}>
+              <span class="${styles.yearArrowIcon}">${solidDown({ colour: '#ccc', width: '12', height: '12' })}</span>
             </button>
-            <button type="button" class="${styles.yearBtn}" onclick=${onPrevYear} aria-label="Previous year">
-              <span class="${styles.yearArrowIcon}" style="transform: rotate(0deg);">${solidDown({ colour: '#ccc' })}</span>
+            <button type="button" class="${styles.yearBtn}" onclick=${onPrevYear} aria-label="Previous year" style="transform: rotate(0deg);" tabindex="-1" onmousedown=${(e) => e.preventDefault()}>
+              <span class="${styles.yearArrowIcon}">${solidDown({ colour: '#ccc', width: '12', height: '12' })}</span>
             </button>
           </span>
         </span>
           </div>
-          <button type="button" class="${styles.navBtn}" onclick=${onNextMonth} aria-label="Next month">
-              <span class="${styles.arrowIcon}" style="transform: rotate(270deg);">${solidDown({ colour: '#ccc' })}</span>
+          <button type="button" class="${styles.navBtn}" onclick=${onNextMonth} aria-label="Next month" style="transform: rotate(270deg);" tabindex="-1" onmousedown=${(e) => e.preventDefault()}>
+              <span class="${styles.arrowIcon}">${solidDown({ colour: '#ccc', width: '13', height: '13' })}</span>
           </button>
       </div>
       <div class="${styles.weekHead}">${weekNames.map(w => html`<div style="text-align:center;">${w}</div>`)}</div>
@@ -233,7 +236,7 @@ function buildCalendarUI ({ state, today, onPickDay, onPrevMonth, onNextMonth, o
               const selStyle = isSelected(d) ? 'background:#48aaf3; color:#fff;' : 'color:#999;'
               const bgStyle = isSelected(d) ? '' : 'background:#fff;'
               const todayStyle = isToday(d) ? 'box-shadow: inset 0 0 0 2px #c9c9c9;' : ''
-              return html`<button type="button" style="padding:6px; ${selStyle} ${bgStyle} ${todayStyle} border:1px solid #c9c9c9; cursor:pointer;" onclick=${() => onPickDay(d)}>${d}</button>`
+              return html`<button type="button" style="padding:6px; ${selStyle} ${bgStyle} ${todayStyle} border:1px solid #c9c9c9; cursor:pointer;" onclick=${() => onPickDay(d)} tabindex="-1" onmousedown=${(e) => e.preventDefault()}>${d}</button>`
           })}
       </div>
   `
@@ -268,11 +271,25 @@ export default function datePicker ({
     state.tmpDate = parseYMD(currentStr) || new Date(now.getFullYear(), now.getMonth(), now.getDate())
   }
 
+  // Emphasize focus styling on the input and keep it until blur/close
+  const pulseActive = () => {
+    if (typeof window === 'undefined') return
+    setTimeout(() => {
+      const el = document.getElementById(`${wrapperId}-input`)
+      if (!el || el.disabled) return
+      try { el.focus && el.focus({ preventScroll: true }) } catch (e) {}
+      el.classList && el.classList.add(styles.activeFocus)
+      // Do not auto-remove; rely on blur/close logic below
+    }, 0)
+  }
+
   const commit = () => {
     const valueStr = state.tmpDate ? toYMD(state.tmpDate) : ''
     commitValue({ holdingPen, property, onchange, valueStr })
     state.open = false
     rerender()
+    // Keep focus style only if input retains focus; otherwise it will be cleared on blur
+    pulseActive()
   }
 
   const clearValue = (e) => {
@@ -280,6 +297,7 @@ export default function datePicker ({
     commitValue({ holdingPen, property, onchange, valueStr: '' })
     state.open = false
     rerender()
+    pulseActive()
     return false
   }
 
@@ -292,16 +310,26 @@ export default function datePicker ({
     if (state.open) return
     state.open = true
     rerender()
+    pulseActive()
     if (typeof window !== 'undefined' && state.open) {
+      // Clean up any previous listener in case of defensive re-open
+      if (state._closeOnOutside) {
+        try { document.removeEventListener('mousedown', state._closeOnOutside, true) } catch {}
+      }
       const closeOnOutside = (ev) => {
         const wrapperEl = document.getElementById(wrapperId)
         if (!wrapperEl) return
         if (!wrapperEl.contains(ev.target)) {
           state.open = false
           rerender()
+          // Remove active styling when popup closes due to outside click
+          const el = document.getElementById(`${wrapperId}-input`)
+          if (el && el.classList) el.classList.remove(styles.activeFocus)
           document.removeEventListener('mousedown', closeOnOutside, true)
+          state._closeOnOutside = null
         }
       }
+      state._closeOnOutside = closeOnOutside
       setTimeout(() => document.addEventListener('mousedown', closeOnOutside, true), 0)
     }
   }
@@ -312,10 +340,10 @@ export default function datePicker ({
                   state,
                   today: new Date(),
                   onPickDay: (d) => { state.tmpDate = new Date(state.viewYear, state.viewMonth, d); commit() },
-                  onPrevMonth: () => { if (state.viewMonth === 0) { state.viewMonth = 11; state.viewYear -= 1 } else { state.viewMonth -= 1 }; rerender() },
-                  onNextMonth: () => { if (state.viewMonth === 11) { state.viewMonth = 0; state.viewYear += 1 } else { state.viewMonth += 1 }; rerender() },
-                  onPrevYear: () => { state.viewYear -= 1; rerender() },
-                  onNextYear: () => { state.viewYear += 1; rerender() }
+                  onPrevMonth: () => { if (state.viewMonth === 0) { state.viewMonth = 11; state.viewYear -= 1 } else { state.viewMonth -= 1 } rerender(); pulseActive() },
+                  onNextMonth: () => { if (state.viewMonth === 11) { state.viewMonth = 0; state.viewYear += 1 } else { state.viewMonth += 1 } rerender(); pulseActive() },
+                  onPrevYear: () => { state.viewYear -= 1; rerender(); pulseActive() },
+                  onNextYear: () => { state.viewYear += 1; rerender(); pulseActive() }
               })}
           </div>`
     : ''
@@ -336,9 +364,21 @@ export default function datePicker ({
               ${label ? html`<span class="${styles.label}" style="opacity: ${(holdingPen && (holdingPen[property] === 0 || holdingPen[property])) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
               ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${clearValue}>clear</div>` : ''}
               <div class="${styles.icon}">${calendarIcon({ colour: '#ccc', width: 20, height: 20 })}</div>
-              <input data-gramm="false" ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : 'cursor: pointer;'}" class="${styles.textfield} ${styles.noType} ${styles.withRightIcon} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ?required=${required}
+              <input id="${wrapperId}-input" data-gramm="false" ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : 'cursor: pointer;'}" class="${styles.textfield} ${styles.noType} ${styles.withRightIcon} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" ?required=${required}
                      onclick=${open}
-                     onfocus=${open}
+                     onfocus=${(e) => { open(e); const el = e && e.target; if (el && el.classList) el.classList.add(styles.activeFocus) }}
+                     onblur=${(e) => {
+                       // Close the popup when tabbing/clicking away to avoid multiple open popups
+                       state.open = false
+                       rerender()
+                       const el = e && e.target
+                       if (el && el.classList) el.classList.remove(styles.activeFocus)
+                       // Also remove any pending outside-click listener
+                       if (typeof window !== 'undefined' && state._closeOnOutside) {
+                         try { document.removeEventListener('mousedown', state._closeOnOutside, true) } catch {}
+                         state._closeOnOutside = null
+                       }
+                     }}
                      readonly
                      placeholder="${(placeholder || 'Date') + (required ? ' *' : '')}"
                      type="text" ${pattern ? { pattern } : ''}

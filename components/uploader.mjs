@@ -81,6 +81,11 @@ const styles = css`
         z-index: 20;
     }
 
+    /* Programmatic visual focus/active indicator to match other fields */
+    .activeFocus {
+        border: solid 5px #969696;
+    }
+
     .dragOver {}
     .dragAccept {}
     .dragReject {}
@@ -127,6 +132,14 @@ function clearAllUploaderFrames () {
     frames.forEach(f => {
       f.classList.remove(styles.dragOver, styles.dragAccept, styles.dragReject)
     })
+  } catch {}
+}
+
+// Ensure only one uploader shows the active (darker) border at a time
+function clearAllUploaderActiveFocus () {
+  try {
+    const frames = document.querySelectorAll(`.${styles.frame}`)
+    frames.forEach(f => f.classList.remove(styles.activeFocus))
   } catch {}
 }
 /**
@@ -288,6 +301,20 @@ export default function uploader (args) {
   }
 
   // Helpers for drag & drop behavior
+  const addActive = (frameEl) => {
+    try {
+      if (!frameEl || disabled) return
+      // Exclusivity: remove active state from all other uploader frames first
+      clearAllUploaderActiveFocus()
+      frameEl.classList && frameEl.classList.add(styles.activeFocus)
+    } catch {}
+  }
+  const removeActive = (frameEl) => {
+    try {
+      if (!frameEl) return
+      frameEl.classList && frameEl.classList.remove(styles.activeFocus)
+    } catch {}
+  }
   const parseAcceptList = (acceptStr) => {
     if (!acceptStr) return null
     return acceptStr.split(',').map(s => s.trim().toLowerCase()).filter(Boolean)
@@ -404,6 +431,8 @@ export default function uploader (args) {
       frame.classList.add(styles.dragOver)
       frame.classList.add(styles.dragReject)
     }
+    // Always show active border while a drag is over the frame
+    addActive(frame)
   }
 
   const onDragEnter = (e) => {
@@ -417,6 +446,8 @@ export default function uploader (args) {
       frame.classList.add(styles.dragOver)
       frame.classList.add(styles.dragReject)
     }
+    // Indicate active when drag enters
+    addActive(frame)
   }
 
   const onDragLeave = (e) => {
@@ -427,6 +458,8 @@ export default function uploader (args) {
     if (!related || !frame.contains(related)) {
       // Remove local reject indicators; global will maintain accept state
       frame.classList.remove(styles.dragReject)
+      // Remove active indicator when leaving drop zone
+      removeActive(frame)
     }
   }
 
@@ -437,6 +470,8 @@ export default function uploader (args) {
     // Clear all global highlights so every frame returns to neutral on drop
     clearAllUploaderFrames()
     const frame = e.currentTarget
+    // Keep active state after a successful drop
+    addActive(frame)
     const input = frame.querySelector('input[type="file"]')
     const files = e.dataTransfer && e.dataTransfer.files
     let ok = true
@@ -473,6 +508,8 @@ export default function uploader (args) {
     } else {
       addDragClass(frame, styles.dragReject)
       setTimeout(() => clearDragClasses(frame), 180)
+      // If rejected, also remove active state shortly after to reflect error
+      setTimeout(() => removeActive(frame), 180)
     }
   }
 
@@ -529,6 +566,8 @@ export default function uploader (args) {
       if (!inputEl || disabled) return
       const frame = inputEl.closest ? inputEl.closest(`.${styles.frame}`) : inputEl.parentElement
       if (!frame || frame.dataset.opening === '1') return
+      // Add active border immediately while chooser is opening
+      addActive(frame)
       const placeholderEl = frame.querySelector(`.${styles.placeholder}`)
       if (!placeholderEl) return // only show when placeholder is currently visible
 
@@ -570,6 +609,21 @@ export default function uploader (args) {
                   if (disabled) return
                   try {
                       const frame = e.currentTarget
+                      // Prevent the wrapper from losing active state when clicking internal controls
+                      e.preventDefault && e.preventDefault()
+                      addActive(frame)
+                      // Remove active state if user clicks outside the label area next time
+                      const labelEl = frame && frame.closest('label')
+                      const onDocDown = (ev) => {
+                        try {
+                          if (!labelEl) return
+                          const target = ev && ev.target
+                          if (target && labelEl.contains(target)) return
+                          removeActive(frame)
+                          document.removeEventListener('mousedown', onDocDown, true)
+                        } catch {}
+                      }
+                      setTimeout(() => document.addEventListener('mousedown', onDocDown, true), 0)
                       const input = frame && frame.querySelector('input[type="file"]')
                       showOpeningWhileChoosing(input)
                   } catch {}
@@ -588,21 +642,34 @@ export default function uploader (args) {
                           <div
                                   class="${styles.clear}"
                                   role="button"
-                                  tabindex="0"
+                                  tabindex="-1"
+                                  onmousedown=${(e) => {
+                                      // Prevent focus from moving to the clear control; keep focus/active on the frame
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                  }}
                                   onclick=${(e) => {
                                       // Prevent the label's default behavior of triggering the hidden file input
                                       e.preventDefault()
                                       e.stopPropagation()
+                                      try {
+                                        const frame = e.currentTarget && e.currentTarget.closest && e.currentTarget.closest('label') && e.currentTarget.closest('label').querySelector('.' + styles.frame)
+                                        addActive(frame)
+                                      } catch {}
                                       // Only clear when there is a value; otherwise do nothing
                                       if (holdingPen && Object.prototype.hasOwnProperty.call(holdingPen, property) && holdingPen[property]) {
                                           if (typeof onclear === 'function') onclear(e)
                                       }
                                   }}
                                   onkeydown=${(e) => {
-                                      // Also handle keyboard activation without triggering the file chooser
+                                      // Keep handler for programmatic focus cases; Tab will not reach here due to tabindex -1
                                       if (e.key === 'Enter' || e.key === ' ') {
                                           e.preventDefault()
                                           e.stopPropagation()
+                                          try {
+                                            const frame = e.currentTarget && e.currentTarget.closest && e.currentTarget.closest('label') && e.currentTarget.closest('label').querySelector('.' + styles.frame)
+                                            addActive(frame)
+                                          } catch {}
                                           if (holdingPen && Object.prototype.hasOwnProperty.call(holdingPen, property) && holdingPen[property]) {
                                               if (typeof onclear === 'function') onclear(e)
                                           }
