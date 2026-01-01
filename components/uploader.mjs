@@ -605,7 +605,7 @@ export default function uploader (args) {
       <div class="${wrapperClassName}" style="display: inline-block; width: 100%; margin-top: 36px;">
           <label style="width: 100%; text-align: left; position: relative; padding: 0; cursor: pointer;">
               ${label ? html`<span class="${styles.label}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0};">${label}${required ? ' *' : ''}</span>` : ''}
-              <span class="${styles.frame}" data-accept="${acceptAttr || ''}" data-disabled="${!!disabled}" ondragenter=${onDragEnter} ondragover=${onDragOver} ondragleave=${onDragLeave} ondrop=${onDrop} onmousedown=${(e) => {
+              <span class="${styles.frame}" style="color: ${holdingPen[property] ? '#666' : '#999'};" data-accept="${acceptAttr || ''}" data-disabled="${!!disabled}" ondragenter=${onDragEnter} ondragover=${onDragOver} ondragleave=${onDragLeave} ondrop=${onDrop} onmousedown=${(e) => {
                   if (disabled) return
                   try {
                       const frame = e.currentTarget

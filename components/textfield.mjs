@@ -20,7 +20,7 @@ const styles = css`
         appearance: none;
         z-index: 20;
         position: relative;
-        color: #999;
+        color: #666;
     }
 
     /* Provide room for custom right-side controls when present */

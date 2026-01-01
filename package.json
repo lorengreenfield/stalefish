@@ -1,6 +1,6 @@
 {
   "name": "stalefish",
-  "version": "8.1.12",
+  "version": "8.1.13",
   "description": "Simple function based component library for halfcab tagged template literals",
   "main": "index.mjs",
   "module": "index.mjs",
@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/lorengreenfield/stalefish#readme",
   "devDependencies": {
-    "halfcab": "^15.0.3",
+    "halfcab": "^15.0.4",
     "standard": "^12.0.1"
   },
   "dependencies": {

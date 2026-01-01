@@ -20,7 +20,7 @@ const styles = css`
         border-radius: 0;
         font-size: 18px;
         font-weight: normal;
-        color: #999;
+        color: #666;
         margin: 5px 5px 5px 5px;
         border: solid 5px #c9c9c9;
         user-select: none;

@@ -36,7 +36,7 @@ const styles = css`
         left: 5px;
         font-size: 16px;
         font-weight: normal;
-        color: #999;
+        color: #666;
         margin-left: 5px;
         padding: 9px;
         background-color: rgba(255,255,255,0.8);
@@ -70,18 +70,19 @@ export default ({ wrapperStyle = null, holdingPen, label, property, options, req
       return option === holdingPen[property]
     }
   })
-  // text color is always #999 per latest design; placeholder state no longer affects color
 
   const wrapperClassName = wrapperStyle
     ? (typeof wrapperStyle === 'string' ? wrapperStyle : (wrapperStyle.toString ? wrapperStyle.toString() : ''))
     : ''
 
+  const isPlaceholder = !currentOption || (typeof currentOption === 'object' && currentOption.value === '') || currentOption === ''
+
   return html`
       <label style="text-align: left; position: relative; display: inline-block; width: 100%;" class="${wrapperClassName}">
           <div class="${styles.down}">${solidDown({ colour: '#ccc' })}</div>
           <span class="${styles.label}">${label}${required ? ' *' : ''}</span>
-          <select ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}; color: #999;" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
-              <option value="${required ? 'Select an option' : ''}" ?selected=${!holdingPen[property]} ?disabled=${required} : ''}>${required ? 'Select an option' : ''}</option>
+          <select ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}; color: ${isPlaceholder ? '#999' : '#666'};" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
+              <option value="${required ? 'Select an option' : ''}" ?selected=${!holdingPen[property]} ?disabled=${required}>${required ? 'Select an option' : ''}</option>
               ${options.map(option => {
                   let optionValue
                   let optionName
@@ -91,7 +92,7 @@ export default ({ wrapperStyle = null, holdingPen, label, property, options, req
                   } else {
                       optionValue = option
                   }
-                  return html`<option value="${optionValue}" ?selected=${holdingPen[property] == optionValue}>${optionName || optionValue}</option>` // eslint-disable-line
+                  return html`<option style="color: ${optionValue === '' ? '#999' : '#666'};" value="${optionValue}" ?selected=${holdingPen[property] == optionValue}>${optionName || optionValue}</option>` // eslint-disable-line
               })}
           </select>
       </label>

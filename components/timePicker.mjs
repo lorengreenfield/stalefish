@@ -23,7 +23,7 @@ const styles = css`
         position: relative;
         height: 55px;
         background-color: #FFF;
-        color: #999;
+        color: #666;
     }
 
     /* Placeholder text color */
