@@ -690,7 +690,7 @@ export default function timePicker ({
                      type="text" ${pattern ? { pattern } : ''}
                      .value=${displayValue} data-input />
 
-              <div class="${styles.controls}">
+              <div class="${styles.controls}" style="${disableClear ? 'right: 34px;' : ''}">
                   <button type="button" tabindex="-1" class="${styles.btn}" style="transform: rotate(180deg);" onmousedown=${(e) => e.preventDefault()} onclick=${stepMinute(minuteStep)} aria-label="Increase time by ${minuteStep} minutes">
                       <span class="${styles.arrowIcon}">${solidDown({ colour: '#ccc', width: '12', height: '12' })}</span>
                   </button>

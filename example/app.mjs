@@ -146,11 +146,12 @@ const Showcase = () => html`
       </div>
 
       <div class="${styles.card}">
-        <div class="${styles.title}">Date picker (pre-populated)</div>
+        <div class="${styles.title}">Date picker (pre-populated and clearDisabled=true)</div>
         ${sf.datePicker({
     holdingPen: state.demo,
     property: 'datePre',
-    label: 'Date (starts with today)'
+    label: 'Date (starts with today)',
+            disableClear: true
   })}
         <div class="${styles.subtle}">Initial value set to 2025-12-28 for testing.</div>
       </div>
@@ -193,6 +194,17 @@ const Showcase = () => html`
     minuteStep: 15
   })}
         <div class="${styles.subtle}">Use the arrows to verify the first step respects the pre-loaded value.</div>
+      </div>
+
+      <div class="${styles.card}">
+        <div class="${styles.title}">Time picker (disableClear)</div>
+        ${sf.timePicker({
+    holdingPen: state.demo,
+    property: 'timeDisableClear',
+    label: 'Time (Clear Disabled)',
+    minuteStep: 15,
+    disableClear: true
+  })}
       </div>
 
       <div class="${styles.card}">
