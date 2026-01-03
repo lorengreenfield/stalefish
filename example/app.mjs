@@ -214,7 +214,7 @@ const Showcase = () => html`
     property: 'fileImage',
     label: 'Upload image',
     placeholder: 'Choose/drop an image',
-    accept: '.jpg, .jpeg, .gif, .bmp, .tif, .tiff, .png, .svg',
+    accept: '.jpg, .jpeg, .gif, .bmp, .tif, .tiff, .png, .svg, .webp, .avif',
     onchange: (e) => {
       const files = (e && e.files) || (e && e.target && (e.target.files || e.target._droppedFiles))
       const f = files && files[0]

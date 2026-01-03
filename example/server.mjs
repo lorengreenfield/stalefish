@@ -22,6 +22,8 @@ const mime = (filePath) => {
     case '.png': return 'image/png'
     case '.jpg':
     case '.jpeg': return 'image/jpeg'
+    case '.webp': return 'image/webp'
+    case '.avif': return 'image/avif'
     case '.gif': return 'image/gif'
     default: return 'application/octet-stream'
   }

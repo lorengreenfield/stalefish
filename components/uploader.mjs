@@ -2,7 +2,7 @@ import { html, css, fieldIsTouched } from 'halfcab'
 import uploadIcon from './icons/upload.mjs'
 
 // Known extension groups used to infer acceptance from MIME major types during dragover
-const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.gif', '.bmp', '.tif', '.tiff', '.png', '.svg'])
+const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.gif', '.bmp', '.tif', '.tiff', '.png', '.svg, .webp, .avif'])
 const VIDEO_EXTS = new Set(['.mxf', '.mkv', '.webm', '.mov', '.wmv', '.mp4', '.3gp', '.avi', '.mpg', '.mpeg', '.flv', '.asx', '.asf', '.divx', '.rm', '.m1v', '.m2v', '.m4v'])
 const PDF_EXTS = new Set(['.pdf'])
 
