@@ -8,7 +8,7 @@
   "scripts": {
     "test": "npm run test:lint",
     "test:lint": "standard \"**/*.mjs\"",
-    "npm-publish": "npm publish --tag beta",
+    "npm-publish": "npm publish",
     "versionbump:fix": "npm version patch --no-git-tag-version",
     "versionbump:feature": "npm version minor --no-git-tag-version",
     "versionbump:breakingchanges": "npm version major --no-git-tag-version",
