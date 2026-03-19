@@ -61,7 +61,7 @@ export default ({ chevronStyle = null, on = true, content, heading = '', collaps
       </div>
       ${closeAction && !collapseToggleAction ? html`<div style="position: absolute; width: 20px; height: 20px; right: 5px; top: 5px; cursor: pointer;" onclick=${closeAction}><div style="display: flex; justify-content: center; align-items: center;">${close({ colour: '#22487e' })}</div></div>` : ''}
 
-      ${collapseToggleAction ? html`<div ${chevronStyle ? { 'class': chevronStyle } : ''} style="position: absolute; width: 50px; height: 50px; right: 0; margin-top: -3px; top: 5px; cursor: pointer;" onclick=${collapseToggleAction}><div style="display: flex; justify-content: center; align-items: center;">${collapsed ? down({ colour: light ? '#999' : '#22487e', width: '40px', height: '50px' }) : up({ colour: light ? '#999' : '#22487e', width: '40px', height: '40px' })}</div></div>` : ''}
+      ${collapseToggleAction ? html`<div style="position: absolute; width: 50px; height: 50px; right: 0; margin-top: -3px; top: 5px; cursor: pointer;${chevronStyle ? ` ${chevronStyle}` : ''}" onclick=${collapseToggleAction}><div style="display: flex; justify-content: center; align-items: center;">${chevronStyle ? down({ colour: light ? '#999' : '#22487e', width: '40px', height: '50px' }) : collapsed ? down({ colour: light ? '#999' : '#22487e', width: '40px', height: '50px' }) : up({ colour: light ? '#999' : '#22487e', width: '40px', height: '40px' })}</div></div>` : ''}
 
       ${collapsed === false ? typeof content === 'function' ? content() : content : ''}
   </div>` : ''
