@@ -1,4 +1,5 @@
 import { html, css, formField, fieldIsTouched, rerender } from 'halfcab'
+import { render as litRender } from 'lit'
 import calendarIcon from './icons/calendarIcon.mjs'
 import solidDown from './icons/solidDown.mjs'
 
@@ -76,7 +77,7 @@ const styles = css`
         top: 17px;
     }
 
-    .popup { position: absolute; z-index: 9999; top: 55px; left: 0; background: #fff; border: 1px solid #c9c9c9; box-shadow: 0 2px 10px rgba(0,0,0,.15); padding: 4px; color: #999; }
+    .popup { position: fixed; z-index: 999999; background: #fff; border: 1px solid #c9c9c9; box-shadow: 0 2px 10px rgba(0,0,0,.15); padding: 4px; color: #999; }
     .calHeader { display: flex; align-items: center; justify-content: space-between; padding: 4px 6px; }
     .navBtn { background: transparent; border: none; cursor: pointer; padding: 4px; color: #ccc; }
     .navBtn:focus { outline: none; }
@@ -99,7 +100,6 @@ const styles = css`
 
 // Internal symbols for per-holdingPen state
 const STATE_SYMBOL = Symbol.for('stalefish.date.state')
-const ID_MAP_SYMBOL = Symbol.for('stalefish.date.idMap')
 
 function pad2 (n) { return (n < 10 ? '0' : '') + n }
 
@@ -161,15 +161,9 @@ function ensureState (holdingPen, property) {
 }
 
 function ensureId (holdingPen, property, uniqueKey) {
+  if (uniqueKey) return `sf-date-${uniqueKey}`
   if (!holdingPen) return `sf-date-${property || Math.random().toString(36).slice(2)}`
-  if (!holdingPen[ID_MAP_SYMBOL]) {
-    Object.defineProperty(holdingPen, ID_MAP_SYMBOL, { value: {}, enumerable: false })
-  }
-  const map = holdingPen[ID_MAP_SYMBOL]
-  if (!map[property]) {
-    map[property] = `sf-date-${property}-${Math.random().toString(36).slice(2)}`
-  }
-  return `sf-date-${uniqueKey || map[property]}`
+  return `sf-date-${property}`
 }
 
 function commitValue ({ holdingPen, property, onchange, valueStr }) {
@@ -283,6 +277,36 @@ export default function datePicker ({
     }, 0)
   }
 
+  const renderPortal = () => {
+    if (typeof window === 'undefined') return
+    let portal = document.getElementById(`${wrapperId}-portal`)
+    if (!state.open) {
+      if (portal) portal.remove()
+      return
+    }
+    if (!portal) {
+      portal = document.createElement('div')
+      portal.id = `${wrapperId}-portal`
+      document.body.appendChild(portal)
+    }
+    const inputEl = document.getElementById(`${wrapperId}-input`)
+    if (inputEl) {
+      const rect = inputEl.getBoundingClientRect()
+      portal.style.cssText = `position: fixed; z-index: 999999; top: ${rect.bottom}px; left: ${rect.left}px;`
+    }
+    litRender(html`<div class="${styles.popup}" role="dialog" aria-modal="false" style="position:static;border:none;box-shadow:none;padding:0;">
+        ${buildCalendarUI({
+            state,
+            today: new Date(),
+            onPickDay: (d) => { state.tmpDate = new Date(state.viewYear, state.viewMonth, d); commit() },
+            onPrevMonth: () => { if (state.viewMonth === 0) { state.viewMonth = 11; state.viewYear -= 1 } else { state.viewMonth -= 1 } rerender(); renderPortal() },
+            onNextMonth: () => { if (state.viewMonth === 11) { state.viewMonth = 0; state.viewYear += 1 } else { state.viewMonth += 1 } rerender(); renderPortal() },
+            onPrevYear: () => { state.viewYear -= 1; rerender(); renderPortal() },
+            onNextYear: () => { state.viewYear += 1; rerender(); renderPortal() }
+        })}
+    </div>`, portal)
+  }
+
   const commit = () => {
     const valueStr = state.tmpDate ? toYMD(state.tmpDate) : ''
     commitValue({ holdingPen, property, onchange, valueStr })
@@ -311,6 +335,7 @@ export default function datePicker ({
     state.open = true
     rerender()
     pulseActive()
+    setTimeout(() => renderPortal(), 0)
     if (typeof window !== 'undefined' && state.open) {
       // Clean up any previous listener in case of defensive re-open
       if (state._closeOnOutside) {
@@ -319,9 +344,11 @@ export default function datePicker ({
       const closeOnOutside = (ev) => {
         const wrapperEl = document.getElementById(wrapperId)
         if (!wrapperEl) return
-        if (!wrapperEl.contains(ev.target)) {
+        const portalEl = document.getElementById(`${wrapperId}-portal`)
+        if (!wrapperEl.contains(ev.target) && !(portalEl && portalEl.contains(ev.target))) {
           state.open = false
           rerender()
+          renderPortal()
           // Remove active styling when popup closes due to outside click
           const el = document.getElementById(`${wrapperId}-input`)
           if (el && el.classList) el.classList.remove(styles.activeFocus)
@@ -334,19 +361,8 @@ export default function datePicker ({
     }
   }
 
-  const popup = state.open
-    ? html`<div class="${styles.popup}" role="dialog" aria-modal="false">
-              ${buildCalendarUI({
-                  state,
-                  today: new Date(),
-                  onPickDay: (d) => { state.tmpDate = new Date(state.viewYear, state.viewMonth, d); commit() },
-                  onPrevMonth: () => { if (state.viewMonth === 0) { state.viewMonth = 11; state.viewYear -= 1 } else { state.viewMonth -= 1 } rerender(); pulseActive() },
-                  onNextMonth: () => { if (state.viewMonth === 11) { state.viewMonth = 0; state.viewYear += 1 } else { state.viewMonth += 1 } rerender(); pulseActive() },
-                  onPrevYear: () => { state.viewYear -= 1; rerender(); pulseActive() },
-                  onNextYear: () => { state.viewYear += 1; rerender(); pulseActive() }
-              })}
-          </div>`
-    : ''
+  // Popup is rendered via a body-level portal (see renderPortal) to escape stacking contexts
+  const popup = ''
 
   const displayValue = (() => {
     const d = parseYMD(currentStr)
@@ -359,7 +375,7 @@ export default function datePicker ({
     : ''
 
   return html`
-      <div id="${wrapperId}" class="${wrapperClassName}" style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px;">
+      <div id="${wrapperId}" class="${wrapperClassName}" style="min-height: 55px; display: inline-block; width: calc(100% - 10px); margin: 40px 5px 5px 5px; position: relative;">
           <div style="display: inline-block; width: 100%; text-align: left; position: relative; padding: 0;" onclick=${e => e.stopPropagation()}>
               ${label ? html`<span class="${styles.label}" style="opacity: ${(holdingPen && (holdingPen[property] === 0 || holdingPen[property])) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,0.8); position: absolute; top: -36px;">${label}${required ? ' *' : ''}</span>` : ''}
               ${!disableClear ? html`<div data-clear class="${styles.clear}" onclick=${clearValue}>clear</div>` : ''}
@@ -368,16 +384,17 @@ export default function datePicker ({
                      onclick=${open}
                      onfocus=${(e) => { open(e); const el = e && e.target; if (el && el.classList) el.classList.add(styles.activeFocus) }}
                      onblur=${(e) => {
-                       // Close the popup when tabbing/clicking away to avoid multiple open popups
-                       state.open = false
-                       rerender()
-                       const el = e && e.target
-                       if (el && el.classList) el.classList.remove(styles.activeFocus)
-                       // Also remove any pending outside-click listener
-                       if (typeof window !== 'undefined' && state._closeOnOutside) {
-                         try { document.removeEventListener('mousedown', state._closeOnOutside, true) } catch {}
-                         state._closeOnOutside = null
-                       }
+                         // Close the popup when tabbing/clicking away to avoid multiple open popups
+                         state.open = false
+                         rerender()
+                         renderPortal()
+                         const el = e && e.target
+                         if (el && el.classList) el.classList.remove(styles.activeFocus)
+                         // Also remove any pending outside-click listener
+                         if (typeof window !== 'undefined' && state._closeOnOutside) {
+                             try { document.removeEventListener('mousedown', state._closeOnOutside, true) } catch {}
+                             state._closeOnOutside = null
+                         }
                      }}
                      readonly
                      placeholder="${(placeholder || 'Date') + (required ? ' *' : '')}"
