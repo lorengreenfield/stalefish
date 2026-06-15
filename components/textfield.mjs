@@ -173,7 +173,8 @@ function determineType (type) {
 
 function determineStep (type) {
   const tl = typeof type === 'string' ? type.toLowerCase() : ''
-  if (tl === 'float' || tl === 'number') return '0.1'
+  if (tl === 'float') return '0.1'
+  if (tl === 'number') return '1'
   return '1'
 }
 
@@ -331,15 +332,15 @@ export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, labe
               ${label ? html`<span class="${styles.label} ${normalizedType === 'color' ? styles.labelColorAdjustForColorType : ''}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>` : ''}
               ${input}
               ${
-  (isNumber && !disabled)
-    ? html`
+                      (isNumber && !disabled)
+                              ? html`
                                   <span id="${wrapperId}-ctrls" class="${styles.controls} ${hasValueContext ? styles.controlsWithValueContext : ''}" aria-hidden="false">
                         <button type="button" tabindex="-1" aria-label="Increase value" class="${styles.btn}" style="transform: rotate(180deg);" onmousedown=${(e) => e.preventDefault()} onclick=${inc}>${solidDown({ colour: '#CCC', width: '14px', height: '14px' })}</button>
                         <button type="button" tabindex="-1" aria-label="Decrease value" class="${styles.btn}" onmousedown=${(e) => e.preventDefault()} onclick=${dec}>${solidDown({ colour: '#CCC', width: '14px', height: '14px' })}</button>
                       </span>
                               `
-    : ''
-}
+                              : ''
+              }
           </label>
       </div>
   `
