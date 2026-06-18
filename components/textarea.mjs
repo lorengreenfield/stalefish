@@ -1,4 +1,4 @@
-import { html, css, formField, fieldIsTouched } from 'halfcab'
+import { html, css, formField, fieldIsTouched, rerender } from 'halfcab'
 
 let styles = css`
     .textarea {
@@ -47,17 +47,28 @@ let styles = css`
 
 function change ({ e, holdingPen, property, label }) {
   let ff = formField(holdingPen, property)(e)
-  if (holdingPen[property] === 0 || holdingPen[property]) {
-    e.target.closest('label').querySelector(label.selector).style.opacity = 1
-  } else {
-    e.target.closest('label').querySelector(label.selector).style.opacity = 0
+
+  const target = e && (e.target || e.currentTarget)
+  const canQuery = target && typeof target.closest === 'function'
+  if (canQuery) {
+    const closestLabel = target.closest('label')
+    if (closestLabel) {
+      const labelEl = label && label.selector ? closestLabel.querySelector(label.selector) : null
+      if (labelEl) {
+        if (holdingPen[property] === 0 || holdingPen[property]) {
+          labelEl.style.opacity = 1
+        } else {
+          labelEl.style.opacity = 0
+        }
+      }
+    }
   }
 
   return ff
 }
 
 export default ({ holdingPen, label, placeholder, property, required, pattern, onkeyup, autofocus, permanentTopPlaceholder = false, permanentTopLabel = false, disabled, darkBackground, onchange, height, oninput, element }) => {
-  let input = html`<textarea data-gramm="false" style="${height ? `height: ${height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ?required=${required} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); onchange && onchange(e) }} oninput=${e => { height = window.getComputedStyle(element.querySelector('textarea')).height; change({ e, holdingPen, property, label: styles.label }); oninput && oninput(e) }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${pattern ? { pattern } : ''}>${holdingPen[property] || ''}</textarea>`
+  let input = html`<textarea data-gramm="false" style="${height ? `height: ${height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ?required=${required} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); onchange && onchange(e); rerender() }} oninput=${e => { if (element) { height = window.getComputedStyle(element.querySelector('textarea')).height } change({ e, holdingPen, property, label: styles.label }); oninput && oninput(e); rerender() }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${pattern ? { pattern } : ''}>${holdingPen[property] || ''}</textarea>`
 
   if (autofocus) {
     input.autofocus = true
