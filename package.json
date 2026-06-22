@@ -1,6 +1,6 @@
 {
   "name": "stalefish",
-  "version": "8.1.23",
+  "version": "8.1.24",
   "description": "Simple function based component library for halfcab tagged template literals",
   "main": "index.mjs",
   "module": "index.mjs",
