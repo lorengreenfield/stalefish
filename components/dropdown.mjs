@@ -37,30 +37,40 @@ export default ({ menuItems = [], options = [], visible = true, side, width, mar
   const items = Array.isArray(menuItems) ? menuItems : (Array.isArray(options) ? options : [])
   const filtered = items.filter(item => {
     if (!item) return false
-    if (!item.visibleUnder) return true
-    if (typeof window === 'undefined') return false
-    const limit = parseInt(item.visibleUnder, 10)
-    return Number.isFinite(limit) ? window.innerWidth <= limit : true
+    return true
   })
 
+  const limits = [...new Set(filtered.map(item => item.visibleUnder).filter(v => !!v).map(v => parseInt(v, 10)))]
+
   return html`
+    <style>
+      ${limits.map(limit => `
+        @media (min-width: ${limit + 1}px) {
+          .visible-under-${limit} {
+            display: none;
+          }
+        }
+      `).join('')}
+    </style>
     <div tabindex="-1" class="${styles.dropdown}" style="position: relative; z-index: 100000; ${!visible ? 'display: none;' : ''}${side === 'right' ? 'float: right;' : ''}">
       <div class="${styles.dropdownContent}" style="background-color: ${backgroundColour || '#f9f9f9'}; ${side === 'right' ? 'right: 0;' : ''} width: ${width || '160px'};${margin ? `margin: ${margin};` : ''}">
         ${filtered.map(item => {
-          const label = item.text != null ? item.text : (item.name != null ? item.name : '')
-          const disabled = item.disabled === true
-          const hasAction = typeof item.action === 'function'
-          if (item.separator) {
-            return html`<hr class="${styles.separator}">`
-          }
-          if (disabled) {
-            return html`<div style="opacity: 0.3; pointer-events: none;">${label}</div>`
-          }
-          if (hasAction) {
-            return html`<div style="cursor: pointer;" onclick=${item.action}>${label}</div>`
-          }
-          return html`<div>${label}</div>`
-        })}
+    const label = item.text != null ? item.text : (item.name != null ? item.name : '')
+    const disabled = item.disabled === true
+    const hasAction = typeof item.action === 'function'
+    const limit = item.visibleUnder ? parseInt(item.visibleUnder, 10) : null
+    const itemClass = Number.isFinite(limit) ? `visible-under-${limit}` : ''
+    if (item.separator) {
+      return html`<hr class="${styles.separator} ${itemClass}">`
+    }
+    if (disabled) {
+      return html`<div class="${itemClass}" style="opacity: 0.3; pointer-events: none;">${label}</div>`
+    }
+    if (hasAction) {
+      return html`<div class="${itemClass}" style="cursor: pointer;" onclick=${item.action}>${label}</div>`
+    }
+    return html`<div class="${itemClass}">${label}</div>`
+  })}
       </div>
     </div>
   `
