@@ -31,6 +31,12 @@ const styles = css`
     margin: 0;
     border-style: solid;
   }
+
+  @media (min-width: 601px) {
+    .visibleUnder600 {
+      display: none;
+    }
+  }
 `
 
 export default ({ menuItems = [], options = [], visible = true, side, width, margin, backgroundColour }) => {
@@ -40,18 +46,7 @@ export default ({ menuItems = [], options = [], visible = true, side, width, mar
     return true
   })
 
-  const limits = [...new Set(filtered.map(item => item.visibleUnder).filter(v => !!v).map(v => parseInt(v, 10)))]
-
   return html`
-    <style>
-      ${limits.map(limit => `
-        @media (min-width: ${limit + 1}px) {
-          .visible-under-${limit} {
-            display: none;
-          }
-        }
-      `).join('')}
-    </style>
     <div tabindex="-1" class="${styles.dropdown}" style="position: relative; z-index: 100000; ${!visible ? 'display: none;' : ''}${side === 'right' ? 'float: right;' : ''}">
       <div class="${styles.dropdownContent}" style="background-color: ${backgroundColour || '#f9f9f9'}; ${side === 'right' ? 'right: 0;' : ''} width: ${width || '160px'};${margin ? `margin: ${margin};` : ''}">
         ${filtered.map(item => {
@@ -59,7 +54,7 @@ export default ({ menuItems = [], options = [], visible = true, side, width, mar
     const disabled = item.disabled === true
     const hasAction = typeof item.action === 'function'
     const limit = item.visibleUnder ? parseInt(item.visibleUnder, 10) : null
-    const itemClass = Number.isFinite(limit) ? `visible-under-${limit}` : ''
+    const itemClass = limit === 600 ? styles.visibleUnder600 : ''
     if (item.separator) {
       return html`<hr class="${styles.separator} ${itemClass}">`
     }
