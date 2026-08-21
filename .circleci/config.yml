@@ -1,13 +1,19 @@
-version: 2
+version: 2.1
+
 jobs:
   build:
     working_directory: ~/lorengreenfield/stalefish
     parallelism: 1
     shell: /bin/bash --login
     docker:
-      - image: cimg/node:18.12.1
+      - image: cimg/node:22.11.0
     steps:
       - checkout
       - run: export PATH="~/lorengreenfield/stalefish/node_modules/.bin:$PATH"
       - run: npm install
       - run: npm run test:lint
+
+workflows:
+  build:
+    jobs:
+      - build
