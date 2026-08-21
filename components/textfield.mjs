@@ -271,9 +271,9 @@ export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, labe
 
   const input = html`<input data-gramm="false"
                             ?disabled=${disabled}
-                            ${maxNumber ? { max: maxNumber } : ''}
-                            ${minNumber ? { min: minNumber } : ''}
-                            ${maxCharacters ? { maxlength: maxCharacters } : ''}
+                            max="${typeof maxNumber === 'number' ? maxNumber : ''}"
+                            min="${typeof minNumber === 'number' ? minNumber : ''}"
+                            maxlength="${maxCharacters || ''}"
                             style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}"
                             id="${wrapperId}-input"
                             class="${styles.textfield} ${isNumber ? styles.withRightControls : ''} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''} ${highlightBorder ? styles.highlight : ''}"
@@ -285,8 +285,8 @@ export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, labe
                             onblur=${formField(holdingPen, property)}
                             placeholder="${placeholder || ''}${required ? ' *' : ''}"
                             type="${normalizedType}"
-                            ${pattern ? { pattern } : ''}
-                            ${isNumber ? { step: determineStep(type) } : ''}
+                            step="${isNumber ? (isInteger ? determineStep(type) : 'any') : ''}"
+                            pattern="${pattern || ''}"
   />`
 
   if (autofocus) {
@@ -335,15 +335,15 @@ export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, labe
               ${label ? html`<span class="${styles.label} ${normalizedType === 'color' ? styles.labelColorAdjustForColorType : ''}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>` : ''}
               ${input}
               ${
-    (isNumber && !disabled)
-      ? html`
-                <span id="${wrapperId}-ctrls" class="${styles.controls} ${hasValueContext ? styles.controlsWithValueContext : ''}" aria-hidden="false">
+  (isNumber && !disabled)
+    ? html`
+                                  <span id="${wrapperId}-ctrls" class="${styles.controls} ${hasValueContext ? styles.controlsWithValueContext : ''}" aria-hidden="false">
                         <button type="button" tabindex="-1" aria-label="Increase value" class="${styles.btn}" style="transform: rotate(180deg);" onmousedown=${(e) => e.preventDefault()} onclick=${inc}>${solidDown({ colour: '#CCC', width: '14px', height: '14px' })}</button>
                         <button type="button" tabindex="-1" aria-label="Decrease value" class="${styles.btn}" onmousedown=${(e) => e.preventDefault()} onclick=${dec}>${solidDown({ colour: '#CCC', width: '14px', height: '14px' })}</button>
                       </span>
-      `
-      : ''
-  }
+                              `
+    : ''
+}
           </label>
       </div>
   `
