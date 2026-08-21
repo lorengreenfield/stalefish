@@ -7,7 +7,7 @@ const styles = css`
         border: solid 5px #c9c9c9;
         transition: border 0.3s;
         outline: none;
-        width: 100%;
+        width: calc(100% - 10px);
         font-size: 18px;
         border-radius: 0;
         box-shadow: none !important;
@@ -329,21 +329,21 @@ export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, labe
   }
 
   return html`
-      <div id="${wrapperId}" class="${wrapperClassName}" style="display: inline-block; width: calc(100% - 10px); margin: ${label ? '40' : '5'}px 5px 5px 5px;">
+      <div id="${wrapperId}" class="${wrapperClassName}" style="display: inline-block; width: 100%; margin: ${label ? '40' : '5'}px 5px 5px 5px;">
           <label style="width: 100%; text-align: left; position: relative; padding: 0;">
               ${hasValueContext ? html`<div id="${wrapperId}-vc" data-vc class="${styles.valueContext}">${valueContext}</div>` : ''}
               ${label ? html`<span class="${styles.label} ${normalizedType === 'color' ? styles.labelColorAdjustForColorType : ''}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>` : ''}
               ${input}
               ${
-  (isNumber && !disabled)
-    ? html`
+                      (isNumber && !disabled)
+                              ? html`
                                   <span id="${wrapperId}-ctrls" class="${styles.controls} ${hasValueContext ? styles.controlsWithValueContext : ''}" aria-hidden="false">
                         <button type="button" tabindex="-1" aria-label="Increase value" class="${styles.btn}" style="transform: rotate(180deg);" onmousedown=${(e) => e.preventDefault()} onclick=${inc}>${solidDown({ colour: '#CCC', width: '14px', height: '14px' })}</button>
                         <button type="button" tabindex="-1" aria-label="Decrease value" class="${styles.btn}" onmousedown=${(e) => e.preventDefault()} onclick=${dec}>${solidDown({ colour: '#CCC', width: '14px', height: '14px' })}</button>
                       </span>
                               `
-    : ''
-}
+                              : ''
+              }
           </label>
       </div>
   `
