@@ -1,7 +1,7 @@
 import { html, css, geb } from 'halfcab'
 import close from './icons/close.mjs'
 
-let styles = css`
+const styles = css`
   .toast{
     width: 80%;
     min-width: 300px;

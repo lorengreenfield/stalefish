@@ -1,6 +1,6 @@
 import { html, css } from 'halfcab'
 
-let styles = css`
+const styles = css`
     .table {
         width: 100%;
         border-collapse: collapse;
@@ -19,7 +19,7 @@ let styles = css`
     }
 `
 
-let _columns = [
+const _columns = [
   {
     title: 'Column 1',
     icon: null,
@@ -37,7 +37,7 @@ let _columns = [
     width: '20%'
   }]
 
-let _data = [
+const _data = [
   ['C1-R1', 'C2-R1', 'C3-R1'],
   ['C1-R2', () => 'C2-R2', () => 'C3-R2']
 ]

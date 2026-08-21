@@ -84,16 +84,16 @@ export default ({ wrapperStyle = null, holdingPen, label, property, options, req
           <select ?disabled=${disabled} style="${disabled ? 'cursor: not-allowed; opacity: 0.3;' : ''}background-color: ${typeof currentOption === 'object' && currentOption.colour ? `#${currentOption.colour}` : 'white'}; color: ${isPlaceholder ? '#999' : '#666'};" class="${styles.selectBox} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" oninput=${e => { formField(holdingPen, property)(e); oninput && oninput(e) }} onchange=${e => { formField(holdingPen, property)(e); onchange && onchange(e) }} onblur=${formField(holdingPen, property)}>
               <option value="${required ? 'Select an option' : ''}" ?selected=${!holdingPen[property]} ?disabled=${required}>${required ? 'Select an option' : ''}</option>
               ${options.map(option => {
-                  let optionValue
-                  let optionName
-                  if (typeof option === 'object' && option.value !== undefined) {
-                      optionValue = option.value
-                      optionName = option.name
-                  } else {
-                      optionValue = option
-                  }
+    let optionValue
+    let optionName
+    if (typeof option === 'object' && option.value !== undefined) {
+      optionValue = option.value
+      optionName = option.name
+    } else {
+      optionValue = option
+    }
                   return html`<option style="color: ${optionValue === '' ? '#999' : '#666'};" value="${optionValue}" ?selected=${holdingPen[property] == optionValue}>${optionName || optionValue}</option>` // eslint-disable-line
-              })}
+  })}
           </select>
       </label>
   `

@@ -78,14 +78,14 @@ const Showcase = () => html`
           </div>
         </div>
         ${sf.textfield({
-          holdingPen: state.demo,
-          property: 'text',
-          label: 'Value',
-          placeholder: state.demo.textType === 'color' ? '#rrggbb' : (state.demo.textType === 'number' || state.demo.textType === 'integer' ? 'enter a number' : 'e.g. Ada Lovelace'),
-          type: state.demo.textType,
-          valueContext: 'longer',
-          wrapperStyle: styles.textfieldSelectBox
-        })}
+    holdingPen: state.demo,
+    property: 'text',
+    label: 'Value',
+    placeholder: state.demo.textType === 'color' ? '#rrggbb' : (state.demo.textType === 'number' || state.demo.textType === 'integer' ? 'enter a number' : 'e.g. Ada Lovelace'),
+    type: state.demo.textType,
+    valueContext: 'longer',
+    wrapperStyle: styles.textfieldSelectBox
+  })}
       </div>
 
       <div class="${styles.card}">
@@ -151,7 +151,7 @@ const Showcase = () => html`
     holdingPen: state.demo,
     property: 'datePre',
     label: 'Date (starts with today)',
-            disableClear: true
+    disableClear: true
   })}
         <div class="${styles.subtle}">Initial value set to 2025-12-28 for testing.</div>
       </div>

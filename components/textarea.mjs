@@ -1,6 +1,6 @@
 import { html, css, formField, fieldIsTouched, rerender } from 'halfcab'
 
-let styles = css`
+const styles = css`
     .textarea {
         color: #666;
         padding: 10px;
@@ -46,7 +46,7 @@ let styles = css`
 `
 
 function change ({ e, holdingPen, property, label }) {
-  let ff = formField(holdingPen, property)(e)
+  const ff = formField(holdingPen, property)(e)
 
   const target = e && (e.target || e.currentTarget)
   const canQuery = target && typeof target.closest === 'function'
@@ -68,7 +68,7 @@ function change ({ e, holdingPen, property, label }) {
 }
 
 export default ({ holdingPen, label, placeholder, property, required, pattern, onkeyup, autofocus, permanentTopPlaceholder = false, permanentTopLabel = false, disabled, darkBackground, onchange, height, oninput, element }) => {
-  let input = html`<textarea data-gramm="false" style="${height ? `height: ${height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ?required=${required} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); onchange && onchange(e); rerender() }} oninput=${e => { if (element) { height = window.getComputedStyle(element.querySelector('textarea')).height } change({ e, holdingPen, property, label: styles.label }); oninput && oninput(e); rerender() }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${pattern ? { pattern } : ''}>${holdingPen[property] || ''}</textarea>`
+  const input = html`<textarea data-gramm="false" style="${height ? `height: ${height}` : ''}" class="${styles.textarea} ${fieldIsTouched(holdingPen, property) === true ? styles.touched : ''}" onkeyup=${e => onkeyup && onkeyup(e)} ?required=${required} onchange=${e => { change({ e, holdingPen, property, label: styles.label }); onchange && onchange(e); rerender() }} oninput=${e => { if (element) { height = window.getComputedStyle(element.querySelector('textarea')).height } change({ e, holdingPen, property, label: styles.label }); oninput && oninput(e); rerender() }} onblur=${formField(holdingPen, property)} placeholder="${placeholder || ''}${required ? ' *' : ''}" ${pattern ? { pattern } : ''}>${holdingPen[property] || ''}</textarea>`
 
   if (autofocus) {
     input.autofocus = true

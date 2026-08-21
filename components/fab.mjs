@@ -1,6 +1,6 @@
 import { html, css } from 'halfcab'
 
-let styles = css`
+const styles = css`
     .fab {
         transition: bottom 0.2s ease, opacity 0.4s ease;
         padding: 0;
@@ -61,12 +61,14 @@ let styles = css`
 
 export default ({ diameter, text, action, colour, disabled, on, icon, menuItems, menuOpen }) => html`<div>
     <div style="${!menuOpen ? 'visibility: hidden;' : ''} position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: rgba(240,240,240,0.9); z-index: 18999;">
-        ${menuItems ? html`<div class="${styles.menu}" style="bottom: calc(${diameter} + 20px)">${menuItems.map((menuItem, index) => html`
+        ${menuItems
+? html`<div class="${styles.menu}" style="bottom: calc(${diameter} + 20px)">${menuItems.map((menuItem, index) => html`
             <div class="${styles.menuItem}" style="margin-right: calc(${diameter}/2 - ${menuItem.diameter}/2);">
                 <div class="${styles.menuItemLabel}" style="opacity: ${menuOpen ? '1' : '0'}; transition-delay: ${(0.1 * (index + 1)).toPrecision(2)}s;">${menuItem.text}</div>
                 <button class="${styles.menuItemButton}" onclick=${e => menuItem.action(e)} style="right: ${menuOpen ? '0' : '-90'}px; transition-delay: ${(0.1 * (index + 1)).toPrecision(2)}s; width: ${menuItem.diameter}; height: ${menuItem.diameter}; background-color: ${menuItem.colour};">${menuItem.icon}</button>
             </div>
-        `)}</div>` : ''}
+        `)}</div>`
+: ''}
     </div>
     <button class="${styles.fab}" onclick=${e => action(e)}
             ?disabled=${disabled}

@@ -1,6 +1,6 @@
 import { html, css } from 'halfcab'
 
-let styles = css`
+const styles = css`
     .progress {
         position: fixed;
         top: 0;

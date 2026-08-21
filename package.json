@@ -32,11 +32,10 @@
   "homepage": "https://github.com/lorengreenfield/stalefish#readme",
   "devDependencies": {
     "halfcab": "^15.0.9",
-    "standard": "^12.0.1"
+    "standard": "^16.0.4"
   },
   "dependencies": {
     "deep-object-diff": "^1.1.0",
-    "eslint": "^6.0.1",
     "fast-clone": "^1.5.3"
   }
 }
