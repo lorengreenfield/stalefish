@@ -1,4 +1,5 @@
 import { html, css, formField, fieldIsTouched, rerender } from 'halfcab'
+import { ifDefined } from 'lit-html/directives/if-defined.js'
 import solidDown from './icons/solidDown.mjs'
 // language=CSS
 const styles = css`
@@ -286,7 +287,7 @@ export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, labe
                             placeholder="${placeholder || ''}${required ? ' *' : ''}"
                             type="${normalizedType}"
                             step="${isNumber ? (isInteger ? determineStep(type) : 'any') : ''}"
-                            pattern="${pattern || ''}"
+                            pattern=${ifDefined(pattern || undefined)}
   />`
 
   if (autofocus) {
