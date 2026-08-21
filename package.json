@@ -1,6 +1,6 @@
 {
   "name": "stalefish",
-  "version": "7.4.6",
+  "version": "8.1.28",
   "description": "Simple function based component library for halfcab tagged template literals",
   "main": "index.mjs",
   "module": "index.mjs",
@@ -11,7 +11,8 @@
     "npm-publish": "npm publish",
     "versionbump:fix": "npm version patch --no-git-tag-version",
     "versionbump:feature": "npm version minor --no-git-tag-version",
-    "versionbump:breakingchanges": "npm version major --no-git-tag-version"
+    "versionbump:breakingchanges": "npm version major --no-git-tag-version",
+    "start:example": "node example/server.mjs"
   },
   "repository": {
     "type": "git",
@@ -19,10 +20,9 @@
   },
   "keywords": [
     "halfcab",
-    "nanohtml",
     "components",
     "css",
-    "bel"
+    "lit-html"
   ],
   "author": "Loren Greenfield",
   "license": "MIT",
@@ -31,13 +31,11 @@
   },
   "homepage": "https://github.com/lorengreenfield/stalefish#readme",
   "devDependencies": {
-    "halfcab": "^13.0.5",
-    "standard": "^12.0.1"
+    "halfcab": "^15.0.9",
+    "standard": "^16.0.4"
   },
   "dependencies": {
     "deep-object-diff": "^1.1.0",
-    "eslint": "^6.0.1",
-    "fast-clone": "^1.5.3",
-    "flatpickr": "4.5.2"
+    "fast-clone": "^1.5.3"
   }
 }

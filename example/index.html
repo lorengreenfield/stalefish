@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>stalefish component demo</title>
+    <base href="/stalefish/example/">
+    <script type="importmap">
+      {
+        "imports": {
+          "halfcab": "/halfcab/halfcab.mjs",
+          "shifty-router": "https://esm.sh/shifty-router@0.1.1",
+          "shifty-router/href.js": "https://esm.sh/shifty-router@0.1.1/href.js",
+          "shifty-router/history.js": "https://esm.sh/shifty-router@0.1.1/history.js",
+          "shifty-router/create-location.js": "https://esm.sh/shifty-router@0.1.1/create-location.js",
+
+          "lit": "https://esm.sh/lit@3.3.2",
+          "lit/directives/unsafe-html.js": "https://esm.sh/lit@3.3.2/directives/unsafe-html.js",
+          "@lit-labs/ssr-client": "https://esm.sh/@lit-labs/ssr-client@1.1.8",
+          "@lit-labs/ssr": "/stalefish/example/ssr-browser-stub.js",
+
+          "axios": "https://esm.sh/axios@0.26.1",
+          "csjs-inject": "https://esm.sh/csjs-inject@1.0.1",
+          "deepmerge": "https://esm.sh/deepmerge@4.0.0",
+          "marked": "https://esm.sh/marked@0.7.0",
+          "html-entities": "https://esm.sh/html-entities@2.3.2",
+          "qs": "https://esm.sh/qs@6.5.2",
+          "nanolru": "https://esm.sh/nanolru@1.0.0",
+          "nanocomponent": "https://esm.sh/nanocomponent@6.5.2",
+          "deep-object-diff": "https://esm.sh/deep-object-diff@1.1.0",
+          "fast-clone": "https://esm.sh/fast-clone@1.5.13",
+          "event-emitter": "https://esm.sh/event-emitter@0.3.5",
+
+          "stalefish": "/stalefish/index.mjs"
+        }
+      }
+    </script>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; margin: 0; padding: 0; background: #efefef; }
+      header { padding: 12px 16px; border-bottom: 1px solid #ccc; display: flex; gap: 12px; align-items: center; }
+      main { padding: 16px; }
+      .container { max-width: 1100px; margin: 0 auto; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+      .card { padding: 12px; border: 1px solid #8884; border-radius: 8px; background: #fff; }
+      h2 { margin: 16px 0 8px; }
+      h3 { margin: 0 0 8px; font-size: 16px; }
+      code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    </style>
+  </head>
+  <body>
+    <header class="container">
+      <h1 style="font-size:18px; font-weight:600;">stalefish components demo</h1>
+    </header>
+    <main class="container">
+      <div id="app"></div>
+    </main>
+    <script type="module" src="./app.mjs"></script>
+    <script type="module" id="ssr-browser-stub">
+      // Minimal stub so halfcab's SSR import is satisfied in browser contexts
+      export default {}
+    </script>
+  </body>
+  </html>

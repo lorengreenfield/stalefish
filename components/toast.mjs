@@ -1,9 +1,7 @@
-import { html, css, geb, Component } from 'halfcab'
+import { html, css, geb } from 'halfcab'
 import close from './icons/close.mjs'
-import * as deepDiff from 'deep-object-diff'
-import clone from 'fast-clone'
 
-let styles = css`
+const styles = css`
   .toast{
     width: 80%;
     min-width: 300px;
@@ -16,7 +14,7 @@ let styles = css`
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
     pointer-events: auto;
   }
-    
+
   .toastContainer{
     transition: bottom 0.5s ease, opacity 1s ease;
     width: 100%;
@@ -31,25 +29,13 @@ let styles = css`
   }
 `
 
-class Toast extends Component {
-  createElement (args) {
-    this.args = clone(args)
-    let { on, message, colour, multiline, closeAction } = args
-    return html`
-      <div class="${styles.toastContainer}" onclick=${() => geb.broadcast('errorDismissed')} style="${on ? 'bottom: 0px;' : `bottom: -${multiline ? '100' : '50'}px; opacity: 0; `}${multiline ? 'height: 100px;' : ''}">
-          <div class="${styles.toast}" style="background-color: ${colour || 'red'};">
-              <div style="width: 100%; margin-left: 20px">${message}</div>
-              <div style="margin-right: 10px; cursor: pointer;" onclick=${e => closeAction && closeAction(e)}>${close({ colour: 'white' })}</div>
-          </div>
+export default ({ on, message, colour, multiline, closeAction }) => {
+  return html`
+    <div class="${styles.toastContainer}" onclick=${() => geb.broadcast('errorDismissed')} style="${on ? 'bottom: 0px;' : `bottom: -${multiline ? '100' : '50'}px; opacity: 0; `}${multiline ? 'height: 100px;' : ''}">
+      <div class="${styles.toast}" style="background-color: ${colour || 'red'};">
+          <div style="width: 100%; margin-left: 20px">${message}</div>
+          <div style="margin-right: 10px; cursor: pointer;" onclick=${e => closeAction && closeAction(e)}>${close({ colour: 'white' })}</div>
       </div>
-    `
-  }
-
-  update (args) {
-    let diff = deepDiff.diff(this.args, args)
-    return !!Object.keys(diff).find(key => typeof diff[key] !== 'function')
-  }
+    </div>
+  `
 }
-
-let toast = new Toast()
-export default args => toast.render(args)

@@ -1,3 +1,3 @@
 # stalefish
-Simple function based component library for hyperx/bel/halfcab/nanohtml tagged template literals
+Simple function based component library for halfcab/lit-html tagged template literals
 
