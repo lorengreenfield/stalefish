@@ -207,7 +207,10 @@ export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, labe
     return Number.isFinite(n) ? n : null
   }
   // Derive step details and use scaled integer math to avoid FP artifacts (e.g., 3.3000000000000003)
-  const stepStr = determineStep(normalizedType)
+  // Note: must use the original `type` (e.g. "float"), not `normalizedType`, since determineType()
+  // already collapses "float"/"integer" into "number", which would make determineStep() always
+  // return the integer step of "1" instead of "0.1" for float fields.
+  const stepStr = determineStep(type)
   const stepDp = isInteger ? 0 : (String(stepStr).includes('.') ? (String(stepStr).split('.')[1] || '').length : 0)
   const scale = Math.pow(10, stepDp)
   const stepInt = isInteger ? 1 : Math.round(Number(stepStr) * scale) // integer number of scaled units per step
@@ -283,7 +286,7 @@ export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, labe
                             placeholder="${placeholder || ''}${required ? ' *' : ''}"
                             type="${normalizedType}"
                             ${pattern ? { pattern } : ''}
-                            ${isNumber ? { step: determineStep(normalizedType) } : ''}
+                            ${isNumber ? { step: determineStep(type) } : ''}
   />`
 
   if (autofocus) {
@@ -332,15 +335,15 @@ export default ({ highlightBorder = false, wrapperStyle = null, holdingPen, labe
               ${label ? html`<span class="${styles.label} ${normalizedType === 'color' ? styles.labelColorAdjustForColorType : ''}" style="opacity: ${holdingPen[property] === 0 || holdingPen[property] || (permanentTopPlaceholder || permanentTopLabel) ? 1 : 0}; font-size: 16px; font-weight: normal; color: #999; margin-left: 5px; padding: 9px; background-color: rgba(255,255,255,${darkBackground ? 1 : 0.8}); ">${label}${required ? ' *' : ''}</span>` : ''}
               ${input}
               ${
-  (isNumber && !disabled)
-    ? html`
-                                  <span id="${wrapperId}-ctrls" class="${styles.controls} ${hasValueContext ? styles.controlsWithValueContext : ''}" aria-hidden="false">
+    (isNumber && !disabled)
+      ? html`
+                <span id="${wrapperId}-ctrls" class="${styles.controls} ${hasValueContext ? styles.controlsWithValueContext : ''}" aria-hidden="false">
                         <button type="button" tabindex="-1" aria-label="Increase value" class="${styles.btn}" style="transform: rotate(180deg);" onmousedown=${(e) => e.preventDefault()} onclick=${inc}>${solidDown({ colour: '#CCC', width: '14px', height: '14px' })}</button>
                         <button type="button" tabindex="-1" aria-label="Decrease value" class="${styles.btn}" onmousedown=${(e) => e.preventDefault()} onclick=${dec}>${solidDown({ colour: '#CCC', width: '14px', height: '14px' })}</button>
                       </span>
-                              `
-    : ''
-}
+      `
+      : ''
+  }
           </label>
       </div>
   `
