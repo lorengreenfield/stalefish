@@ -138,14 +138,25 @@ const styles = css`
 `
 
 function change ({ e, holdingPen, property, label }) {
+  // halfcab's formField() coerces a number-type input's value via Number(e.currentTarget.value),
+  // and Number('') === 0. That means clearing a number/float field would silently snap the
+  // holdingPen value back to 0 instead of leaving it empty. Detect that case up front so we can
+  // restore an actually-empty value after formField() runs.
+  const target = e && e.currentTarget
+  const isEmptyNumberField = !!target && target.type === 'number' && target.value === ''
+
   const ff = formField(holdingPen, property)(e)
+
+  if (isEmptyNumberField) {
+    holdingPen[property] = null
+  }
 
   // When programmatically changing via custom arrows we may not have e.target
   // Guard DOM lookups so we don't throw and skip label opacity tweaks in that case
-  const target = e && (e.target || e.currentTarget)
-  const canQuery = target && typeof target.closest === 'function'
+  const labelTarget = e && (e.target || e.currentTarget)
+  const canQuery = labelTarget && typeof labelTarget.closest === 'function'
   if (canQuery) {
-    const closestLabel = target.closest('label')
+    const closestLabel = labelTarget.closest('label')
     if (closestLabel) {
       const labelEl = label && label.selector ? closestLabel.querySelector(label.selector) : null
       if (labelEl) {
