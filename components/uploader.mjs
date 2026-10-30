@@ -572,14 +572,17 @@ export default function uploader (args) {
       if (!placeholderEl) return // only show when placeholder is currently visible
 
       frame.dataset.opening = '1'
-      if (!placeholderEl.dataset.originalText) placeholderEl.dataset.originalText = placeholderEl.textContent || ''
-      placeholderEl.textContent = 'Opening files...'
+      // only touch the text node's data; setting textContent would remove lit's marker nodes and break later renders
+      const placeholderTextNode = Array.from(placeholderEl.childNodes).find(n => n.nodeType === 3 && n.data.trim())
+      if (!placeholderTextNode) { delete frame.dataset.opening; return }
+      const originalText = placeholderTextNode.data
+      placeholderTextNode.data = 'Opening files...'
 
       const clearOpening = () => {
         try {
           delete frame.dataset.opening
-          if (placeholderEl && placeholderEl.dataset && typeof placeholderEl.dataset.originalText === 'string') {
-            placeholderEl.textContent = placeholderEl.dataset.originalText
+          if (placeholderTextNode.data === 'Opening files...') {
+            placeholderTextNode.data = originalText
           }
         } catch {}
         window.removeEventListener('focus', onWindowFocus, true)
@@ -615,13 +618,13 @@ export default function uploader (args) {
                       // Remove active state if user clicks outside the label area next time
                       const labelEl = frame && frame.closest('label')
                       const onDocDown = (ev) => {
-                        try {
-                          if (!labelEl) return
-                          const target = ev && ev.target
-                          if (target && labelEl.contains(target)) return
-                          removeActive(frame)
-                          document.removeEventListener('mousedown', onDocDown, true)
-                        } catch {}
+                          try {
+                              if (!labelEl) return
+                              const target = ev && ev.target
+                              if (target && labelEl.contains(target)) return
+                              removeActive(frame)
+                              document.removeEventListener('mousedown', onDocDown, true)
+                          } catch {}
                       }
                       setTimeout(() => document.addEventListener('mousedown', onDocDown, true), 0)
                       const input = frame && frame.querySelector('input[type="file"]')
@@ -653,8 +656,8 @@ export default function uploader (args) {
                                       e.preventDefault()
                                       e.stopPropagation()
                                       try {
-                                        const frame = e.currentTarget && e.currentTarget.closest && e.currentTarget.closest('label') && e.currentTarget.closest('label').querySelector('.' + styles.frame)
-                                        addActive(frame)
+                                          const frame = e.currentTarget && e.currentTarget.closest && e.currentTarget.closest('label') && e.currentTarget.closest('label').querySelector('.' + styles.frame)
+                                          addActive(frame)
                                       } catch {}
                                       // Only clear when there is a value; otherwise do nothing
                                       if (holdingPen && Object.prototype.hasOwnProperty.call(holdingPen, property) && holdingPen[property]) {
@@ -667,8 +670,8 @@ export default function uploader (args) {
                                           e.preventDefault()
                                           e.stopPropagation()
                                           try {
-                                            const frame = e.currentTarget && e.currentTarget.closest && e.currentTarget.closest('label') && e.currentTarget.closest('label').querySelector('.' + styles.frame)
-                                            addActive(frame)
+                                              const frame = e.currentTarget && e.currentTarget.closest && e.currentTarget.closest('label') && e.currentTarget.closest('label').querySelector('.' + styles.frame)
+                                              addActive(frame)
                                           } catch {}
                                           if (holdingPen && Object.prototype.hasOwnProperty.call(holdingPen, property) && holdingPen[property]) {
                                               if (typeof onclear === 'function') onclear(e)
